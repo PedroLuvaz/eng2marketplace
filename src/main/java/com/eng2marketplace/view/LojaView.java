@@ -1,16 +1,16 @@
 package com.eng2marketplace.view;
 
-import com.eng2marketplace.controller.LojaController;
+import com.eng2marketplace.Facade.MarketplaceFacade;
 import com.eng2marketplace.model.Loja;
 import java.util.List;
 import java.util.Scanner;
 
 public class LojaView {
-    private LojaController lojaController;
+    private MarketplaceFacade facade;
     private Scanner scanner;
 
-    public LojaView() {
-        this.lojaController = new LojaController();
+    public LojaView(MarketplaceFacade facade) {
+        this.facade = facade;
         this.scanner = new Scanner(System.in);
     }
 
@@ -21,16 +21,16 @@ public class LojaView {
             System.out.println("1. Adicionar Loja");
             System.out.println("2. Listar Lojas");
             System.out.println("3. Remover Loja");
-            System.out.println("0. Sair");
+            System.out.println("0. Voltar");
             System.out.print("Escolha uma opção: ");
             opcao = scanner.nextInt();
-            scanner.nextLine();  
+            scanner.nextLine();
 
             switch (opcao) {
                 case 1 -> adicionarLoja();
                 case 2 -> listarLojas();
                 case 3 -> removerLoja();
-                case 0 -> System.out.println("Saindo...");
+                case 0 -> System.out.println("Voltando ao menu principal...");
                 default -> System.out.println("Opção inválida.");
             }
         } while (opcao != 0);
@@ -48,12 +48,12 @@ public class LojaView {
         System.out.print("Endereço: ");
         String endereco = scanner.nextLine();
 
-        lojaController.adicionarLoja(nome, email, senha, cpfCnpj, endereco);
+        facade.adicionarLoja(nome, email, senha, cpfCnpj, endereco);
         System.out.println("Loja adicionada com sucesso!");
     }
 
     private void listarLojas() {
-        List<Loja> lojas = lojaController.listarLojas();
+        List<Loja> lojas = facade.listarLojas();
         if (lojas.isEmpty()) {
             System.out.println("Nenhuma loja cadastrada.");
         } else {
@@ -64,7 +64,7 @@ public class LojaView {
     private void removerLoja() {
         System.out.print("Informe o CPF/CNPJ da loja a ser removida: ");
         String cpfCnpj = scanner.nextLine();
-        if (lojaController.removerLoja(cpfCnpj)) {
+        if (facade.removerLoja(cpfCnpj)) {
             System.out.println("Loja removida com sucesso!");
         } else {
             System.out.println("Loja não encontrada.");
