@@ -1,5 +1,6 @@
 package com.eng2marketplace.view;
 
+import com.eng2marketplace.view.input.ConsoleInput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -214,7 +215,7 @@ public class ConsoleInputTest {
      */
     @Test
     void testNumberOk() {
-        String number = "7";
+        String number = "7\n";
         setInput(number);
 
         ConsoleInput io = new ConsoleInput();
@@ -228,7 +229,7 @@ public class ConsoleInputTest {
      */
     @Test
     void testNumberOkInRange() {
-        String number = "7";
+        String number = "7\n";
         setInput(number);
 
         ConsoleInput io = new ConsoleInput();
@@ -241,7 +242,7 @@ public class ConsoleInputTest {
      */
     @Test
     void testNumberOkNeg() {
-        String number = "-7";
+        String number = "-7\n";
         setInput(number);
 
         ConsoleInput io = new ConsoleInput();
@@ -255,7 +256,7 @@ public class ConsoleInputTest {
      */
     @Test
     void testNumberOkMax() {
-        String number = "50";
+        String number = "50\n";
         setInput(number);
 
         ConsoleInput io = new ConsoleInput();
@@ -269,7 +270,7 @@ public class ConsoleInputTest {
      */
     @Test
     void testNumberOkMin() {
-        String number = "0";
+        String number = "0\n";
         setInput(number);
 
         ConsoleInput io = new ConsoleInput();
@@ -283,7 +284,7 @@ public class ConsoleInputTest {
      */
     @Test
     void testNumberInvalid() {
-        String number = "7k";
+        String number = "7k\n";
         setInput(number);
 
         ConsoleInput io = new ConsoleInput();
@@ -297,7 +298,7 @@ public class ConsoleInputTest {
      */
     @Test
     void testNumberOverMax() {
-        String number = "51";
+        String number = "51\n";
         setInput(number);
 
         ConsoleInput io = new ConsoleInput();
@@ -311,7 +312,7 @@ public class ConsoleInputTest {
      */
     @Test
     void testNumberUnderMin() {
-        String number = "-1";
+        String number = "-1\n";
         setInput(number);
 
         ConsoleInput io = new ConsoleInput();

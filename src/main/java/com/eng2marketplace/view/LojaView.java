@@ -2,6 +2,8 @@ package com.eng2marketplace.view;
 
 import com.eng2marketplace.Facade.MarketplaceFacade;
 import com.eng2marketplace.model.Loja;
+import com.eng2marketplace.view.input.ConsoleInput;
+
 import java.util.List;
 
 public class LojaView {

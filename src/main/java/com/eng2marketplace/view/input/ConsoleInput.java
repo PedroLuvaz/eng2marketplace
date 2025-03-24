@@ -1,22 +1,15 @@
-package com.eng2marketplace.view;
+package com.eng2marketplace.view.input;
 
-import java.io.IOException;
-import java.util.InputMismatchException;
 import java.util.Scanner;
-import java.util.regex.Pattern;
-
 
 /**
- * Classe responsável por obter e validar a entrada de texto no console.
+ * Classe responsável por obter entrada validada de texto a partir do console.
  */
 public class ConsoleInput {
     private final Scanner scanner = new Scanner(System.in);
 
-    public ConsoleInput() {
-    }
     /**
-     * Obtém um texto qualquer com pelo menos um caractere.
-     * O texto deve conter no mínimo um caractere.
+     * Obtém um texto qualquer
      * @return Um texto ou null se um texto inválido for informado
      */
     public String getText() {
@@ -29,10 +22,7 @@ public class ConsoleInput {
      * @return Um texto ou null se o texto não satisfazer a expressão regular
      */
     public String getText(String regex) {
-        String input = this.scanner.nextLine();
-        if(Pattern.matches(regex, input))
-            return input;
-        return null;
+        return TextGetter.get(this.scanner, regex, 0);
     }
 
     public String askText(String prompt, String regex, String invalidMsg) {
@@ -55,10 +45,7 @@ public class ConsoleInput {
      * @return Um endereço de email válido ou null se os caracteres forem inválidos.
      */
     public String getMail() {
-        String input = this.scanner.nextLine();
-        if(Pattern.matches("([A-z0-9_\\.-]+\\@[A-z0-9_-]+\\.[A-z\\.]{2,6})", input))
-            return input;
-        return null;
+        return TextGetter.get(this.scanner, "([A-z0-9_\\.-]+\\@[A-z0-9_-]+\\.[A-z\\.]{2,6})", 0);
     }
 
     public String askMail(String prompt, String invalidMsg) {
@@ -81,15 +68,9 @@ public class ConsoleInput {
      * @return Um nome de pessoa ou null se um nome inválido for informado
      */
     public String getName(int maxSize) {
-        if (maxSize <= 0)
+        if (maxSize < 0)
             throw new IllegalArgumentException("O tamanho máximo é inválido.");
-
-        String input = this.scanner.nextLine();
-        if(!Pattern.matches("(?:[A-zÀ-ú]{2,99} ){0,99}[A-zÀ-ú]{2,99}", input))
-            return null;
-        if(input.length() > maxSize)
-            return null;
-        return input;
+        return TextGetter.get(this.scanner, "(?:[A-zÀ-ú]{2,99} ){0,99}[A-zÀ-ú]{2,99}", maxSize);
     }
 
     public String askName(String prompt, int maxSize, String invalidMsg) {
@@ -108,13 +89,7 @@ public class ConsoleInput {
      * @return Um número ou null se um número inválido for informado.
      */
     public Integer getNumber() {
-        try {
-            int result = this.scanner.nextInt();
-            this.scanner.nextLine(); // scanner bug workaround
-            return result;
-        } catch (InputMismatchException e) { // número veio troncho
-            return null;
-        }
+        return IntRangeGetter.get(this.scanner, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     public int askNumber(String prompt, String invalidMsg) {
@@ -138,10 +113,7 @@ public class ConsoleInput {
     public Integer getNumber(int min, int max) {
         if(min > max)
             throw new IllegalArgumentException("O mínimo deve ser menor ou igual ao máximo!");
-        int input = this.getNumber();
-        if(input < min || input > max)
-            return null;
-        return input;
+        return IntRangeGetter.get(this.scanner, min, max);
     }
 
     public int askNumber(String prompt, int min, int max, String invalidMsg) {
@@ -161,11 +133,7 @@ public class ConsoleInput {
      * @return Um número ou null se nenhum número válido for informado
      */
     public Double getValue() {
-        try {
-            return this.scanner.nextDouble();
-        } catch (InputMismatchException e) { // número veio troncho
-            return null;
-        }
+        return DoubleRangeGetter.get(this.scanner, -Double.MAX_VALUE, Double.MAX_VALUE);
     }
 
     public double askValue(String prompt, String invalidMsg) {
@@ -189,10 +157,7 @@ public class ConsoleInput {
     public Double getValue(double min, double max) {
         if(min > max)
             throw new IllegalArgumentException("O mínimo deve ser menor ou igual ao máximo!");
-        double input = this.getValue();
-        if(input < min || input > max)
-            return null;
-        return input;
+        return DoubleRangeGetter.get(this.scanner, min, max);
     }
 
     public double askValue(String prompt, double min, double max, String invalidMsg) {
@@ -214,18 +179,21 @@ public class ConsoleInput {
      * @return Um número de CPF ou null caso não for informado um valor válido
      */
     public String getCPF() {
-        String input = this.scanner.nextLine();
-        if(Pattern.matches("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}", input))
-            return input;
-        if(Pattern.matches("\\d{11}", input)) {
+        TextGetter getter = new TextGetter(this.scanner, "\\d{11}", 11);
+        if (getter.validate()) {
+            String value = getter.getValue();
             return String.format(
                 "%s.%s.%s-%s",
-                input.substring(0, 3),
-                input.substring(3, 6),
-                input.substring(6, 9),
-                input.substring(9, 11));
+                value.substring(0, 3),
+                value.substring(3, 6),
+                value.substring(6, 9),
+                value.substring(9, 11));
         }
-        return null;
+
+        // Tente de novo com outro padrão
+        getter.setRegex("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}");
+        getter.setMaxLength(14);
+        return getter.validate() ? getter.getValue() : null;
     }
 
     public String askCPF(String prompt, String invalidMsg) {
@@ -248,19 +216,22 @@ public class ConsoleInput {
      * @return Um número de CNPJ ou null caso não for informado um valor válido
      */
     public String getCNPJ() {
-        String input = this.scanner.nextLine();
-        if(Pattern.matches("\\d{2}.\\d{3}.\\d{3}\\/(?:0001|0002)-\\d{2}", input))
-            return input;
-        if(Pattern.matches("\\d{8}(?:0001|0002)\\d{2}", input)){
+        TextGetter getter = new TextGetter(this.scanner, "\\d{8}(?:0001|0002)\\d{2}", 14);
+        if(getter.validate()) {
+            String value = getter.getValue();
             return String.format(
                 "%s.%s.%s/%s-%s",
-                input.substring(0, 2),
-                input.substring(2, 5),
-                input.substring(5, 8),
-                input.substring(8, 12),
-                input.substring(12, 14));
+                value.substring(0, 2),
+                value.substring(2, 5),
+                value.substring(5, 8),
+                value.substring(8, 12),
+                value.substring(12, 14));
         }
-        return null;
+
+        // Tentando com 2o padrao
+        getter.setRegex("\\d{2}.\\d{3}.\\d{3}\\/(?:0001|0002)-\\d{2}");
+        getter.setMaxLength(18);
+        return getter.validate() ? getter.getValue() : null;
     }
 
     public String askCNPJ(String prompt, String invalidMsg) {
@@ -286,31 +257,42 @@ public class ConsoleInput {
      * @return Um número de CPF ou CNPJ ou null caso não for informado um valor válido
      */
     public String getCPFCNPJ() {
-        String input = this.scanner.nextLine();
-        if(Pattern.matches("\\d{2}.\\d{3}.\\d{3}\\/(?:0001|0002)-\\d{2}", input))
-            return input;
-        if(Pattern.matches("\\d{8}(?:0001|0002)\\d{2}", input)){
+        TextGetter getter = new TextGetter(this.scanner, "\\d{8}(?:0001|0002)\\d{2}", 14);
+        if(getter.validate()) {
+            String value = getter.getValue();
             return String.format(
                 "%s.%s.%s/%s-%s",
-                input.substring(0, 2),
-                input.substring(2, 5),
-                input.substring(5, 8),
-                input.substring(8, 12),
-                input.substring(12, 14));
+                value.substring(0, 2),
+                value.substring(2, 5),
+                value.substring(5, 8),
+                value.substring(8, 12),
+                value.substring(12, 14));
         }
-        if(Pattern.matches("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}", input))
-            return input;
-        if(Pattern.matches("\\d{11}", input)) {
+
+        // Tente 2o padrao de CNPJ
+        getter.setRegex("\\d{2}.\\d{3}.\\d{3}\\/(?:0001|0002)-\\d{2}");
+        getter.setMaxLength(18);
+        if(getter.validate())
+            return getter.getValue();
+
+        // Tente primeiro padrão de CPF
+        getter.setRegex("\\d{11}");
+        getter.setMaxLength(11);
+        if (getter.validate()) {
+            String value = getter.getValue();
             return String.format(
                 "%s.%s.%s-%s",
-                input.substring(0, 3),
-                input.substring(3, 6),
-                input.substring(6, 9),
-                input.substring(9, 11));
+                value.substring(0, 3),
+                value.substring(3, 6),
+                value.substring(6, 9),
+                value.substring(9, 11));
         }
-        return null;
-    }
 
+        // Tente segundo padrão de CPF
+        getter.setRegex("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}");
+        getter.setMaxLength(14);
+        return getter.validate() ? getter.getValue() : null;
+    }
 
     public String askCPFCNPJ(String prompt, String invalidMsg) {
         String answer;
