@@ -58,4 +58,9 @@ public class MarketplaceFacade {
     public boolean removerComprador(String email) {
         return compradorController.removerComprador(email);
     }
+
+    // Adicione este método na classe MarketplaceFacade
+public List<Produto> listarProdutosPorLoja(String cpfCnpjLoja) {
+    return produtoController.listarProdutosPorLoja(cpfCnpjLoja);
+}
 }

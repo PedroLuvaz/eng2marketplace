@@ -5,9 +5,15 @@ import com.eng2marketplace.model.Loja;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ProdutoRepository {
-    private static final String FILE_NAME = "produtos.txt";
+    private static final String FILE_NAME = "./data/produtos.txt";
+    private final LojaRepository lojaRepository;
+
+    public ProdutoRepository(LojaRepository lojaRepository) {
+        this.lojaRepository = lojaRepository;
+    }
 
     public void salvar(Produto produto) {
         List<Produto> produtos = listar();
@@ -22,8 +28,22 @@ public class ProdutoRepository {
             while ((linha = br.readLine()) != null) {
                 String[] dados = linha.split(";");
                 if (dados.length == 7) {
-                    Loja loja = new Loja(dados[6], "", "", "", ""); 
-                    produtos.add(new Produto(dados[0], Double.parseDouble(dados[1]), dados[2], Integer.parseInt(dados[3]), dados[4], dados[5], loja));
+                    String cpfCnpjLoja = dados[6];
+                    Optional<Loja> loja = lojaRepository.listar().stream()
+                            .filter(l -> l.getCpfCnpj().equals(cpfCnpjLoja))
+                            .findFirst();
+
+                    if (loja.isPresent()) {
+                        produtos.add(new Produto(
+                                dados[0],
+                                Double.parseDouble(dados[1]),
+                                dados[2],
+                                Integer.parseInt(dados[3]),
+                                dados[4],
+                                dados[5],
+                                loja.get()
+                        ));
+                    }
                 }
             }
         } catch (IOException e) {
@@ -32,9 +52,20 @@ public class ProdutoRepository {
         return produtos;
     }
 
+    public List<Produto> listarPorLoja(String cpfCnpjLoja) {
+        List<Produto> todosProdutos = listar();
+        List<Produto> produtosDaLoja = new ArrayList<>();
+        for (Produto produto : todosProdutos) {
+            if (produto.getLoja().getCpfCnpj().equals(cpfCnpjLoja)) {
+                produtosDaLoja.add(produto);
+            }
+        }
+        return produtosDaLoja;
+    }
+
     public boolean remover(String nome) {
         List<Produto> produtos = listar();
-        boolean removido = produtos.removeIf(produto -> produto.getNome().equals(nome));
+        boolean removido = produtos.removeIf(p -> p.getNome().equalsIgnoreCase(nome));
         if (removido) {
             salvarArquivo(produtos);
         }
@@ -44,8 +75,13 @@ public class ProdutoRepository {
     private void salvarArquivo(List<Produto> produtos) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME))) {
             for (Produto produto : produtos) {
-                bw.write(produto.getNome() + ";" + produto.getValor() + ";" + produto.getTipo() + ";" + produto.getQuantidade() + ";" +
-                        produto.getMarca() + ";" + produto.getDescricao() + ";" + produto.getLoja().getNome());
+                bw.write(produto.getNome() + ";" +
+                        produto.getValor() + ";" +
+                        produto.getTipo() + ";" +
+                        produto.getQuantidade() + ";" +
+                        produto.getMarca() + ";" +
+                        produto.getDescricao() + ";" +
+                        produto.getLoja().getCpfCnpj());
                 bw.newLine();
             }
         } catch (IOException e) {

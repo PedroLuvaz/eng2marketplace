@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CompradorRepository {
-    private static final String FILE_NAME = "compradores.txt";
+    private static final String FILE_NAME = "./data/compradores.txt";
 
     public void salvar(Comprador comprador) {
         List<Comprador> compradores = listar();

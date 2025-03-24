@@ -2,21 +2,21 @@ package com.eng2marketplace.view;
 
 import com.eng2marketplace.Facade.MarketplaceFacade;
 import com.eng2marketplace.model.Comprador;
-import com.eng2marketplace.view.input.ConsoleInput;
 
 import java.util.List;
+import java.util.Scanner;
 
 public class CompradorView {
     private MarketplaceFacade facade;
-    private ConsoleInput scanner;
+    private Scanner scanner;
 
     public CompradorView(MarketplaceFacade facade) {
         this.facade = facade;
-        this.scanner = new ConsoleInput();
+        this.scanner = new Scanner(System.in);
     }
 
     public void menu() {
-        Integer opcao;
+        int opcao;
         do {
             System.out.println("\n--- Gestão de Compradores ---");
             System.out.println("1. Cadastrar Comprador");
@@ -24,27 +24,28 @@ public class CompradorView {
             System.out.println("3. Remover Comprador");
             System.out.println("0. Voltar");
             System.out.print("Escolha uma opção: ");
-
-            opcao = scanner.getNumber(0, 3);
-            if(opcao == null) {
-                System.out.println("Opção inválida.");
-                continue;
-            }
+            opcao = scanner.nextInt();
+            scanner.nextLine();
 
             switch (opcao) {
                 case 1 -> cadastrarComprador();
                 case 2 -> listarCompradores();
                 case 3 -> removerComprador();
                 case 0 -> System.out.println("Voltando ao menu principal...");
+                default -> System.out.println("Opção inválida.");
             }
-        } while (opcao == null);
+        } while (opcao != 0);
     }
 
     private void cadastrarComprador() {
-        String nome = scanner.askName("Nome (entre 2 e 99 letras): ", 99, "Nome inválido!");
-        String email = scanner.askMail("Email (padrão aaa@bbb.ccc): ", "Email inválido!");
-        String senha = scanner.askText("Senha (pelo menos 8 caracteres): ", ".{8,}", "Senha inválida!");
-        String endereco = scanner.askText("Endereço (entre 5 e 250 caracteres): ", ".{5,250}", "Endereço inválido!");
+        System.out.print("Nome: ");
+        String nome = scanner.nextLine();
+        System.out.print("Email: ");
+        String email = scanner.nextLine();
+        System.out.print("Senha: ");
+        String senha = scanner.nextLine();
+        System.out.print("Endereço: ");
+        String endereco = scanner.nextLine();
 
         facade.cadastrarComprador(nome, email, senha, endereco);
         System.out.println("Comprador cadastrado com sucesso!");
@@ -60,7 +61,8 @@ public class CompradorView {
     }
 
     private void removerComprador() {
-        String email = scanner.askMail("Informe o email do comprador a ser removido (padrão aaa@bbb.ccc): ", "Email inválido!");
+        System.out.print("Informe o email do comprador a ser removido: ");
+        String email = scanner.nextLine();
         if (facade.removerComprador(email)) {
             System.out.println("Comprador removido com sucesso!");
         } else {

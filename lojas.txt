@@ -1,1 +1,2 @@
 Brookdale Equipamentos;brkdl@mail.net;12345;012.345.678-90;Rua dos Mafagafos, 1
+Nike;nike@gmail.com;12345678;136.389.264-94;rua alagada
