@@ -3,19 +3,18 @@ package com.eng2marketplace.view;
 import com.eng2marketplace.Facade.MarketplaceFacade;
 import com.eng2marketplace.model.Loja;
 import java.util.List;
-import java.util.Scanner;
 
 public class LojaView {
-    private MarketplaceFacade facade;
-    private Scanner scanner;
+    private final MarketplaceFacade facade;
+    private final ConsoleInput scanner;
 
     public LojaView(MarketplaceFacade facade) {
         this.facade = facade;
-        this.scanner = new Scanner(System.in);
+        this.scanner = new ConsoleInput();
     }
 
     public void menu() {
-        int opcao;
+        Integer opcao;
         do {
             System.out.println("\n--- Gestão de Lojas ---");
             System.out.println("1. Adicionar Loja");
@@ -23,30 +22,29 @@ public class LojaView {
             System.out.println("3. Remover Loja");
             System.out.println("0. Voltar");
             System.out.print("Escolha uma opção: ");
-            opcao = scanner.nextInt();
-            scanner.nextLine();
+
+            opcao = scanner.getNumber(0, 3);
+
+            if(opcao == null) {
+                System.out.println("Opção inválida.");
+                continue;
+            }
 
             switch (opcao) {
                 case 1 -> adicionarLoja();
                 case 2 -> listarLojas();
                 case 3 -> removerLoja();
                 case 0 -> System.out.println("Voltando ao menu principal...");
-                default -> System.out.println("Opção inválida.");
             }
-        } while (opcao != 0);
+        } while (opcao == null);
     }
 
     private void adicionarLoja() {
-        System.out.print("Nome: ");
-        String nome = scanner.nextLine();
-        System.out.print("Email: ");
-        String email = scanner.nextLine();
-        System.out.print("Senha: ");
-        String senha = scanner.nextLine();
-        System.out.print("CPF/CNPJ: ");
-        String cpfCnpj = scanner.nextLine();
-        System.out.print("Endereço: ");
-        String endereco = scanner.nextLine();
+        String nome = scanner.askName("Nome (entre 2 e 99 letras): ", 99, "Nome inválido!");
+        String email = scanner.askMail("Email (padrão aaa@bbb.ccc): ", "Email inválido!");
+        String senha = scanner.askText("Senha (pelo menos 8 caracteres): ", ".{8,}", "Senha inválida!");
+        String cpfCnpj = scanner.askCNPJ("CPF/CNPJ (somente números ou com ponto/hífen/barra): ", "Número de documento inválido!");
+        String endereco = scanner.askText("Endereço (entre 5 e 250 caracteres): ", ".{5,250}", "Endereço inválido!");
 
         facade.adicionarLoja(nome, email, senha, cpfCnpj, endereco);
         System.out.println("Loja adicionada com sucesso!");
@@ -62,8 +60,10 @@ public class LojaView {
     }
 
     private void removerLoja() {
-        System.out.print("Informe o CPF/CNPJ da loja a ser removida: ");
-        String cpfCnpj = scanner.nextLine();
+        String cpfCnpj = scanner.askCPFCNPJ(
+            "Informe o CPF/CNPJ da loja a ser removida (somente números ou com ponto/hífen/barra): ",
+            "Documento inválido!");
+
         if (facade.removerLoja(cpfCnpj)) {
             System.out.println("Loja removida com sucesso!");
         } else {
