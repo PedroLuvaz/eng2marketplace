@@ -1,12 +1,11 @@
 package com.eng2marketplace.view;
 
 import com.eng2marketplace.Facade.MarketplaceFacade;
-
-import java.util.Scanner;
+import com.eng2marketplace.view.input.ConsoleInput;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        ConsoleInput scanner = new ConsoleInput();
         MarketplaceFacade facade = new MarketplaceFacade();
 
         while (true) {
@@ -17,8 +16,11 @@ public class Main {
             System.out.println("0. Sair");
             System.out.print("Escolha uma opção: ");
 
-            int opcao = scanner.nextInt();
-            scanner.nextLine();
+            Integer opcao = scanner.getNumber(0, 3);
+            if (opcao == null) {
+                System.out.println("Opção inválida. Tente novamente.");
+                continue;
+            }
 
             switch (opcao) {
                 case 1 -> new LojaView(facade).menu();
@@ -26,10 +28,9 @@ public class Main {
                 case 3 -> new ProdutoView(facade).menu();
                 case 0 -> {
                     System.out.println("Saindo...");
-                    scanner.close();
+                    // scanner.close();
                     return;
                 }
-                default -> System.out.println("Opção inválida. Tente novamente.");
             }
         }
     }
