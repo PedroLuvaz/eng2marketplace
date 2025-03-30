@@ -20,7 +20,7 @@ class ProdutoControllerTest {
     @BeforeEach
     void setup() {
         // deleta o repositório de Produtos
-        File f = new File("Produtos.txt");
+        File f = new File("./data/produtos.txt");
         if(!f.exists())
             return;
         if(!f.delete())

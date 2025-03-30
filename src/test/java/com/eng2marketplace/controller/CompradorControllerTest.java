@@ -17,7 +17,7 @@ class CompradorControllerTest {
     @BeforeEach
     void setup() {
         // deleta o repositório de compradores
-        File f = new File("compradores.txt");
+        File f = new File("./data/compradores.txt");
         if(!f.exists())
             return;
         if(!f.delete())
