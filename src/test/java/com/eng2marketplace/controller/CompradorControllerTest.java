@@ -17,7 +17,7 @@ class CompradorControllerTest {
     @BeforeEach
     void setup() {
         // deleta o repositório de compradores
-        File f = new File("./data/compradores.txt");
+        File f = new File("compradores.txt");
         if(!f.exists())
             return;
         if(!f.delete())
@@ -30,7 +30,7 @@ class CompradorControllerTest {
     @Test
     void testSalvar() {
         CompradorController control = new CompradorController();
-        control.adicionarComprador("Joana Ferreira", "jfjf@mail.ko", "321321", "074.821.754-03", "Rua Margaridas, Número 123");
+        control.adicionarComprador("Joana Ferreira", "jfjf@mail.ko", "321321", "074.821.754-03");
 
         List<Comprador> result = control.listarCompradores();
 
@@ -55,8 +55,8 @@ class CompradorControllerTest {
     @Test
     void testListar() {
         CompradorController control = new CompradorController();
-        control.adicionarComprador("Joana Ferreira", "jfjf@mail.ko", "321321", "074.821.754-03", "Avenida Predial 955/B");
-        control.adicionarComprador("Ana Pontes", "anabanana@mail.ko", "123123", "072.891.939-05", "Rua Marimbondo Caboclo, 3001");
+        control.adicionarComprador("Joana Ferreira", "jfjf@mail.ko", "321321", "074.821.754-03");
+        control.adicionarComprador("Ana Pontes", "anabanana@mail.ko", "123123", "072.891.939-05");
 
         List<Comprador> result = control.listarCompradores();
 
@@ -82,8 +82,8 @@ class CompradorControllerTest {
     @Test
     void testRemoverInexistente() {
         CompradorController control = new CompradorController();
-        control.adicionarComprador("Joana Ferreira", "jfjf@mail.ko", "321321", "074.821.754-03", "Avenida Predial 955/B");
-        control.adicionarComprador("Ana Pontes", "anabanana@mail.ko", "123123", "072.891.939-05", "Rua Marimbondo Caboclo, 3001");
+        control.adicionarComprador("Joana Ferreira", "jfjf@mail.ko", "321321", "074.821.754-03");
+        control.adicionarComprador("Ana Pontes", "anabanana@mail.ko", "123123", "072.891.939-05");
 
         boolean result = control.removerComprador("484.242.121-01");
 
@@ -97,8 +97,8 @@ class CompradorControllerTest {
     @Test
     void testRemover() {
         CompradorController control = new CompradorController();
-        control.adicionarComprador("Joana Ferreira", "jfjf@mail.ko", "321321", "074.821.754-03", "Avenida Predial 955/B");
-        control.adicionarComprador("Ana Pontes", "anabanana@mail.ko", "123123", "072.891.939-05", "Rua Marimbondo Caboclo, 3001");
+        control.adicionarComprador("Joana Ferreira", "jfjf@mail.ko", "321321", "074.821.754-03");
+        control.adicionarComprador("Ana Pontes", "anabanana@mail.ko", "123123", "072.891.939-05");
 
         boolean result = control.removerComprador("074.821.754-03");
 

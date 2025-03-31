@@ -5,15 +5,12 @@ public class Comprador {
     private String email;
     private String senha;
     private String cpf;
-    private String endereco;
 
-
-    public Comprador(String nome, String email, String senha, String cpf, String endereco) {
+    public Comprador(String nome, String email, String senha, String cpf) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.cpf = cpf;
-        this.endereco = endereco;
     }
 
     // Getters e Setters
@@ -29,12 +26,12 @@ public class Comprador {
     public String getCpf() { return cpf; }
     public void setCpf(String cpf) { this.cpf = cpf; }
 
-    public String getEndereco() { return endereco; }
-    public void setEndereco(String endereco) { this.endereco = endereco; }
-
     @Override
     public String toString() {
-        return String.format("Comprador{nome='%s', email='%s', cpf='%s', endereço='%s'}",
-            this.nome, this.email, this.cpf, this.endereco);
+        return "Comprador{" +
+                "nome='" + nome + '\'' +
+                ", email='" + email + '\'' +
+                ", cpf='" + cpf + '\'' +
+                '}';
     }
 }
