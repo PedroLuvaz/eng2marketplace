@@ -2,51 +2,78 @@ package com.eng2marketplace.view;
 
 import com.eng2marketplace.Facade.MarketplaceFacade;
 import com.eng2marketplace.model.Comprador;
-import com.eng2marketplace.view.input.ConsoleInput;
 
 import java.util.List;
+import java.util.Scanner;
 
 public class CompradorView {
     private MarketplaceFacade facade;
-    private ConsoleInput scanner;
+    private Scanner scanner;
 
     public CompradorView(MarketplaceFacade facade) {
         this.facade = facade;
-        this.scanner = new ConsoleInput();
+        this.scanner = new Scanner(System.in);
     }
 
     public void menu() {
-        Integer opcao;
+        int opcao;
         do {
             System.out.println("\n--- Gestão de Compradores ---");
             System.out.println("1. Cadastrar Comprador");
             System.out.println("2. Listar Compradores");
-            System.out.println("3. Remover Comprador");
+            System.out.println("3. Buscar Comprador por CPF");
+            System.out.println("4. Remover Comprador");
             System.out.println("0. Voltar");
             System.out.print("Escolha uma opção: ");
-
-            opcao = scanner.getNumber(0, 3);
-            if(opcao == null) {
-                System.out.println("Opção inválida.");
-                continue;
+            
+            try {
+                opcao = scanner.nextInt();
+                scanner.nextLine(); // Limpa o buffer
+                
+                switch (opcao) {
+                    case 1:
+                        cadastrarComprador();
+                        break;
+                    case 2:
+                        listarCompradores();
+                        break;
+                    case 3:
+                        buscarCompradorPorCpf();
+                        break;
+                    case 4:
+                        removerComprador();
+                        break;
+                    case 0:
+                        System.out.println("Voltando ao menu principal...");
+                        break;
+                    default:
+                        System.out.println("Opção inválida.");
+                }
+            } catch (Exception e) {
+                System.out.println("Entrada inválida. Digite um número.");
+                scanner.nextLine(); // Limpa o buffer
+                opcao = -1;
             }
-
-            switch (opcao) {
-                case 1 -> cadastrarComprador();
-                case 2 -> listarCompradores();
-                case 3 -> removerComprador();
-                case 0 -> System.out.println("Voltando ao menu principal...");
-            }
-        } while (opcao == null);
+        } while (opcao != 0);
     }
 
     private void cadastrarComprador() {
-        String nome = scanner.askName("Nome (entre 2 e 99 letras): ", 99, "Nome inválido!");
-        String email = scanner.askMail("Email (padrão aaa@bbb.ccc): ", "Email inválido!");
-        String senha = scanner.askText("Senha (pelo menos 8 caracteres): ", ".{8,}", "Senha inválida!");
-        String endereco = scanner.askText("Endereço (entre 5 e 250 caracteres): ", ".{5,250}", "Endereço inválido!");
-
-        facade.cadastrarComprador(nome, email, senha, endereco);
+        System.out.print("Nome: ");
+        String nome = scanner.nextLine();
+        
+        System.out.print("Email: ");
+        String email = scanner.nextLine();
+        
+        System.out.print("Senha: ");
+        String senha = scanner.nextLine();
+        
+        System.out.print("CPF: ");
+        String cpf = scanner.nextLine();
+        
+        System.out.print("Endereço: ");
+        String endereco = scanner.nextLine();
+        
+        facade.cadastrarComprador(nome, email, senha, cpf, endereco);
         System.out.println("Comprador cadastrado com sucesso!");
     }
 
@@ -55,13 +82,38 @@ public class CompradorView {
         if (compradores.isEmpty()) {
             System.out.println("Nenhum comprador cadastrado.");
         } else {
-            compradores.forEach(System.out::println);
+            System.out.println("\n--- Lista de Compradores ---");
+            compradores.forEach(comprador -> 
+                System.out.println(comprador.getNome() + " - " + comprador.getCpf() + 
+                                 " - " + comprador.getEmail()));
+        }
+    }
+
+    private void buscarCompradorPorCpf() {
+        System.out.print("\nInforme o CPF do comprador: ");
+        String cpf = scanner.nextLine();
+        
+        try {
+            Comprador comprador = facade.buscarCompradorPorCpf(cpf);
+            if (comprador != null) {
+                System.out.println("\n--- Dados do Comprador ---");
+                System.out.println("Nome: " + comprador.getNome());
+                System.out.println("Email: " + comprador.getEmail());
+                System.out.println("CPF: " + comprador.getCpf());
+                System.out.println("Endereço: " + comprador.getEndereco());
+            } else {
+                System.out.println("Comprador não encontrado.");
+            }
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
     private void removerComprador() {
-        String email = scanner.askMail("Informe o email do comprador a ser removido (padrão aaa@bbb.ccc): ", "Email inválido!");
-        if (facade.removerComprador(email)) {
+        System.out.print("Informe o CPF do comprador a ser removido: ");
+        String cpf = scanner.nextLine();
+        
+        if (facade.removerComprador(cpf)) {
             System.out.println("Comprador removido com sucesso!");
         } else {
             System.out.println("Comprador não encontrado.");

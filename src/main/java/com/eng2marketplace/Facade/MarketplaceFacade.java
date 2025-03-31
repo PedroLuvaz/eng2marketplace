@@ -1,11 +1,11 @@
 package com.eng2marketplace.Facade;
 
+import com.eng2marketplace.controller.CompradorController;
 import com.eng2marketplace.controller.LojaController;
 import com.eng2marketplace.controller.ProdutoController;
-import com.eng2marketplace.controller.CompradorController;
+import com.eng2marketplace.model.Comprador;
 import com.eng2marketplace.model.Loja;
 import com.eng2marketplace.model.Produto;
-import com.eng2marketplace.model.Comprador;
 
 import java.util.List;
 
@@ -33,6 +33,11 @@ public class MarketplaceFacade {
         return lojaController.removerLoja(cpfCnpj);
     }
 
+    public Loja buscarLojaPorCpfCnpj(String cpfCnpj) {
+        // Implementação da busca por CPF/CNPJ
+        return lojaController.buscarLojaPorCpfCnpj(cpfCnpj);
+    }
+
     // Métodos para Produto
     public void adicionarProduto(String nome, double valor, String tipo, int quantidade, String marca, String descricao, Loja loja) {
         produtoController.adicionarProduto(nome, valor, tipo, quantidade, marca, descricao, loja);
@@ -46,9 +51,11 @@ public class MarketplaceFacade {
         return produtoController.removerProduto(nome);
     }
 
+    
+
     // Métodos para Comprador
-    public void cadastrarComprador(String nome, String email, String senha, String endereco) {
-        compradorController.adicionarComprador(nome, email, senha, endereco);
+    public void cadastrarComprador(String nome, String email, String senha, String cpf, String endereco) {
+        compradorController.adicionarComprador(nome, email, senha, cpf, endereco);
     }
 
     public List<Comprador> listarCompradores() {
@@ -58,4 +65,13 @@ public class MarketplaceFacade {
     public boolean removerComprador(String email) {
         return compradorController.removerComprador(email);
     }
+
+    public Comprador buscarCompradorPorCpf(String cpf) {
+        return compradorController.buscarCompradorPorCpf(cpf);
+    }
+
+    // Adicione este método na classe MarketplaceFacade
+public List<Produto> listarProdutosPorLoja(String cpfCnpjLoja) {
+    return produtoController.listarProdutosPorLoja(cpfCnpjLoja);
+}
 }

@@ -12,9 +12,15 @@ public class IntRangeGetter implements InputValidator<Integer> {
     public IntRangeGetter(Scanner scanner, int min, int max) {
         try {
             this.value = scanner.nextInt();
-            scanner.nextLine(); // Bug do java. Adicione '\n' aos testes
         } catch (InputMismatchException e) {
             this.isInvalid = true;
+        } finally {
+            scanner.nextLine();
+            /** linha acima resolve o seguinte:
+             * nextInt não consome a linha se o input se não for inteiro, dando loop infinito nos métodos ask...()
+             * nextInt não consome \n, fazendo o próximo scanner.next...() retornar imediatamente
+             */
+            // como nextInt é tão bugado?
         }
 
         this.min = min;

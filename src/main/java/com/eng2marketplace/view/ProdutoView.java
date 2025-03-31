@@ -8,25 +8,28 @@ import com.eng2marketplace.view.input.ConsoleInput;
 import java.util.List;
 
 public class ProdutoView {
-    private MarketplaceFacade facade;
-    private ConsoleInput scanner;
+    private final MarketplaceFacade facade;
+    private final ConsoleInput scanner;
+    private Loja lojaLogada;
 
     public ProdutoView(MarketplaceFacade facade) {
         this.facade = facade;
         this.scanner = new ConsoleInput();
     }
 
-    public void menu() {
+    public void menu(Loja lojaLogada) {
+        this.lojaLogada = lojaLogada;
         Integer opcao;
         do {
             System.out.println("\n--- Gestão de Produtos ---");
             System.out.println("1. Adicionar Produto");
-            System.out.println("2. Listar Produtos");
+            System.out.println("2. Listar Meus Produtos");
             System.out.println("3. Remover Produto");
             System.out.println("0. Voltar");
             System.out.print("Escolha uma opção: ");
 
             opcao = scanner.getNumber(0, 3);
+
             if(opcao == null) {
                 System.out.println("Opção inválida.");
                 continue;
@@ -38,47 +41,48 @@ public class ProdutoView {
                 case 3 -> removerProduto();
                 case 0 -> System.out.println("Voltando ao menu principal...");
             }
-        } while (opcao == null);
+        } while (opcao != 0);
     }
 
     private void adicionarProduto() {
-        String nome = scanner.askText("Nome (entre 2 e 99 caracteres): ", ".{2,99}", "Nome inválido!");
-        double valor = scanner.askValue("Valor: ", "Valor inválido!");
-        String tipo = scanner.askText("Tipo (entre 2 e 99 caracteres): ", ".{2,99}", "Tipo inválido!");
-        int quantidade = scanner.askNumber("Quantidade (entre 0 e 1.000.000): ", 0, 1_000_000, "Quantidade inválida!");
-        String marca = scanner.askText("Marca (entre 2 e 99 caracteres): ", ".{2,99}", "Marca inválido!");
-        String descricao = scanner.askText("Descrição (opcional, no máximo 500 caracteres): ", ".{,500}", "Descrição muito longa!");
+        System.out.println("\n--- Adicionar Produto ---");
+        
+        String nome = scanner.askText("Nome: ", ".{2,100}", "Nome inválido! Deve ter entre 2 e 100 caracteres.");
+        Double valor = scanner.askDouble("Valor (ex: 10.99): ", 0.01, Double.MAX_VALUE, "Valor inválido! Deve ser maior que 0.");
+        String tipo = scanner.askText("Tipo: ", ".{2,50}", "Tipo inválido! Deve ter entre 2 e 50 caracteres.");
+        Integer quantidade = scanner.askInteger("Quantidade: ", 0, Integer.MAX_VALUE, "Quantidade inválida! Deve ser 0 ou mais.");
+        String marca = scanner.askText("Marca: ", ".{2,50}", "Marca inválida! Deve ter entre 2 e 50 caracteres.");
+        String descricao = scanner.askText("Descrição: ", ".{5,250}", "Descrição inválida! Deve ter entre 5 e 250 caracteres.");
 
-        // Assumindo que a loja já foi cadastrada anteriormente
-        String nomeLoja = scanner.askText("Informe o nome da loja: ", ".{2,99}", "Nome inválido!");
-
-        List<Loja> lojas = facade.listarLojas();
-        Loja lojaEncontrada = lojas.stream().filter(l -> l.getNome().equalsIgnoreCase(nomeLoja)).findFirst().orElse(null);
-
-        if (lojaEncontrada != null) {
-            facade.adicionarProduto(nome, valor, tipo, quantidade, marca, descricao, lojaEncontrada);
-            System.out.println("Produto cadastrado com sucesso!");
-        } else {
-            System.out.println("Loja não encontrada. Produto não cadastrado.");
-        }
+        facade.adicionarProduto(nome, valor, tipo, quantidade, marca, descricao, lojaLogada);
+        System.out.println("\nProduto cadastrado com sucesso!");
     }
 
     private void listarProdutos() {
-        List<Produto> produtos = facade.listarProdutos();
+        List<Produto> produtos = facade.listarProdutosPorLoja(lojaLogada.getCpfCnpj());
         if (produtos.isEmpty()) {
-            System.out.println("Nenhum produto cadastrado.");
+            System.out.println("\nNenhum produto cadastrado para esta loja.");
         } else {
-            produtos.forEach(System.out::println);
+            System.out.println("\n--- Produtos da Loja " + lojaLogada.getNome() + " ---");
+            produtos.forEach(produto -> {
+                System.out.println("\nNome: " + produto.getNome());
+                System.out.println("Valor: R$ " + String.format("%.2f", produto.getValor()));
+                System.out.println("Tipo: " + produto.getTipo());
+                System.out.println("Quantidade: " + produto.getQuantidade());
+                System.out.println("Marca: " + produto.getMarca());
+                System.out.println("Descrição: " + produto.getDescricao());
+            });
         }
     }
 
     private void removerProduto() {
-        String nome = scanner.askText("Informe o nome do produto a ser removido (entre 2 e 99 caracteres): ", ".{2,99}", "Nome inválido!");
-
+        System.out.println("\n--- Remover Produto ---");
+        String nome = scanner.askText("Informe o nome do produto a ser removido: ", ".{2,100}", "Nome inválido!");
+        
         if (facade.removerProduto(nome)) {
-            System.out.println("Produto removido com sucesso!");
+            System.out.println("\nProduto removido com sucesso!");
         } else {
-            System.out.println("Produto não encontrado.");
+            System.out.println("\nProduto não encontrado ou não pertence à sua loja.");
         }
     }
 }

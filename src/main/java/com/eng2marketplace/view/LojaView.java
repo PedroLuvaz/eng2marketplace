@@ -21,11 +21,12 @@ public class LojaView {
             System.out.println("\n--- Gestão de Lojas ---");
             System.out.println("1. Adicionar Loja");
             System.out.println("2. Listar Lojas");
-            System.out.println("3. Remover Loja");
+            System.out.println("3. Buscar Loja por CPF/CNPJ");
+            System.out.println("4. Remover Loja");
             System.out.println("0. Voltar");
             System.out.print("Escolha uma opção: ");
 
-            opcao = scanner.getNumber(0, 3);
+            opcao = scanner.getNumber(0, 4);
 
             if(opcao == null) {
                 System.out.println("Opção inválida.");
@@ -35,14 +36,15 @@ public class LojaView {
             switch (opcao) {
                 case 1 -> adicionarLoja();
                 case 2 -> listarLojas();
-                case 3 -> removerLoja();
+                case 3 -> buscarLojaPorCpfCnpj();
+                case 4 -> removerLoja();
                 case 0 -> System.out.println("Voltando ao menu principal...");
             }
-        } while (opcao == null);
+        } while (opcao != 0);
     }
 
     private void adicionarLoja() {
-        String nome = scanner.askText("Nome (entre 2 e 99 caracteres): ", ".{2,99}", "Nome inválido!");
+        String nome = scanner.askName("Nome (entre 2 e 99 letras): ", 99, "Nome inválido!");
         String email = scanner.askMail("Email (padrão aaa@bbb.ccc): ", "Email inválido!");
         String senha = scanner.askText("Senha (pelo menos 8 caracteres): ", ".{8,}", "Senha inválida!");
         String cpfCnpj = scanner.askCPFCNPJ("CPF/CNPJ (somente números ou com ponto/hífen/barra): ", "Número de documento inválido!");
@@ -57,7 +59,31 @@ public class LojaView {
         if (lojas.isEmpty()) {
             System.out.println("Nenhuma loja cadastrada.");
         } else {
-            lojas.forEach(System.out::println);
+            System.out.println("\n--- Lista de Lojas ---");
+            lojas.forEach(loja -> 
+                System.out.println(loja.getNome() + " - " + loja.getCpfCnpj() + 
+                                 " - " + loja.getEmail()));
+        }
+    }
+
+    private void buscarLojaPorCpfCnpj() {
+        String cpfCnpj = scanner.askCPFCNPJ(
+            "Informe o CPF/CNPJ da loja a ser buscada (somente números ou com ponto/hífen/barra): ",
+            "Documento inválido!");
+
+        try {
+            Loja loja = facade.buscarLojaPorCpfCnpj(cpfCnpj);
+            if (loja != null) {
+                System.out.println("\n--- Dados da Loja ---");
+                System.out.println("Nome: " + loja.getNome());
+                System.out.println("Email: " + loja.getEmail());
+                System.out.println("CPF/CNPJ: " + loja.getCpfCnpj());
+                System.out.println("Endereço: " + loja.getEndereco());
+            } else {
+                System.out.println("Loja não encontrada.");
+            }
+        } catch (Exception e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
