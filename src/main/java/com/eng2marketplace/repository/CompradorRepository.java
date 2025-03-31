@@ -1,53 +1,82 @@
 package com.eng2marketplace.repository;
 
 import com.eng2marketplace.model.Comprador;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
-import java.io.*;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CompradorRepository {
-    private static final String FILE_NAME = "./data/compradores.txt";
+    private static final String ARQUIVO_COMPRADORES = "src/main/data/compradores.json";
+    private final Gson gson;
+    private final Type listType = new TypeToken<ArrayList<Comprador>>() {}.getType();
+
+    public CompradorRepository() {
+        this.gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .create();
+        criarArquivoSeNaoExistir();
+    }
+
+    private void criarArquivoSeNaoExistir() {
+        try {
+            java.io.File file = new java.io.File(ARQUIVO_COMPRADORES);
+            if (!file.exists()) {
+                file.getParentFile().mkdirs();
+                salvarLista(new ArrayList<>());
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao criar arquivo JSON: " + e.getMessage());
+        }
+    }
 
     public void salvar(Comprador comprador) {
         List<Comprador> compradores = listar();
         compradores.add(comprador);
-        salvarArquivo(compradores);
+        salvarLista(compradores);
     }
 
     public List<Comprador> listar() {
-        List<Comprador> compradores = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(FILE_NAME))) {
-            String linha;
-            while ((linha = br.readLine()) != null) {
-                String[] dados = linha.split(";");
-                if (dados.length == 5) {
-                    compradores.add(new Comprador(dados[0], dados[1], dados[2], dados[3], dados[4]));
-                }
-            }
+        try (FileReader reader = new FileReader(ARQUIVO_COMPRADORES)) {
+            List<Comprador> compradores = gson.fromJson(reader, listType);
+            return compradores != null ? compradores : new ArrayList<>();
         } catch (IOException e) {
-            System.out.println("Erro ao ler compradores: " + e.getMessage());
+            System.err.println("Erro ao ler arquivo JSON: " + e.getMessage());
+            return new ArrayList<>();
         }
-        return compradores;
     }
 
     public boolean remover(String cpf) {
         List<Comprador> compradores = listar();
         boolean removido = compradores.removeIf(comprador -> comprador.getCpf().equals(cpf));
         if (removido) {
-            salvarArquivo(compradores);
+            salvarLista(compradores);
         }
         return removido;
     }
 
-    private void salvarArquivo(List<Comprador> compradores) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME))) {
-            for (Comprador comprador : compradores) {
-                bw.write(comprador.getNome() + ";" + comprador.getEmail() + ";" + comprador.getSenha() + ";" + comprador.getCpf() + ";" + comprador.getEndereco());
-                bw.newLine();
-            }
+    private void salvarLista(List<Comprador> compradores) {
+        try (FileWriter writer = new FileWriter(ARQUIVO_COMPRADORES)) {
+            gson.toJson(compradores, writer);
         } catch (IOException e) {
-            System.out.println("Erro ao salvar compradores: " + e.getMessage());
+            System.err.println("Erro ao salvar arquivo JSON: " + e.getMessage());
         }
+    }
+
+    public void limparTodos() {
+        salvarLista(new ArrayList<>());
+    }
+
+    public Comprador buscarPorCpf(String cpf) {
+        return listar().stream()
+            .filter(comprador -> comprador.getCpf().equals(cpf))
+            .findFirst()
+            .orElse(null);
     }
 }
