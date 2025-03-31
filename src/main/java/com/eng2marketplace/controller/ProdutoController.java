@@ -9,14 +9,12 @@ import java.util.List;
 
 public class ProdutoController {
     private final ProdutoRepository produtoRepository;
-    private final LojaRepository lojaRepository;
 
-    public ProdutoController() {
-        this.produtoRepository = new ProdutoRepository(new LojaRepository());
-        this.lojaRepository = new LojaRepository();
+    public ProdutoController(ProdutoRepository repo) {
+        this.produtoRepository = repo;
     }
 
-    public void adicionarProduto(String nome, double valor, String tipo, int quantidade, 
+    public void adicionarProduto(String nome, double valor, String tipo, int quantidade,
                                 String marca, String descricao, Loja loja) {
         Produto produto = new Produto(nome, valor, tipo, quantidade, marca, descricao, loja);
         produtoRepository.salvar(produto);

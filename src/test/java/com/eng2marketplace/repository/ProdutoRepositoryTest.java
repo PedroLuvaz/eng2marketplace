@@ -14,26 +14,22 @@ import static org.junit.jupiter.api.Assertions.*;
  * Teste de unidade do repositório de loja.
  */
 class ProdutoRepositoryTest {
+    private static final String LOJAS_DB = "./data/lojas.json";
+    private static final String PRODUTOS_DB = "./data/produtos.json";
     private static final Loja LOJA = new Loja("Baratinhos", "mario@mail.net", "meu", "33.333.333/0001-33", "Rua N, S/N");
 
     @BeforeEach
     void setup() {
-        // deleta o repositório de lojas
-        File f = new File("./data/produtos.txt");
-        if(!f.exists())
-            return;
-        if(!f.delete())
-            throw new RuntimeException();
+        // deleta o repositório de produtos
+        File f = new File(PRODUTOS_DB);
+        f.delete();
 
         // deleta o repositório de lojas
-        f = new File("./data/lojas.txt");
-        if(!f.exists())
-            return;
-        if(!f.delete())
-            throw new RuntimeException();
+        f = new File(LOJAS_DB);
+        f.delete();
 
-        // salva a primeira
-        new LojaRepository().salvar(LOJA);
+        // salva a primeira loja
+        new LojaRepository(LOJAS_DB).salvar(LOJA);
     }
 
     /**
@@ -42,7 +38,7 @@ class ProdutoRepositoryTest {
     @Test
     void testSalvar() {
         Produto product = new Produto("Netbook", 750.0, "909123", 15, "Asus", "Netbook atom com 1GB de memória", LOJA);
-        ProdutoRepository repo = new ProdutoRepository(new LojaRepository());
+        ProdutoRepository repo = new ProdutoRepository(PRODUTOS_DB, new LojaRepository(LOJAS_DB));
         repo.salvar(product);
 
         List<Produto> result = repo.listar();
@@ -56,7 +52,7 @@ class ProdutoRepositoryTest {
      */
     @Test
     void testListarVazio() {
-        ProdutoRepository repo = new ProdutoRepository(new LojaRepository());
+        ProdutoRepository repo = new ProdutoRepository(PRODUTOS_DB, new LojaRepository(LOJAS_DB));
         List<Produto> result = repo.listar();
 
         assertEquals(0, result.size());
@@ -70,7 +66,7 @@ class ProdutoRepositoryTest {
         Produto product = new Produto("Netbook", 750.0, "909123", 15, "Asus", "Netbook atom com 1GB de memória", LOJA);
         Produto product2 = new Produto("Celular", 350.0, "909123", 15, "Nokia", "Celular flip modelo Nokia 6101", LOJA);
 
-        ProdutoRepository repo = new ProdutoRepository(new LojaRepository());
+        ProdutoRepository repo = new ProdutoRepository(PRODUTOS_DB, new LojaRepository(LOJAS_DB));
         repo.salvar(product);
         repo.salvar(product2);
 
@@ -86,7 +82,7 @@ class ProdutoRepositoryTest {
      */
     @Test
     void testRemoveVazio() {
-        ProdutoRepository repo = new ProdutoRepository(new LojaRepository());
+        ProdutoRepository repo = new ProdutoRepository(PRODUTOS_DB, new LojaRepository(LOJAS_DB));
         boolean result = repo.remover("0");
 
         assertFalse(result);
@@ -100,7 +96,7 @@ class ProdutoRepositoryTest {
         Produto product = new Produto("Netbook", 750.0, "909123", 15, "Asus", "Netbook atom com 1GB de memória", LOJA);
         Produto product2 = new Produto("Celular", 350.0, "909123", 15, "Nokia", "Celular flip modelo Nokia 6101", LOJA);
 
-        ProdutoRepository repo = new ProdutoRepository(new LojaRepository());
+        ProdutoRepository repo = new ProdutoRepository(PRODUTOS_DB, new LojaRepository(LOJAS_DB));
         repo.salvar(product);
         repo.salvar(product2);
 
@@ -118,7 +114,7 @@ class ProdutoRepositoryTest {
         Produto product = new Produto("Netbook", 750.0, "909123", 15, "Asus", "Netbook atom com 1GB de memória", LOJA);
         Produto product2 = new Produto("Celular", 350.0, "909123", 15, "Nokia", "Celular flip modelo Nokia 6101", LOJA);
 
-        ProdutoRepository repo = new ProdutoRepository(new LojaRepository());
+        ProdutoRepository repo = new ProdutoRepository(PRODUTOS_DB, new LojaRepository(LOJAS_DB));
         repo.salvar(product);
         repo.salvar(product2);
 
