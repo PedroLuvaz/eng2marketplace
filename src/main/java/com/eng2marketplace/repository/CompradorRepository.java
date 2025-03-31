@@ -1,6 +1,7 @@
 package com.eng2marketplace.repository;
 
 import com.eng2marketplace.model.Comprador;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +21,8 @@ public class CompradorRepository {
             String linha;
             while ((linha = br.readLine()) != null) {
                 String[] dados = linha.split(";");
-                if (dados.length == 4) {
-                    compradores.add(new Comprador(dados[0], dados[1], dados[2], dados[3]));
+                if (dados.length == 5) {
+                    compradores.add(new Comprador(dados[0], dados[1], dados[2], dados[3], dados[4]));
                 }
             }
         } catch (IOException e) {
@@ -42,7 +43,7 @@ public class CompradorRepository {
     private void salvarArquivo(List<Comprador> compradores) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME))) {
             for (Comprador comprador : compradores) {
-                bw.write(comprador.getNome() + ";" + comprador.getEmail() + ";" + comprador.getSenha() + ";" + comprador.getCpf());
+                bw.write(comprador.getNome() + ";" + comprador.getEmail() + ";" + comprador.getSenha() + ";" + comprador.getCpf() + ";" + comprador.getEndereco());
                 bw.newLine();
             }
         } catch (IOException e) {

@@ -1,11 +1,11 @@
 package com.eng2marketplace.Facade;
 
+import com.eng2marketplace.controller.CompradorController;
 import com.eng2marketplace.controller.LojaController;
 import com.eng2marketplace.controller.ProdutoController;
-import com.eng2marketplace.controller.CompradorController;
+import com.eng2marketplace.model.Comprador;
 import com.eng2marketplace.model.Loja;
 import com.eng2marketplace.model.Produto;
-import com.eng2marketplace.model.Comprador;
 
 import java.util.List;
 
@@ -47,8 +47,8 @@ public class MarketplaceFacade {
     }
 
     // Métodos para Comprador
-    public void cadastrarComprador(String nome, String email, String senha, String endereco) {
-        compradorController.adicionarComprador(nome, email, senha, endereco);
+    public void cadastrarComprador(String nome, String email, String senha, String cpf, String endereco) {
+        compradorController.adicionarComprador(nome, email, senha, cpf, endereco);
     }
 
     public List<Comprador> listarCompradores() {

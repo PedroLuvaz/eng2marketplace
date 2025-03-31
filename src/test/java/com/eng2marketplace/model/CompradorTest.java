@@ -14,7 +14,7 @@ class CompradorTest {
      */
     @Test
     void testNome() {
-        Comprador buyer = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33");
+        Comprador buyer = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33", "Rua Teló, S/N");
         buyer.setNome("João Maria");
         // BUG: E se o argumento for null?
 
@@ -26,7 +26,7 @@ class CompradorTest {
      */
     @Test
     void testEmail() {
-        Comprador buyer = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33");
+        Comprador buyer = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33", "Rua Teló, S/N");
         buyer.setEmail("John@professional.com");
 
         assertEquals("John@professional.com", buyer.getEmail());
@@ -37,7 +37,7 @@ class CompradorTest {
      */
     @Test
     void testSenha() {
-        Comprador buyer = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33");
+        Comprador buyer = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33", "Rua Teló, S/N");
         buyer.setSenha("senha muito segura ninguem consegue adivinhar hehe");
 
         assertEquals("senha muito segura ninguem consegue adivinhar hehe", buyer.getSenha());
@@ -48,7 +48,7 @@ class CompradorTest {
      */
     @Test
     void testCpf() {
-        Comprador buyer = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33");
+        Comprador buyer = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33", "Rua Teló, S/N");
         buyer.setCpf("111.222.333-44");
 
         assertEquals("111.222.333-44", buyer.getCpf());
@@ -59,9 +59,9 @@ class CompradorTest {
      */
     @Test
     void testToString() {
-        Comprador buyer = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33");
+        Comprador buyer = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33", "Rua Teló, S/N");
         String buyerRepr = buyer.toString();
 
-        assertEquals("Comprador{nome='João', email='jao@contact.me', cpf='000.111.222-33'}", buyerRepr);
+        assertEquals("Comprador{nome='João', email='jao@contact.me', cpf='000.111.222-33', endereço='Rua Teló, S/N'}", buyerRepr);
     }
 }

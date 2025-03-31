@@ -44,10 +44,12 @@ public class CompradorView {
         String email = scanner.nextLine();
         System.out.print("Senha: ");
         String senha = scanner.nextLine();
+        System.out.print("CPF: ");
+        String cpf = scanner.nextLine();
         System.out.print("Endereço: ");
         String endereco = scanner.nextLine();
 
-        facade.cadastrarComprador(nome, email, senha, endereco);
+        facade.cadastrarComprador(nome, email, senha, cpf, endereco);
         System.out.println("Comprador cadastrado com sucesso!");
     }
 
