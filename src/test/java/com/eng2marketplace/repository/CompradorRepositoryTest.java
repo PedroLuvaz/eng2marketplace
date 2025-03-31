@@ -17,7 +17,7 @@ class CompradorRepositoryTest {
     @BeforeEach
     void setup() {
         // deleta o repositório de compradores
-        File f = new File("compradores.txt");
+        File f = new File("./data/compradores.txt");
         if(!f.exists())
             return;
         if(!f.delete())
@@ -29,7 +29,7 @@ class CompradorRepositoryTest {
      */
     @Test
     void testSalvar() {
-        Comprador buyer = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33");
+        Comprador buyer = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33", "Rua Teló, S/N");
         CompradorRepository repo = new CompradorRepository();
         repo.salvar(buyer);
 
@@ -55,8 +55,8 @@ class CompradorRepositoryTest {
      */
     @Test
     void testListar() {
-        Comprador buyer1 = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33");
-        Comprador buyer2 = new Comprador("Maria", "maria@correio.br", "54321", "999.888.777-66");
+        Comprador buyer1 = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33", "Rua Teló, S/N");
+        Comprador buyer2 = new Comprador("Maria", "maria@correio.br", "54321", "999.888.777-66", "Loteamento Portal, 987");
 
         CompradorRepository repo = new CompradorRepository();
         repo.salvar(buyer1);
@@ -85,8 +85,8 @@ class CompradorRepositoryTest {
      */
     @Test
     void testRemoverInexistente() {
-        Comprador buyer1 = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33");
-        Comprador buyer2 = new Comprador("Maria", "maria@correio.br", "54321", "999.888.777-66");
+        Comprador buyer1 = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33", "Rua Teló, S/N");
+        Comprador buyer2 = new Comprador("Maria", "maria@correio.br", "54321", "999.888.777-66", "Loteamento Portal, 987");
 
         CompradorRepository repo = new CompradorRepository();
         repo.salvar(buyer1);
@@ -103,8 +103,8 @@ class CompradorRepositoryTest {
      */
     @Test
     void testRemover() {
-        Comprador buyer1 = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33");
-        Comprador buyer2 = new Comprador("Maria", "maria@correio.br", "54321", "999.888.777-66");
+        Comprador buyer1 = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33", "Rua Teló, S/N");
+        Comprador buyer2 = new Comprador("Maria", "maria@correio.br", "54321", "999.888.777-66", "Loteamento Portal, 987");
 
         CompradorRepository repo = new CompradorRepository();
         repo.salvar(buyer1);

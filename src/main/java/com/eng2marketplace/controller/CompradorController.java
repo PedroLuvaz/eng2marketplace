@@ -11,8 +11,8 @@ public class CompradorController {
         this.compradorRepository = new CompradorRepository();
     }
 
-    public void adicionarComprador(String nome, String email, String senha, String cpf) {
-        Comprador comprador = new Comprador(nome, email, senha, cpf);
+    public void adicionarComprador(String nome, String email, String senha, String cpf, String endereco) {
+        Comprador comprador = new Comprador(nome, email, senha, cpf, endereco);
         compradorRepository.salvar(comprador);
     }
 

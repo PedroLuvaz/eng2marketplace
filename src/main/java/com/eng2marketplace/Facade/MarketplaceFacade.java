@@ -47,8 +47,8 @@ public class MarketplaceFacade {
     }
 
     // Métodos para Comprador
-    public void cadastrarComprador(String nome, String email, String senha, String endereco) {
-        compradorController.adicionarComprador(nome, email, senha, endereco);
+    public void cadastrarComprador(String nome, String email, String senha, String cpf, String endereco) {
+        compradorController.adicionarComprador(nome, email, senha, cpf, endereco);
     }
 
     public List<Comprador> listarCompradores() {
