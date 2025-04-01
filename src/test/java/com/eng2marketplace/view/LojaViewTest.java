@@ -1,29 +1,36 @@
 package com.eng2marketplace.view;
 
+import com.eng2marketplace.Facade.MarketplaceFacade;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.NoSuchElementException;
 
 public class LojaViewTest {
-    private final InputStream is = System.in;
-    private final PrintStream os = System.out;
-    private final Charset defaultCharset = System.out.charset();
+
+    private final InputStream originalSystemIn = System.in;
+    private final PrintStream originalSystemOut = System.out;
     private ByteArrayOutputStream captureOut;
+
+    private MarketplaceFacade facadeMock;
 
     /**
      * Reseta a entrada de dados para o padrão e redireciona a saída de dados para uma stream legível
      */
     @BeforeEach
     public void setUp() {
-        System.setIn(is);
+        System.setIn(originalSystemIn);  // Restaura a entrada original
         this.captureOut = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(this.captureOut));
+        System.setOut(new PrintStream(this.captureOut));  // Captura a saída do sistema
+
+        // Criando o mock do MarketplaceFacade para evitar NullPointerException
+        facadeMock = mock(MarketplaceFacade.class);
     }
 
     /**
@@ -31,12 +38,12 @@ public class LojaViewTest {
      */
     @AfterEach
     public void tearDown() {
-        System.out.flush();
-        System.setOut(os);
+        System.setOut(originalSystemOut);  // Restaura a saída original
+        System.setIn(originalSystemIn);    // Restaura a entrada original
     }
 
     /**
-     * Insere o texto como entrada para chamadas de Scanner.next... .
+     * Insere o texto como entrada para chamadas de Scanner.next...
      * Deve ser chamado antes de chamadas Scanner(System.in).
      * @param txt O texto a ser usado como entrada de dados.
      */
@@ -50,7 +57,7 @@ public class LojaViewTest {
      * @return A saída de texto capturada do console
      */
     String getOutput() {
-        return this.captureOut.toString(defaultCharset);
+        return this.captureOut.toString(Charset.defaultCharset());
     }
 
     /**
@@ -60,7 +67,7 @@ public class LojaViewTest {
     void menuReturnTest() {
         setInput("0\n");
 
-        LojaView lv = new LojaView(null);
+        LojaView lv = new LojaView(facadeMock);  // Passando o mock para a view
         lv.menu();
 
         String text = getOutput();
@@ -79,24 +86,20 @@ public class LojaViewTest {
      */
     @Test
     void menuAddTest() {
-        setInput("1\n");
+        setInput("1\nLoja Teste\n");
 
-        LojaView lv = new LojaView(null);
-        try {
-            lv.menu();
-        } catch (NoSuchElementException err) {
-            // O menu vai lançar essa exceção por falta de entrada
-            // O teste não está interessado no resto do processo, só checar se a opção correta foi chamada
-            String text = getOutput();
-            String expected = "\n" +
-                "--- Gestão de Lojas ---\n" +
-                "1. Adicionar Loja\n" +
-                "2. Listar Lojas\n" +
-                "3. Remover Loja\n" +
-                "0. Voltar\n" +
-                "Escolha uma opção: Nome (entre 2 e 99 letras): ";
-            assertEquals(expected, text);
-        }
+        LojaView lv = new LojaView(facadeMock);
+        lv.menu();
+
+        String text = getOutput();
+        String expected = "\n" +
+            "--- Gestão de Lojas ---\n" +
+            "1. Adicionar Loja\n" +
+            "2. Listar Lojas\n" +
+            "3. Remover Loja\n" +
+            "0. Voltar\n" +
+            "Escolha uma opção: Nome (entre 2 e 99 letras): ";
+        assertEquals(expected, text);
     }
 
     /**
@@ -106,22 +109,18 @@ public class LojaViewTest {
     void menuListTest() {
         setInput("2\n");
 
-        LojaView lv = new LojaView(null);
-        try {
-            lv.menu();
-        } catch (NullPointerException err) {
-            // O menu vai lançar essa exceção por não haver um arquivo
-            // O teste não está interessado no resto do processo, só checar se a opção correta foi chamada
-            String text = getOutput();
-            String expected = "\n" +
-                "--- Gestão de Lojas ---\n" +
-                "1. Adicionar Loja\n" +
-                "2. Listar Lojas\n" +
-                "3. Remover Loja\n" +
-                "0. Voltar\n" +
-                "Escolha uma opção: ";
-            assertEquals(expected, text);
-        }
+        LojaView lv = new LojaView(facadeMock);
+        lv.menu();
+
+        String text = getOutput();
+        String expected = "\n" +
+            "--- Gestão de Lojas ---\n" +
+            "1. Adicionar Loja\n" +
+            "2. Listar Lojas\n" +
+            "3. Remover Loja\n" +
+            "0. Voltar\n" +
+            "Escolha uma opção: ";
+        assertEquals(expected, text);
     }
 
     /**
@@ -131,22 +130,18 @@ public class LojaViewTest {
     void menuRemoveTest() {
         setInput("3\n");
 
-        LojaView lv = new LojaView(null);
-        try {
-            lv.menu();
-        } catch (NoSuchElementException err) {
-            // O menu vai lançar essa exceção por falta de entrada
-            // O teste não está interessado no resto do processo, só checar se a opção correta foi chamada
-            String text = getOutput();
-            String expected = "\n" +
-                "--- Gestão de Lojas ---\n" +
-                "1. Adicionar Loja\n" +
-                "2. Listar Lojas\n" +
-                "3. Remover Loja\n" +
-                "0. Voltar\n" +
-                "Escolha uma opção: Informe o CPF/CNPJ da loja a ser removida (somente números ou com ponto/hífen/barra): ";
-            assertEquals(expected, text);
-        }
+        LojaView lv = new LojaView(facadeMock);
+        lv.menu();
+
+        String text = getOutput();
+        String expected = "\n" +
+            "--- Gestão de Lojas ---\n" +
+            "1. Adicionar Loja\n" +
+            "2. Listar Lojas\n" +
+            "3. Remover Loja\n" +
+            "0. Voltar\n" +
+            "Escolha uma opção: Informe o CPF/CNPJ da loja a ser removida (somente números ou com ponto/hífen/barra): ";
+        assertEquals(expected, text);
     }
 
     /**
@@ -156,28 +151,45 @@ public class LojaViewTest {
     void menuInvalidTest() {
         setInput("8\n");
 
-        LojaView lv = new LojaView(null);
-        try {
-            lv.menu();
-        } catch (NoSuchElementException err) {
-            // O menu vai lançar essa exceção por falta de entrada
-            // O teste não está interessado no resto do processo, só checar se a opção correta foi chamada
-            String text = getOutput();
-            String expected = "\n" +
-                "--- Gestão de Lojas ---\n" +
-                "1. Adicionar Loja\n" +
-                "2. Listar Lojas\n" +
-                "3. Remover Loja\n" +
-                "0. Voltar\n" +
-                "Escolha uma opção: Opção inválida.\n" +
-                "\n" +
-                "--- Gestão de Lojas ---\n" +
-                "1. Adicionar Loja\n" +
-                "2. Listar Lojas\n" +
-                "3. Remover Loja\n" +
-                "0. Voltar\n" +
-                "Escolha uma opção: ";
-            assertEquals(expected, text);
-        }
+        LojaView lv = new LojaView(facadeMock);
+        lv.menu();
+
+        String text = getOutput();
+        String expected = "\n" +
+            "--- Gestão de Lojas ---\n" +
+            "1. Adicionar Loja\n" +
+            "2. Listar Lojas\n" +
+            "3. Remover Loja\n" +
+            "0. Voltar\n" +
+            "Escolha uma opção: Opção inválida.\n" +
+            "\n" +
+            "--- Gestão de Lojas ---\n" +
+            "1. Adicionar Loja\n" +
+            "2. Listar Lojas\n" +
+            "3. Remover Loja\n" +
+            "0. Voltar\n" +
+            "Escolha uma opção: ";
+        assertEquals(expected, text);
+    }
+
+    /**
+     * Verifica se a opção de criar loja lida com entradas inválidas corretamente
+     */
+    @Test
+    void menuAddInvalidNameTest() {
+        setInput("1\nA\n");
+
+        LojaView lv = new LojaView(facadeMock);
+        lv.menu();
+
+        String text = getOutput();
+        String expected = "\n" +
+            "--- Gestão de Lojas ---\n" +
+            "1. Adicionar Loja\n" +
+            "2. Listar Lojas\n" +
+            "3. Remover Loja\n" +
+            "0. Voltar\n" +
+            "Escolha uma opção: Nome (entre 2 e 99 letras): Nome inválido! Tente novamente: ";
+        assertEquals(expected, text);
     }
 }

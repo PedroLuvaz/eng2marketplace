@@ -1,5 +1,6 @@
 package com.eng2marketplace.view;
 
+import static org.junit.jupiter.api.Assertions.*;
 import com.eng2marketplace.Facade.MarketplaceFacade;
 import com.eng2marketplace.model.Comprador;
 import org.junit.jupiter.api.AfterEach;
@@ -10,41 +11,36 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class CompradorViewTest {
-    private final InputStream is = System.in;
-    private final PrintStream os = System.out;
-    private final Charset defaultCharset = System.out.charset();
+    private final InputStream originalSystemIn = System.in;
+    private final PrintStream originalSystemOut = System.out;
     private ByteArrayOutputStream captureOut;
     private MarketplaceFacade mockFacade;
 
     @BeforeEach
     public void setUp() {
-        System.setIn(is);
-        this.captureOut = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(this.captureOut));
-        this.mockFacade = mock(MarketplaceFacade.class);
+        captureOut = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(captureOut, true, StandardCharsets.UTF_8));
+        mockFacade = mock(MarketplaceFacade.class);
     }
 
     @AfterEach
     public void tearDown() {
-        System.out.flush();
-        System.setOut(os);
+        System.setIn(originalSystemIn);
+        System.setOut(originalSystemOut);
     }
 
-    void setInput(String txt) {
-        ByteArrayInputStream input = new ByteArrayInputStream(txt.getBytes());
-        System.setIn(input);
+    private void setInput(String data) {
+        System.setIn(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
     }
 
-    String getOutput() {
-        return this.captureOut.toString(defaultCharset);
+    private String getOutput() {
+        return captureOut.toString(StandardCharsets.UTF_8);
     }
 
     @Test
@@ -66,7 +62,6 @@ public class CompradorViewTest {
     @Test
     void menuAddTest() {
         setInput("1\nJoão\njoao@teste.com\nsenha123\n123.456.789-09\nRua A\n0\n");
-        
         CompradorView cv = new CompradorView(mockFacade);
         cv.menu();
 
