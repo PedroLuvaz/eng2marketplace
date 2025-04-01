@@ -15,14 +15,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class LojaControllerTest {
 
+    private static final String FILE_NAME = "./data/lojas.json";
+    private LojaRepository repo;
+
     @BeforeEach
     void setup() {
         // deleta o repositório de lojas
-        File f = new File("lojas.txt");
-        if(!f.exists())
-            return;
-        if(!f.delete())
-            throw new RuntimeException();
+        File f = new File(FILE_NAME);
+        f.delete();
+
+        repo = new LojaRepository(FILE_NAME);
     }
 
     /**
@@ -30,7 +32,7 @@ class LojaControllerTest {
      */
     @Test
     void testSalvar() {
-        LojaController control = new LojaController();
+        LojaController control = new LojaController(repo);
         control.adicionarLoja("Pou pet store", "pou@animals.at", "0000", "074.801.734-03", "Rua José da Silva Jr., No 200");
 
         List<Loja> result = control.listarLojas();
@@ -44,7 +46,7 @@ class LojaControllerTest {
      */
     @Test
     void testListarVazio() {
-        LojaController control = new LojaController();
+        LojaController control = new LojaController(repo);
         List<Loja> result = control.listarLojas();
 
         assertEquals(0, result.size());
@@ -55,7 +57,7 @@ class LojaControllerTest {
      */
     @Test
     void testListar() {
-        LojaController control = new LojaController();
+        LojaController control = new LojaController(repo);
         control.adicionarLoja("Pou pet store", "pou@animals.at", "0000", "074.801.734-03", "Rua José da Silva Jr., No 200");
         control.adicionarLoja("Restaurante da Penha", "penha123@a-mail.com", "13011990", "072.931.665-18", "Rua José da Silva Jr., No 201");
 
@@ -71,7 +73,7 @@ class LojaControllerTest {
      */
     @Test
     void testRemoveVazio() {
-        LojaController control = new LojaController();
+        LojaController control = new LojaController(repo);
         boolean result = control.removerLoja("000.000.000-00");
 
         assertFalse(result);
@@ -82,7 +84,7 @@ class LojaControllerTest {
      */
     @Test
     void testRemoverInexistente() {
-        LojaController control = new LojaController();
+        LojaController control = new LojaController(repo);
         control.adicionarLoja("Pou pet store", "pou@animals.at", "0000", "074.801.734-03", "Rua José da Silva Jr., No 200");
         control.adicionarLoja("Restaurante da Penha", "penha123@a-mail.com", "13011990", "072.931.665-18", "Rua José da Silva Jr., No 201");
 
@@ -97,7 +99,7 @@ class LojaControllerTest {
      */
     @Test
     void testRemover() {
-        LojaController control = new LojaController();
+        LojaController control = new LojaController(repo);
         control.adicionarLoja("Pou pet store", "pou@animals.at", "0000", "074.801.734-03", "Rua José da Silva Jr., No 200");
         control.adicionarLoja("Restaurante da Penha", "penha123@a-mail.com", "13011990", "072.931.665-18", "Rua José da Silva Jr., No 201");
 

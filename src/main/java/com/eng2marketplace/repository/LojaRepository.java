@@ -1,12 +1,22 @@
 package com.eng2marketplace.repository;
 
 import com.eng2marketplace.model.Loja;
+import com.google.gson.Gson;
+
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class LojaRepository {
-    private static final String FILE_NAME = "lojas.txt";
+
+    private final String fileName;
+    private final Gson gson;
+
+    public LojaRepository(String fileName) {
+        this.fileName = fileName;
+        this.gson = new Gson();
+    }
 
     public void salvar(Loja loja) {
         List<Loja> lojas = listar();
@@ -15,19 +25,13 @@ public class LojaRepository {
     }
 
     public List<Loja> listar() {
-        List<Loja> lojas = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(FILE_NAME))) {
-            String linha;
-            while ((linha = br.readLine()) != null) {
-                String[] dados = linha.split(";");
-                if (dados.length == 5) {
-                    lojas.add(new Loja(dados[0], dados[1], dados[2], dados[3], dados[4]));
-                }
-            }
+        try (FileReader fr = new FileReader(this.fileName)) {
+            Loja[] lojas = gson.fromJson(fr, Loja[].class);
+            return new ArrayList<>(Arrays.asList(lojas));
         } catch (IOException e) {
             System.out.println("Erro ao ler lojas: " + e.getMessage());
         }
-        return lojas;
+        return new ArrayList<>();
     }
 
     public boolean remover(String cpfCnpj) {
@@ -40,11 +44,11 @@ public class LojaRepository {
     }
 
     private void salvarArquivo(List<Loja> lojas) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME))) {
-            for (Loja loja : lojas) {
-                bw.write(loja.getNome() + ";" + loja.getEmail() + ";" + loja.getSenha() + ";" + loja.getCpfCnpj() + ";" + loja.getEndereco());
-                bw.newLine();
-            }
+        Loja[] arr = new Loja[lojas.size()];
+        lojas.toArray(arr);
+        String json = this.gson.toJson(arr);
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(this.fileName))) {
+            bw.write(json);
         } catch (IOException e) {
             System.out.println("Erro ao salvar lojas: " + e.getMessage());
         }

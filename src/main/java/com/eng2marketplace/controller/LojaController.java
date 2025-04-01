@@ -5,10 +5,10 @@ import com.eng2marketplace.repository.LojaRepository;
 import java.util.List;
 
 public class LojaController {
-    private LojaRepository lojaRepository;
+    private final LojaRepository lojaRepository;
 
-    public LojaController() {
-        this.lojaRepository = new LojaRepository();
+    public LojaController(LojaRepository repo) {
+        this.lojaRepository = repo;
     }
 
     public void adicionarLoja(String nome, String email, String senha, String cpfCnpj, String endereco) {

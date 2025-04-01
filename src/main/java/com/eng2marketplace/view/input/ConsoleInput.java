@@ -305,4 +305,34 @@ public class ConsoleInput {
 
         return answer;
     }
+
+    public Double askDouble(String prompt, double min, double max, String errorMessage) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                double value = Double.parseDouble(scanner.nextLine());
+                if (value >= min && value <= max) {
+                    return value;
+                }
+                System.out.println(errorMessage);
+            } catch (NumberFormatException e) {
+                System.out.println(errorMessage);
+            }
+        }
+    }
+
+    public Integer askInteger(String prompt, int min, int max, String errorMessage) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                int value = Integer.parseInt(scanner.nextLine());
+                if (value >= min && value <= max) {
+                    return value;
+                }
+                System.out.println(errorMessage);
+            } catch (NumberFormatException e) {
+                System.out.println(errorMessage);
+            }
+        }
+    }
 }

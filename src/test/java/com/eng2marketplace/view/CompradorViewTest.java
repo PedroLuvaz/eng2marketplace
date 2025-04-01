@@ -4,13 +4,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.util.NoSuchElementException;
 
-public class LojaViewTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class CompradorViewTest {
     private final InputStream is = System.in;
     private final PrintStream os = System.out;
     private final Charset defaultCharset = System.out.charset();
@@ -60,28 +63,28 @@ public class LojaViewTest {
     void menuReturnTest() {
         setInput("0\n");
 
-        LojaView lv = new LojaView(null);
+        CompradorView lv = new CompradorView(null);
         lv.menu();
 
         String text = getOutput();
         String expected = "\n" +
-            "--- Gestão de Lojas ---\n" +
-            "1. Adicionar Loja\n" +
-            "2. Listar Lojas\n" +
-            "3. Remover Loja\n" +
+            "--- Gestão de Compradores ---\n" +
+            "1. Cadastrar Comprador\n" +
+            "2. Listar Compradores\n" +
+            "3. Remover Comprador\n" +
             "0. Voltar\n" +
             "Escolha uma opção: Voltando ao menu principal...\n";
         assertEquals(expected, text);
     }
 
     /**
-     * Verifica se a opção de criar uma nova loja é selecionada corretamente
+     * Verifica se a opção de criar um novo comprador é selecionada corretamente
      */
     @Test
     void menuAddTest() {
         setInput("1\n");
 
-        LojaView lv = new LojaView(null);
+        CompradorView lv = new CompradorView(null);
         try {
             lv.menu();
         } catch (NoSuchElementException err) {
@@ -89,35 +92,36 @@ public class LojaViewTest {
             // O teste não está interessado no resto do processo, só checar se a opção correta foi chamada
             String text = getOutput();
             String expected = "\n" +
-                "--- Gestão de Lojas ---\n" +
-                "1. Adicionar Loja\n" +
-                "2. Listar Lojas\n" +
-                "3. Remover Loja\n" +
+                "--- Gestão de Compradores ---\n" +
+                "1. Cadastrar Comprador\n" +
+                "2. Listar Compradores\n" +
+                "3. Remover Comprador\n" +
                 "0. Voltar\n" +
-                "Escolha uma opção: Nome (entre 2 e 99 letras): ";
+                "Escolha uma opção: Nome: ";
             assertEquals(expected, text);
         }
     }
 
     /**
-     * Verifica se a opção de listar lojas é selecionada corretamente
+     * Verifica se a opção de listar compradores é selecionada corretamente
      */
     @Test
     void menuListTest() {
         setInput("2\n");
 
-        LojaView lv = new LojaView(null);
+        CompradorView lv = new CompradorView(null);
         try {
             lv.menu();
         } catch (NullPointerException err) {
             // O menu vai lançar essa exceção por não haver um arquivo
             // O teste não está interessado no resto do processo, só checar se a opção correta foi chamada
+            // O menu deve voltar para a tela inicial quando não há commpradores
             String text = getOutput();
             String expected = "\n" +
-                "--- Gestão de Lojas ---\n" +
-                "1. Adicionar Loja\n" +
-                "2. Listar Lojas\n" +
-                "3. Remover Loja\n" +
+                "--- Gestão de Compradores ---\n" +
+                "1. Cadastrar Comprador\n" +
+                "2. Listar Compradores\n" +
+                "3. Remover Comprador\n" +
                 "0. Voltar\n" +
                 "Escolha uma opção: ";
             assertEquals(expected, text);
@@ -131,7 +135,7 @@ public class LojaViewTest {
     void menuRemoveTest() {
         setInput("3\n");
 
-        LojaView lv = new LojaView(null);
+        CompradorView lv = new CompradorView(null);
         try {
             lv.menu();
         } catch (NoSuchElementException err) {
@@ -139,12 +143,12 @@ public class LojaViewTest {
             // O teste não está interessado no resto do processo, só checar se a opção correta foi chamada
             String text = getOutput();
             String expected = "\n" +
-                "--- Gestão de Lojas ---\n" +
-                "1. Adicionar Loja\n" +
-                "2. Listar Lojas\n" +
-                "3. Remover Loja\n" +
+                "--- Gestão de Compradores ---\n" +
+                "1. Cadastrar Comprador\n" +
+                "2. Listar Compradores\n" +
+                "3. Remover Comprador\n" +
                 "0. Voltar\n" +
-                "Escolha uma opção: Informe o CPF/CNPJ da loja a ser removida (somente números ou com ponto/hífen/barra): ";
+                "Escolha uma opção: Informe o email do comprador a ser removido: ";
             assertEquals(expected, text);
         }
     }
@@ -156,7 +160,7 @@ public class LojaViewTest {
     void menuInvalidTest() {
         setInput("8\n");
 
-        LojaView lv = new LojaView(null);
+        CompradorView lv = new CompradorView(null);
         try {
             lv.menu();
         } catch (NoSuchElementException err) {
@@ -164,17 +168,17 @@ public class LojaViewTest {
             // O teste não está interessado no resto do processo, só checar se a opção correta foi chamada
             String text = getOutput();
             String expected = "\n" +
-                "--- Gestão de Lojas ---\n" +
-                "1. Adicionar Loja\n" +
-                "2. Listar Lojas\n" +
-                "3. Remover Loja\n" +
+                "--- Gestão de Compradores ---\n" +
+                "1. Cadastrar Comprador\n" +
+                "2. Listar Compradores\n" +
+                "3. Remover Comprador\n" +
                 "0. Voltar\n" +
                 "Escolha uma opção: Opção inválida.\n" +
                 "\n" +
-                "--- Gestão de Lojas ---\n" +
-                "1. Adicionar Loja\n" +
-                "2. Listar Lojas\n" +
-                "3. Remover Loja\n" +
+                "--- Gestão de Compradores ---\n" +
+                "1. Cadastrar Comprador\n" +
+                "2. Listar Compradores\n" +
+                "3. Remover Comprador\n" +
                 "0. Voltar\n" +
                 "Escolha uma opção: ";
             assertEquals(expected, text);

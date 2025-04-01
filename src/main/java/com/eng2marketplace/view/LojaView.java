@@ -42,7 +42,7 @@ public class LojaView {
     }
 
     private void adicionarLoja() {
-        String nome = scanner.askText("Nome (entre 2 e 99 caracteres): ", ".{2,99}", "Nome inválido!");
+        String nome = scanner.askName("Nome (entre 2 e 99 letras): ", 99, "Nome inválido!");
         String email = scanner.askMail("Email (padrão aaa@bbb.ccc): ", "Email inválido!");
         String senha = scanner.askText("Senha (pelo menos 8 caracteres): ", ".{8,}", "Senha inválida!");
         String cpfCnpj = scanner.askCPFCNPJ("CPF/CNPJ (somente números ou com ponto/hífen/barra): ", "Número de documento inválido!");

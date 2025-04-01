@@ -14,14 +14,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class CompradorRepositoryTest {
 
+    private static final String FILE_NAME = "./data/compradores.json";
+
     @BeforeEach
     void setup() {
         // deleta o repositório de compradores
-        File f = new File("compradores.txt");
-        if(!f.exists())
-            return;
-        if(!f.delete())
-            throw new RuntimeException();
+        File f = new File(FILE_NAME);
+        f.delete();
     }
 
     /**
@@ -29,8 +28,8 @@ class CompradorRepositoryTest {
      */
     @Test
     void testSalvar() {
-        Comprador buyer = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33");
-        CompradorRepository repo = new CompradorRepository();
+        Comprador buyer = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33", "Rua Teló, S/N");
+        CompradorRepository repo = new CompradorRepository(FILE_NAME);
         repo.salvar(buyer);
 
         List<Comprador> result = repo.listar();
@@ -44,7 +43,7 @@ class CompradorRepositoryTest {
      */
     @Test
     void testListarVazio() {
-        CompradorRepository repo = new CompradorRepository();
+        CompradorRepository repo = new CompradorRepository(FILE_NAME);
         List<Comprador> result = repo.listar();
 
         assertEquals(0, result.size());
@@ -55,10 +54,10 @@ class CompradorRepositoryTest {
      */
     @Test
     void testListar() {
-        Comprador buyer1 = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33");
-        Comprador buyer2 = new Comprador("Maria", "maria@correio.br", "54321", "999.888.777-66");
+        Comprador buyer1 = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33", "Rua Teló, S/N");
+        Comprador buyer2 = new Comprador("Maria", "maria@correio.br", "54321", "999.888.777-66", "Loteamento Portal, 987");
 
-        CompradorRepository repo = new CompradorRepository();
+        CompradorRepository repo = new CompradorRepository(FILE_NAME);
         repo.salvar(buyer1);
         repo.salvar(buyer2);
 
@@ -74,7 +73,7 @@ class CompradorRepositoryTest {
      */
     @Test
     void testRemoveVazio() {
-        CompradorRepository repo = new CompradorRepository();
+        CompradorRepository repo = new CompradorRepository(FILE_NAME);
         boolean result = repo.remover("0");
 
         assertFalse(result);
@@ -85,10 +84,10 @@ class CompradorRepositoryTest {
      */
     @Test
     void testRemoverInexistente() {
-        Comprador buyer1 = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33");
-        Comprador buyer2 = new Comprador("Maria", "maria@correio.br", "54321", "999.888.777-66");
+        Comprador buyer1 = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33", "Rua Teló, S/N");
+        Comprador buyer2 = new Comprador("Maria", "maria@correio.br", "54321", "999.888.777-66", "Loteamento Portal, 987");
 
-        CompradorRepository repo = new CompradorRepository();
+        CompradorRepository repo = new CompradorRepository(FILE_NAME);
         repo.salvar(buyer1);
         repo.salvar(buyer2);
 
@@ -103,10 +102,10 @@ class CompradorRepositoryTest {
      */
     @Test
     void testRemover() {
-        Comprador buyer1 = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33");
-        Comprador buyer2 = new Comprador("Maria", "maria@correio.br", "54321", "999.888.777-66");
+        Comprador buyer1 = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33", "Rua Teló, S/N");
+        Comprador buyer2 = new Comprador("Maria", "maria@correio.br", "54321", "999.888.777-66", "Loteamento Portal, 987");
 
-        CompradorRepository repo = new CompradorRepository();
+        CompradorRepository repo = new CompradorRepository(FILE_NAME);
         repo.salvar(buyer1);
         repo.salvar(buyer2);
 
