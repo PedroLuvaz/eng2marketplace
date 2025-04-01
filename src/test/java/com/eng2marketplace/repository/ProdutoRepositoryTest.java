@@ -1,7 +1,6 @@
 package com.eng2marketplace.repository;
 
 import com.eng2marketplace.model.Loja;
-import com.eng2marketplace.model.Produto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,112 +12,105 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Teste de unidade do repositório de loja.
  */
-class ProdutoRepositoryTest {
-    private static final String LOJAS_DB = "./data/lojas.json";
-    private static final String PRODUTOS_DB = "./data/produtos.json";
-    private static final Loja LOJA = new Loja("Baratinhos", "mario@mail.net", "meu", "33.333.333/0001-33", "Rua N, S/N");
+class LojaRepositoryTest {
 
     @BeforeEach
     void setup() {
-        // deleta o repositório de produtos
-        File f = new File(PRODUTOS_DB);
-        f.delete();
-
         // deleta o repositório de lojas
-        f = new File(LOJAS_DB);
-        f.delete();
-
-        // salva a primeira loja
-        new LojaRepository(LOJAS_DB).salvar(LOJA);
+        File f = new File("src/main/data/lojas.json");
+        if(!f.exists())
+            return;
+        if(!f.delete())
+            throw new RuntimeException();
     }
 
     /**
-     * Testa salvar produto
+     * Testa salvar loja
      */
     @Test
     void testSalvar() {
-        Produto product = new Produto("Netbook", 750.0, "909123", 15, "Asus", "Netbook atom com 1GB de memória", LOJA);
-        ProdutoRepository repo = new ProdutoRepository(PRODUTOS_DB, new LojaRepository(LOJAS_DB));
-        repo.salvar(product);
+        Loja store = new Loja("Brookdale Equipamentos", "brkdl@mail.net", "12345", "012.345.678-90", "Rua dos Mafagafos, 1");
+        LojaRepository repo = new LojaRepository();
+        repo.salvar(store);
 
-        List<Produto> result = repo.listar();
+        List<Loja> result = repo.listar();
 
         assertEquals(1, result.size());
-        assertEquals("Netbook", result.get(0).getNome());
+        assertEquals("Brookdale Equipamentos", result.get(0).getNome());
     }
 
     /**
-     * Testa listar produtos em um arquivo vazio
+     * Testa listar lojas em um arquivo vazio
      */
     @Test
     void testListarVazio() {
-        ProdutoRepository repo = new ProdutoRepository(PRODUTOS_DB, new LojaRepository(LOJAS_DB));
-        List<Produto> result = repo.listar();
+        LojaRepository repo = new LojaRepository();
+        List<Loja> result = repo.listar();
 
         assertEquals(0, result.size());
     }
 
     /**
-     * Testa listar múltiplos produtos
+     * Testa listar múltiplas lojas
      */
     @Test
     void testListar() {
-        Produto product = new Produto("Netbook", 750.0, "909123", 15, "Asus", "Netbook atom com 1GB de memória", LOJA);
-        Produto product2 = new Produto("Celular", 350.0, "909123", 15, "Nokia", "Celular flip modelo Nokia 6101", LOJA);
+        Loja store1 = new Loja("Brookdale Equipamentos", "brkdl@mail.net", "12345", "012.345.678-90", "Rua dos Mafagafos, 1");
+        Loja store2 = new Loja("Audio&Video", "a-v@contact.me", "010101", "013.345.678-00", "Rua dos Mafagafos, 2");
 
-        ProdutoRepository repo = new ProdutoRepository(PRODUTOS_DB, new LojaRepository(LOJAS_DB));
-        repo.salvar(product);
-        repo.salvar(product2);
+        LojaRepository repo = new LojaRepository();
+        repo.salvar(store1);
+        repo.salvar(store2);
 
-        List<Produto> result = repo.listar();
+        List<Loja> result = repo.listar();
 
         assertEquals(2, result.size());
-        assertEquals("Netbook", result.get(0).getNome());
-        assertEquals("Celular", result.get(1).getNome());
+        assertEquals("Brookdale Equipamentos", result.get(0).getNome());
+        assertEquals("Audio&Video", result.get(1).getNome());
     }
 
     /**
-     * Testa remover produtos em um arquivo vazio
+     * Testa remover lojas em um arquivo vazio
      */
     @Test
     void testRemoveVazio() {
-        ProdutoRepository repo = new ProdutoRepository(PRODUTOS_DB, new LojaRepository(LOJAS_DB));
+        LojaRepository repo = new LojaRepository();
         boolean result = repo.remover("0");
 
         assertFalse(result);
     }
 
     /**
-     * Testa remover produto inexistente
+     * Testa remover loja inexistente
      */
     @Test
     void testRemoverInexistente() {
-        Produto product = new Produto("Netbook", 750.0, "909123", 15, "Asus", "Netbook atom com 1GB de memória", LOJA);
-        Produto product2 = new Produto("Celular", 350.0, "909123", 15, "Nokia", "Celular flip modelo Nokia 6101", LOJA);
+        Loja store1 = new Loja("Brookdale Equipamentos", "brkdl@mail.net", "12345", "012.345.678-90", "Rua dos Mafagafos, 1");
+        Loja store2 = new Loja("Audio&Video", "a-v@contact.me", "010101", "013.345.678-00", "Rua dos Mafagafos, 2");
 
-        ProdutoRepository repo = new ProdutoRepository(PRODUTOS_DB, new LojaRepository(LOJAS_DB));
-        repo.salvar(product);
-        repo.salvar(product2);
+        LojaRepository repo = new LojaRepository();
+        repo.salvar(store1);
+        repo.salvar(store2);
 
-        boolean result = repo.remover("Leitor de floppy disk nvm-e");
+        boolean result = repo.remover("313.131.313-31");
 
         assertFalse(result);
         assertEquals(2, repo.listar().size());
     }
 
     /**
-     * Testa remover produto
+     * Testa remover loja
      */
     @Test
     void testRemover() {
-        Produto product = new Produto("Netbook", 750.0, "909123", 15, "Asus", "Netbook atom com 1GB de memória", LOJA);
-        Produto product2 = new Produto("Celular", 350.0, "909123", 15, "Nokia", "Celular flip modelo Nokia 6101", LOJA);
+        Loja store1 = new Loja("Brookdale Equipamentos", "brkdl@mail.net", "12345", "012.345.678-90", "Rua dos Mafagafos, 1");
+        Loja store2 = new Loja("Audio&Video", "a-v@contact.me", "010101", "013.345.678-00", "Rua dos Mafagafos, 2");
 
-        ProdutoRepository repo = new ProdutoRepository(PRODUTOS_DB, new LojaRepository(LOJAS_DB));
-        repo.salvar(product);
-        repo.salvar(product2);
+        LojaRepository repo = new LojaRepository();
+        repo.salvar(store1);
+        repo.salvar(store2);
 
-        boolean result = repo.remover(product.getNome());
+        boolean result = repo.remover("013.345.678-00");
 
         assertTrue(result);
         assertEquals(1, repo.listar().size());

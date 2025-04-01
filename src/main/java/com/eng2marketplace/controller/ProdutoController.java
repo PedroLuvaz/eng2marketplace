@@ -9,12 +9,14 @@ import java.util.List;
 
 public class ProdutoController {
     private final ProdutoRepository produtoRepository;
+    private final LojaRepository lojaRepository;
 
-    public ProdutoController(ProdutoRepository repo) {
-        this.produtoRepository = repo;
+    public ProdutoController() {
+        this.produtoRepository = new ProdutoRepository(new LojaRepository());
+        this.lojaRepository = new LojaRepository();
     }
 
-    public void adicionarProduto(String nome, double valor, String tipo, int quantidade,
+    public void adicionarProduto(String nome, double valor, String tipo, int quantidade, 
                                 String marca, String descricao, Loja loja) {
         Produto produto = new Produto(nome, valor, tipo, quantidade, marca, descricao, loja);
         produtoRepository.salvar(produto);
@@ -31,4 +33,14 @@ public class ProdutoController {
     public boolean removerProduto(String nome) {
         return produtoRepository.remover(nome);
     }
+
+    public Produto buscarProdutoPorId(String id) {
+        return produtoRepository.buscarPorId(id).orElse(null);
+    }
+    
+    public boolean removerProdutoPorId(String id) {
+        return produtoRepository.removerPorId(id);
+    }
+    
+    
 }

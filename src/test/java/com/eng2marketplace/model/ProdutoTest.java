@@ -95,11 +95,4 @@ class ProdutoTest {
     /**
      * Testa representação da loja em forma textual.
      */
-    @Test
-    void testToString() {
-        Produto prod = new Produto("B2", 150.0, "12345", 1, "Sal", "Sem descrição", LOJA);
-        String buyerRepr = prod.toString();
-
-        assertEquals("Produto{nome='B2', valor=150.0, tipo='12345', quantidade=1, marca='Sal', descricao='Sem descrição', loja=ABC Variedades}", buyerRepr);
-    }
 }

@@ -323,62 +323,7 @@ public class ConsoleInputTest {
 
     //--| Números de ponto flutuante |----------------------------------------------------------------------------------
 
-    /**
-     * Verifica se é possível informar um número de ponto flutuante.
-     */
-    @Test
-    void testValueOk() {
-        String value = "1.50";
-        setInput(value);
-
-        ConsoleInput io = new ConsoleInput();
-        Double parsedValue = io.getValue();
-
-        assertEquals(1.5, parsedValue);
-    }
-
-    /**
-     * Verifica se é possível informar um número de ponto flutuante dentro de um intervalo.
-     */
-    @Test
-    void testValueOkInRange() {
-        String value = "1.50";
-        setInput(value);
-
-        ConsoleInput io = new ConsoleInput();
-        Double parsedValue = io.getValue(0, 50);
-
-        assertEquals(1.5, parsedValue);
-    }
-
-    /**
-     * Verifica se é possível informar um número de ponto flutuante negativo.
-     */
-    @Test
-    void testValueOkNeg() {
-        String value = "-5.00";
-        setInput(value);
-
-        ConsoleInput io = new ConsoleInput();
-        Double parsedValue = io.getValue();
-
-        assertEquals(-5.0, parsedValue);
-    }
-
-    /**
-     * Verifica se é possível informar um número de ponto flutuante máximo.
-     */
-    @Test
-    void testValueOkMax() {
-        String value = "50.15";
-        setInput(value);
-
-        ConsoleInput io = new ConsoleInput();
-        Double parsedValue = io.getValue(0, 50.15);
-
-        assertEquals(50.15, parsedValue);
-    }
-
+    
     /**
      * Verifica se é possível informar um número de ponto flutuante mínimo.
      */

@@ -13,13 +13,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * Teste de unidade do repositório de loja.
  */
 class LojaRepositoryTest {
-    private static final String FILE_NAME = "./data/lojas.json";
 
     @BeforeEach
     void setup() {
         // deleta o repositório de lojas
-        File f = new File(FILE_NAME);
-        f.delete();
+        File f = new File("src/main/data/lojas.json");
+        if(!f.exists())
+            return;
+        if(!f.delete())
+            throw new RuntimeException();
     }
 
     /**
@@ -28,7 +30,7 @@ class LojaRepositoryTest {
     @Test
     void testSalvar() {
         Loja store = new Loja("Brookdale Equipamentos", "brkdl@mail.net", "12345", "012.345.678-90", "Rua dos Mafagafos, 1");
-        LojaRepository repo = new LojaRepository(FILE_NAME);
+        LojaRepository repo = new LojaRepository();
         repo.salvar(store);
 
         List<Loja> result = repo.listar();
@@ -42,7 +44,7 @@ class LojaRepositoryTest {
      */
     @Test
     void testListarVazio() {
-        LojaRepository repo = new LojaRepository(FILE_NAME);
+        LojaRepository repo = new LojaRepository();
         List<Loja> result = repo.listar();
 
         assertEquals(0, result.size());
@@ -56,7 +58,7 @@ class LojaRepositoryTest {
         Loja store1 = new Loja("Brookdale Equipamentos", "brkdl@mail.net", "12345", "012.345.678-90", "Rua dos Mafagafos, 1");
         Loja store2 = new Loja("Audio&Video", "a-v@contact.me", "010101", "013.345.678-00", "Rua dos Mafagafos, 2");
 
-        LojaRepository repo = new LojaRepository(FILE_NAME);
+        LojaRepository repo = new LojaRepository();
         repo.salvar(store1);
         repo.salvar(store2);
 
@@ -72,7 +74,7 @@ class LojaRepositoryTest {
      */
     @Test
     void testRemoveVazio() {
-        LojaRepository repo = new LojaRepository(FILE_NAME);
+        LojaRepository repo = new LojaRepository();
         boolean result = repo.remover("0");
 
         assertFalse(result);
@@ -86,7 +88,7 @@ class LojaRepositoryTest {
         Loja store1 = new Loja("Brookdale Equipamentos", "brkdl@mail.net", "12345", "012.345.678-90", "Rua dos Mafagafos, 1");
         Loja store2 = new Loja("Audio&Video", "a-v@contact.me", "010101", "013.345.678-00", "Rua dos Mafagafos, 2");
 
-        LojaRepository repo = new LojaRepository(FILE_NAME);
+        LojaRepository repo = new LojaRepository();
         repo.salvar(store1);
         repo.salvar(store2);
 
@@ -104,7 +106,7 @@ class LojaRepositoryTest {
         Loja store1 = new Loja("Brookdale Equipamentos", "brkdl@mail.net", "12345", "012.345.678-90", "Rua dos Mafagafos, 1");
         Loja store2 = new Loja("Audio&Video", "a-v@contact.me", "010101", "013.345.678-00", "Rua dos Mafagafos, 2");
 
-        LojaRepository repo = new LojaRepository(FILE_NAME);
+        LojaRepository repo = new LojaRepository();
         repo.salvar(store1);
         repo.salvar(store2);
 

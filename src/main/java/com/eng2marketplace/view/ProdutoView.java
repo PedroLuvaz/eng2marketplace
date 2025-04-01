@@ -65,7 +65,8 @@ public class ProdutoView {
         } else {
             System.out.println("\n--- Produtos da Loja " + lojaLogada.getNome() + " ---");
             produtos.forEach(produto -> {
-                System.out.println("\nNome: " + produto.getNome());
+                System.out.println("\nID: " + produto.getId()); // <-- Mostra o ID
+                System.out.println("Nome: " + produto.getNome());
                 System.out.println("Valor: R$ " + String.format("%.2f", produto.getValor()));
                 System.out.println("Tipo: " + produto.getTipo());
                 System.out.println("Quantidade: " + produto.getQuantidade());
@@ -77,12 +78,13 @@ public class ProdutoView {
 
     private void removerProduto() {
         System.out.println("\n--- Remover Produto ---");
-        String nome = scanner.askText("Informe o nome do produto a ser removido: ", ".{2,100}", "Nome inválido!");
-        
-        if (facade.removerProduto(nome)) {
+        String id = scanner.askText("Informe o ID do produto a ser removido: ", ".{5,}", "ID inválido!");
+    
+        if (facade.removerPorId(id)) {
             System.out.println("\nProduto removido com sucesso!");
         } else {
             System.out.println("\nProduto não encontrado ou não pertence à sua loja.");
         }
     }
+    
 }

@@ -1,15 +1,19 @@
 package com.eng2marketplace.model;
 
+import java.util.UUID;
+
 public class Produto {
+    private String id;
     private String nome;
     private double valor;
     private String tipo;
     private int quantidade;
     private String marca;
     private String descricao;
-    private Loja loja;  // Relacionamento com a Loja
+    private Loja loja;
 
     public Produto(String nome, double valor, String tipo, int quantidade, String marca, String descricao, Loja loja) {
+        this.id = UUID.randomUUID().toString(); // Gera ID único
         this.nome = nome;
         this.valor = valor;
         this.tipo = tipo;
@@ -41,10 +45,14 @@ public class Produto {
     public Loja getLoja() { return loja; }
     public void setLoja(Loja loja) { this.loja = loja; }
 
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
     @Override
     public String toString() {
         return "Produto{" +
-                "nome='" + nome + '\'' +
+                "id='" + id + '\'' +
+                ", nome='" + nome + '\'' +
                 ", valor=" + valor +
                 ", tipo='" + tipo + '\'' +
                 ", quantidade=" + quantidade +
