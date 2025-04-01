@@ -1,0 +1,17 @@
+[
+  {
+    "nome": "Sapato-Confort",
+    "valor": 20.0,
+    "tipo": "calcados",
+    "quantidade": 10,
+    "marca": "Nike",
+    "descricao": "sapato bom demais",
+    "loja": {
+      "nome": "Nike",
+      "email": "nike@gmail.com",
+      "senha": "12345678",
+      "cpfCnpj": "136.389.264-94",
+      "endereco": "rua afogada sabrina"
+    }
+  }
+]
