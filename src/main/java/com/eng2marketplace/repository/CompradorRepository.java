@@ -2,74 +2,88 @@ package com.eng2marketplace.repository;
 
 import com.eng2marketplace.model.Comprador;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
-import java.io.*;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-/**
- * Repositório de compradores
- */
 public class CompradorRepository {
-    private final String fileName;
+    private static final String ARQUIVO_COMPRADORES = "src/main/data/compradores.json";
     private final Gson gson;
+    private final Type listType = new TypeToken<ArrayList<Comprador>>() {}.getType();
 
-    public CompradorRepository(String fileName) {
-        this.fileName = fileName;
-        this.gson = new Gson();
+    public CompradorRepository() {
+        this.gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .create();
+        criarArquivoSeNaoExistir();
     }
 
-    /**
-     * Salva um comprador na base de dados
-     * @param comprador O comprador a ser persistido
-     */
+    private void criarArquivoSeNaoExistir() {
+        try {
+            java.io.File file = new java.io.File(ARQUIVO_COMPRADORES);
+            if (!file.exists()) {
+                file.getParentFile().mkdirs();
+                salvarLista(new ArrayList<>());
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao criar arquivo JSON: " + e.getMessage());
+        }
+    }
+
     public void salvar(Comprador comprador) {
         List<Comprador> compradores = listar();
         compradores.add(comprador);
-        salvarArquivo(compradores);
+        salvarLista(compradores);
     }
 
-    /**
-     * Lista todos os compradores na base de dados
-     * @return Uma lista com todos os compradores
-     */
     public List<Comprador> listar() {
-        try (FileReader fr = new FileReader(this.fileName)) {
-            Comprador[] compradores = this.gson.fromJson(fr, Comprador[].class);
-            return new ArrayList<>(Arrays.asList(compradores));
+        try (FileReader reader = new FileReader(ARQUIVO_COMPRADORES)) {
+            List<Comprador> compradores = gson.fromJson(reader, listType);
+            return compradores != null ? compradores : new ArrayList<>();
         } catch (IOException e) {
-            System.out.println("Erro ao salvar compradores: " + e.getMessage());
+            System.err.println("Erro ao ler arquivo JSON: " + e.getMessage());
+            return new ArrayList<>();
         }
-        return new ArrayList<Comprador>();
     }
 
-    /**
-     * Remove um comprador da base de dados
-     * @param cpf O cpf do comprador
-     * @return true se o comprador foi removido, senão false
-     */
     public boolean remover(String cpf) {
         List<Comprador> compradores = listar();
         boolean removido = compradores.removeIf(comprador -> comprador.getCpf().equals(cpf));
         if (removido) {
-            salvarArquivo(compradores);
+            salvarLista(compradores);
         }
         return removido;
     }
 
-    /**
-     * Salva a base de dados em um arquivo
-     * @param compradores A base de dados, lista de todos os compradores
-     */
-    private void salvarArquivo(List<Comprador> compradores) {
-        Comprador[] arr = new Comprador[compradores.size()];
-        compradores.toArray(arr);
-        String json = this.gson.toJson(arr);
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(this.fileName))) {
-            bw.write(json);
+    private void salvarLista(List<Comprador> compradores) {
+        try (FileWriter writer = new FileWriter(ARQUIVO_COMPRADORES)) {
+            gson.toJson(compradores, writer);
         } catch (IOException e) {
-            System.out.println("Erro ao salvar compradores: " + e.getMessage());
+            System.err.println("Erro ao salvar arquivo JSON: " + e.getMessage());
         }
     }
+
+    public void limparTodos() {
+        salvarLista(new ArrayList<>());
+    }
+
+    public Optional<Comprador> buscarPorCpf(String cpf) {
+        // Remove formatação para comparação
+        String cpfNumerico = cpf.replaceAll("[^0-9]", "");
+        
+        return listar().stream()
+            .filter(comprador -> {
+                String cpfComprador = comprador.getCpf().replaceAll("[^0-9]", "");
+                return cpfComprador.equals(cpfNumerico);
+            })
+            .findFirst();
+    }
+    
 }

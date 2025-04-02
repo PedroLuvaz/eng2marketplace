@@ -335,4 +335,9 @@ public class ConsoleInput {
             }
         }
     }
+
+    public Long askLong(String string, int i, long maxValue, String string2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'askLong'");
+    }
 }

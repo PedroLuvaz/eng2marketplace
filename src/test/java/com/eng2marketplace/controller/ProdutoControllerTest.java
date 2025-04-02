@@ -2,8 +2,6 @@ package com.eng2marketplace.controller;
 
 import com.eng2marketplace.model.Loja;
 import com.eng2marketplace.model.Produto;
-import com.eng2marketplace.repository.LojaRepository;
-import com.eng2marketplace.repository.ProdutoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,28 +15,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ProdutoControllerTest {
 
-    private static final String LOJAS_DB = "./data/lojas.json";
-    private static final String PRODUTOS_DB = "./data/produtos.json";
-    private static final Loja LOJA = new Loja("Baratinhos", "mario@mail.net", "meu", "33.333.333/0001-33", "Rua N, S/N");
-
-    private LojaRepository lojas;
-    private ProdutoRepository repo;
+    private static final Loja LOJA = new Loja("Pets&Pets&Pets", "abc@xyz.cc", "12345678", "12.345.678/0001-90", "Rua Nova, No 1");
 
     @BeforeEach
     void setup() {
-        // deleta o repositório de produtos
-        File f = new File(PRODUTOS_DB);
-        f.delete();
-
-        // deleta o repositório de lojas
-        f = new File(LOJAS_DB);
-        f.delete();
-
-        // salva a primeira loja
-        lojas = new LojaRepository(LOJAS_DB);
-        lojas.salvar(LOJA);
-
-        repo = new ProdutoRepository(PRODUTOS_DB, lojas);
+        // deleta o repositório de Produtos
+        File f = new File("src/main/data/produtos.json");
+        if(!f.exists())
+            return;
+        if(!f.delete())
+            throw new RuntimeException();
     }
 
     /**
@@ -46,7 +32,7 @@ class ProdutoControllerTest {
      */
     @Test
     void testSalvar() {
-        ProdutoController control = new ProdutoController(repo);
+        ProdutoController control = new ProdutoController();
         control.adicionarProduto("Ração", 1000.00, "0000", 9191, "Nutrifods", "Ração universal", LOJA);
 
         List<Produto> result = control.listarProdutos();
@@ -60,7 +46,7 @@ class ProdutoControllerTest {
      */
     @Test
     void testListarVazio() {
-        ProdutoController control = new ProdutoController(repo);
+        ProdutoController control = new ProdutoController();
         List<Produto> result = control.listarProdutos();
 
         assertEquals(0, result.size());
@@ -71,7 +57,7 @@ class ProdutoControllerTest {
      */
     @Test
     void testListar() {
-        ProdutoController control = new ProdutoController(repo);
+        ProdutoController control = new ProdutoController();
         control.adicionarProduto("Ração", 1000.00, "0000", 9191, "Nutrifods", "Ração universal", LOJA);
         control.adicionarProduto("Poção", 999.99, "0001", 1919, "Nutrifods", "Poção de vida, remédio universal", LOJA);
 
@@ -87,7 +73,7 @@ class ProdutoControllerTest {
      */
     @Test
     void testRemoveVazio() {
-        ProdutoController control = new ProdutoController(repo);
+        ProdutoController control = new ProdutoController();
         boolean result = control.removerProduto("Carne de unicórnio");
 
         assertFalse(result);
@@ -98,7 +84,7 @@ class ProdutoControllerTest {
      */
     @Test
     void testRemoverInexistente() {
-        ProdutoController control = new ProdutoController(repo);
+        ProdutoController control = new ProdutoController();
         control.adicionarProduto("Ração", 1000.00, "0000", 9191, "Nutrifods", "Ração universal", LOJA);
         control.adicionarProduto("Poção", 999.99, "0001", 1919, "Nutrifods", "Poção de vida, remédio universal", LOJA);
 
@@ -113,7 +99,7 @@ class ProdutoControllerTest {
      */
     @Test
     void testRemover() {
-        ProdutoController control = new ProdutoController(repo);
+        ProdutoController control = new ProdutoController();
         control.adicionarProduto("Ração", 1000.00, "0000", 9191, "Nutrifods", "Ração universal", LOJA);
         control.adicionarProduto("Poção", 999.99, "0001", 1919, "Nutrifods", "Poção de vida, remédio universal", LOJA);
 
@@ -131,11 +117,7 @@ class ProdutoControllerTest {
         Loja pets = new Loja("Pets&Pets&Pets", "abc@xyz.cc", "12345678", "12.345.678/0001-90", "Rua Nova, No 1");
         Loja sports = new Loja("S(a)ports", "s@por.ts", "0000-0000", "93.333.999/0001-39", "Rua Nova, No 2");
 
-        //sempre salve as lojas antes de filtrar os produtos!
-        lojas.salvar(pets);
-        lojas.salvar(sports);
-
-        ProdutoController control = new ProdutoController(repo);
+        ProdutoController control = new ProdutoController();
         control.adicionarProduto("Ração", 1000.00, "0000", 9191, "Nutrifods", "Ração universal", pets);
         control.adicionarProduto("Poção", 999.99, "0001", 1919, "Nutrifods", "Poção de vida, remédio universal", pets);
         control.adicionarProduto("Chapéu", 1000.00, "0000", 9191, "SuperM", "Chapéu estilo vaquejada para futebol", sports);
@@ -156,7 +138,7 @@ class ProdutoControllerTest {
         Loja pets = new Loja("Pets&Pets&Pets", "abc@xyz.cc", "12345678", "12.345.678/0001-90", "Rua Nova, No 1");
         Loja sports = new Loja("S(a)ports", "s@por.ts", "0000-0000", "93.333.999/0001-39", "Rua Nova, No 2");
 
-        ProdutoController control = new ProdutoController(repo);
+        ProdutoController control = new ProdutoController();
         control.adicionarProduto("Ração", 1000.00, "0000", 9191, "Nutrifods", "Ração universal", pets);
         control.adicionarProduto("Poção", 999.99, "0001", 1919, "Nutrifods", "Poção de vida, remédio universal", pets);
         control.adicionarProduto("Chapéu", 1000.00, "0000", 9191, "SuperM", "Chapéu estilo vaquejada para futebol", sports);

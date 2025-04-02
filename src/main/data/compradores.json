@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "nome": "João",
+    "email": "jao@contact.me",
+    "senha": "12345",
+    "cpf": "000.111.222-33",
+    "endereco": "Rua Teló, S/N"
+  }
+]
