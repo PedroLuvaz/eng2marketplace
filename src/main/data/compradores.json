@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "nome": "João",
+    "email": "jao@contact.me",
+    "senha": "12345",
+    "cpf": "000.111.222-33",
+    "endereco": "Rua Teló, S/N"
+  },
+  {
+    "nome": "Pedro Vaz",
+    "email": "pedro@gmail.com",
+    "senha": "barcelona99",
+    "cpf": "136.389.264-94",
+    "endereco": "rua afogada",
+    "carrinho": [
+      "ceead36f-fdfc-4b69-b871-d91fb0b8e5d4"
+    ]
+  }
+]

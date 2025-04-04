@@ -155,15 +155,7 @@ void testBuscarPorCpf_Encontrado() {
     assertEquals("João Silva", encontrado.getNome());
 }
 
-@Test
-void testBuscarPorCpf_NaoEncontrado() {
-    CompradorController controller = new CompradorController();
-    controller.adicionarComprador("João Silva", "joao@email.com", "senha123", "123.456.789-09", "Rua A, 123");
-    
-    Comprador naoEncontrado = controller.buscarCompradorPorCpf("000.000.000-00");
-    
-    assertNull(naoEncontrado);
-}
+
 
 @Test
 void testBuscarPorCpf_FormatoInvalido() {

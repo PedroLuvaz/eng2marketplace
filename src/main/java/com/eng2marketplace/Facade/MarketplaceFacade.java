@@ -20,7 +20,7 @@ public class MarketplaceFacade {
         this.compradorController = new CompradorController();
     }
 
-    // Métodos para Loja
+    // Métodos para Loja (mantidos existentes)
     public void adicionarLoja(String nome, String email, String senha, String cpfCnpj, String endereco) {
         lojaController.adicionarLoja(nome, email, senha, cpfCnpj, endereco);
     }
@@ -34,11 +34,10 @@ public class MarketplaceFacade {
     }
 
     public Loja buscarLojaPorCpfCnpj(String cpfCnpj) {
-        // Implementação da busca por CPF/CNPJ
         return lojaController.buscarLojaPorCpfCnpj(cpfCnpj);
     }
 
-    // Métodos para Produto
+    // Métodos para Produto (mantidos existentes)
     public void adicionarProduto(String nome, double valor, String tipo, int quantidade, String marca, String descricao, Loja loja) {
         produtoController.adicionarProduto(nome, valor, tipo, quantidade, marca, descricao, loja);
     }
@@ -51,9 +50,15 @@ public class MarketplaceFacade {
         return produtoController.removerProduto(nome);
     }
 
-    
+    public boolean removerPorId(String id) {
+        return produtoController.removerProdutoPorId(id);
+    }
 
-    // Métodos para Comprador
+    public List<Produto> listarProdutosPorLoja(String cpfCnpjLoja) {
+        return produtoController.listarProdutosPorLoja(cpfCnpjLoja);
+    }
+
+    // Métodos para Comprador (atualizados)
     public void cadastrarComprador(String nome, String email, String senha, String cpf, String endereco) {
         compradorController.adicionarComprador(nome, email, senha, cpf, endereco);
     }
@@ -62,16 +67,44 @@ public class MarketplaceFacade {
         return compradorController.listarCompradores();
     }
 
-    public boolean removerComprador(String email) {
-        return compradorController.removerComprador(email);
+    public boolean removerComprador(String cpf) {
+        return compradorController.removerComprador(cpf);
     }
 
     public Comprador buscarCompradorPorCpf(String cpf) {
         return compradorController.buscarCompradorPorCpf(cpf);
     }
 
-    // Adicione este método na classe MarketplaceFacade
-public List<Produto> listarProdutosPorLoja(String cpfCnpjLoja) {
-    return produtoController.listarProdutosPorLoja(cpfCnpjLoja);
-}
+    // Novos métodos para login e carrinho
+    public boolean loginComprador(String cpf, String senha) {
+        return compradorController.login(cpf, senha);
+    }
+
+    public void logoutComprador() {
+        compradorController.logout();
+    }
+
+    public boolean isCompradorLogado() {
+        return compradorController.isLoggedIn();
+    }
+
+    public Comprador getCompradorLogado() {
+        return compradorController.getCompradorLogado();
+    }
+
+    public boolean adicionarAoCarrinho(String produtoId) {
+        return compradorController.adicionarAoCarrinho(produtoId);
+    }
+
+    public boolean removerDoCarrinho(String produtoId) {
+        return compradorController.removerDoCarrinho(produtoId);
+    }
+
+    public void limparCarrinho() {
+        compradorController.limparCarrinho();
+    }
+
+    public List<String> getCarrinho() {
+        return compradorController.getCarrinho();
+    }
 }

@@ -33,4 +33,14 @@ public class ProdutoController {
     public boolean removerProduto(String nome) {
         return produtoRepository.remover(nome);
     }
+
+    public Produto buscarProdutoPorId(String id) {
+        return produtoRepository.buscarPorId(id).orElse(null);
+    }
+    
+    public boolean removerProdutoPorId(String id) {
+        return produtoRepository.removerPorId(id);
+    }
+    
+    
 }

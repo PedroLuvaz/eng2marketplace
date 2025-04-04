@@ -85,5 +85,20 @@ public class CompradorRepository {
             })
             .findFirst();
     }
-    
+/**
+ * Atualiza um comprador existente
+ * @param comprador Comprador com os dados atualizados
+ * @return true se a atualização foi bem-sucedida, false caso contrário
+ */
+public boolean atualizar(Comprador comprador) {
+    List<Comprador> compradores = listar();
+    boolean removido = compradores.removeIf(c -> c.getCpf().equals(comprador.getCpf()));
+    if (removido) {
+        compradores.add(comprador);
+        salvarLista(compradores);
+        return true;
+    }
+    return false;
+}
+
 }

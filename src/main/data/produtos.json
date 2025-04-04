@@ -1,17 +1,66 @@
 [
   {
-    "nome": "Sapato-Confort",
-    "valor": 20.0,
-    "tipo": "calcados",
-    "quantidade": 10,
-    "marca": "Nike",
-    "descricao": "sapato bom demais",
+    "id": "ceead36f-fdfc-4b69-b871-d91fb0b8e5d4",
+    "nome": "Ração",
+    "valor": 1000.0,
+    "tipo": "0000",
+    "quantidade": 9191,
+    "marca": "Nutrifods",
+    "descricao": "Ração universal",
     "loja": {
-      "nome": "Nike",
-      "email": "nike@gmail.com",
+      "nome": "Pets\u0026Pets\u0026Pets",
+      "email": "abc@xyz.cc",
       "senha": "12345678",
-      "cpfCnpj": "136.389.264-94",
-      "endereco": "rua afogada sabrina"
+      "cpfCnpj": "12.345.678/0001-90",
+      "endereco": "Rua Nova, No 1"
+    }
+  },
+  {
+    "id": "ec1fea4f-732d-4c2c-a7d8-03ed12e21936",
+    "nome": "Poção",
+    "valor": 999.99,
+    "tipo": "0001",
+    "quantidade": 1919,
+    "marca": "Nutrifods",
+    "descricao": "Poção de vida, remédio universal",
+    "loja": {
+      "nome": "Pets\u0026Pets\u0026Pets",
+      "email": "abc@xyz.cc",
+      "senha": "12345678",
+      "cpfCnpj": "12.345.678/0001-90",
+      "endereco": "Rua Nova, No 1"
+    }
+  },
+  {
+    "id": "0604d137-af74-4814-b59f-4cf8b03653f9",
+    "nome": "Chapéu",
+    "valor": 1000.0,
+    "tipo": "0000",
+    "quantidade": 9191,
+    "marca": "SuperM",
+    "descricao": "Chapéu estilo vaquejada para futebol",
+    "loja": {
+      "nome": "S(a)ports",
+      "email": "s@por.ts",
+      "senha": "0000-0000",
+      "cpfCnpj": "93.333.999/0001-39",
+      "endereco": "Rua Nova, No 2"
+    }
+  },
+  {
+    "id": "2fa2ffec-8da4-49a4-be8f-28a2d8ad0486",
+    "nome": "Raquete",
+    "valor": 999.99,
+    "tipo": "0001",
+    "quantidade": 1919,
+    "marca": "E-Quipments",
+    "descricao": "Raquete 3 em 1: ping-pong, tênis e mata-mosquito",
+    "loja": {
+      "nome": "S(a)ports",
+      "email": "s@por.ts",
+      "senha": "0000-0000",
+      "cpfCnpj": "93.333.999/0001-39",
+      "endereco": "Rua Nova, No 2"
     }
   }
 ]

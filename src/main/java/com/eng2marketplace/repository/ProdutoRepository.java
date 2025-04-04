@@ -19,6 +19,7 @@ public class ProdutoRepository {
     private final LojaRepository lojaRepository;
     private final Gson gson;
     private final Type listType = new TypeToken<ArrayList<Produto>>() {}.getType();
+    
 
     public ProdutoRepository(LojaRepository lojaRepository) {
         this.lojaRepository = lojaRepository;
@@ -101,5 +102,19 @@ public class ProdutoRepository {
         return listar().stream()
             .filter(p -> p.getNome().equalsIgnoreCase(nome))
             .findFirst();
+    }
+    public Optional<Produto> buscarPorId(String id) {
+        return listar().stream()
+            .filter(p -> p.getId().equals(id))
+            .findFirst();
+    }
+    
+    public boolean removerPorId(String id) {
+        List<Produto> produtos = listar();
+        boolean removido = produtos.removeIf(p -> p.getId().equals(id));
+        if (removido) {
+            salvarLista(produtos);
+        }
+        return removido;
     }
 }
