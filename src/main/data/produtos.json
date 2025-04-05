@@ -62,5 +62,21 @@
       "cpfCnpj": "93.333.999/0001-39",
       "endereco": "Rua Nova, No 2"
     }
+  },
+  {
+    "id": "3393a6a7-c0d4-4dec-bc44-bd38cb1e56a8",
+    "nome": "Tenis Esportivo",
+    "valor": 10.0,
+    "tipo": "Tenis confort-sport",
+    "quantidade": 10,
+    "marca": "Nike",
+    "descricao": "Tenis muito bom pra corrida",
+    "loja": {
+      "nome": "Nike",
+      "email": "nike@gmail.com",
+      "senha": "12345678",
+      "cpfCnpj": "136.389.264-94",
+      "endereco": "rua dos malfagos."
+    }
   }
 ]

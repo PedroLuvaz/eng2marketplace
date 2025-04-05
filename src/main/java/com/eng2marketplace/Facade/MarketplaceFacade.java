@@ -8,6 +8,7 @@ import com.eng2marketplace.model.Loja;
 import com.eng2marketplace.model.Produto;
 
 import java.util.List;
+import java.util.Map;
 
 public class MarketplaceFacade {
     private LojaController lojaController;
@@ -92,8 +93,8 @@ public class MarketplaceFacade {
         return compradorController.getCompradorLogado();
     }
 
-    public boolean adicionarAoCarrinho(String produtoId) {
-        return compradorController.adicionarAoCarrinho(produtoId);
+    public boolean adicionarAoCarrinho(String produtoId, int quantidade) {
+        return compradorController.adicionarAoCarrinho(produtoId, quantidade);
     }
 
     public boolean removerDoCarrinho(String produtoId) {
@@ -104,7 +105,11 @@ public class MarketplaceFacade {
         compradorController.limparCarrinho();
     }
 
-    public List<String> getCarrinho() {
+    public Map<String, Integer> getCarrinho() {
         return compradorController.getCarrinho();
+    }
+
+    public boolean alterarQuantidadeCarrinho(String produtoId, int novaQuantidade) {
+        return compradorController.alterarQuantidadeCarrinho(produtoId, novaQuantidade);
     }
 }

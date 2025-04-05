@@ -5,5 +5,12 @@
     "senha": "12345",
     "cpfCnpj": "012.345.678-90",
     "endereco": "Rua dos Mafagafos, 1"
+  },
+  {
+    "nome": "Nike",
+    "email": "nike@gmail.com",
+    "senha": "12345678",
+    "cpfCnpj": "136.389.264-94",
+    "endereco": "rua dos malfagos."
   }
 ]

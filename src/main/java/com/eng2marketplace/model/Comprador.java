@@ -2,6 +2,8 @@ package com.eng2marketplace.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Comprador {
     private String nome;
@@ -9,7 +11,7 @@ public class Comprador {
     private String senha;  // Na prática, isso deveria ser um hash da senha
     private String cpf;
     private String endereco;
-    private List<String> carrinho;  // Lista de IDs ou códigos dos produtos
+    private Map<String, Integer> carrinho;  // Lista de IDs ou códigos dos produtos
 
     public Comprador(String nome, String email, String senha, String cpf, String endereco) {
         this.nome = nome;
@@ -17,7 +19,7 @@ public class Comprador {
         this.senha = senha;
         this.cpf = cpf;
         this.endereco = endereco;
-        this.carrinho = new ArrayList<>();
+        this.carrinho = new HashMap<>();
     }
 
     // Getters e Setters
@@ -36,8 +38,12 @@ public class Comprador {
     public String getEndereco() { return endereco; }
     public void setEndereco(String endereco) { this.endereco = endereco; }
 
-    public List<String> getCarrinho() { return carrinho; }
-    public void setCarrinho(List<String> carrinho) { this.carrinho = carrinho; }
+    public Map<String, Integer> getCarrinho() {
+        return carrinho;
+    }
+    public void setCarrinho(Map<String, Integer> carrinho) {
+        this.carrinho = carrinho;
+    }
 
     @Override
     public String toString() {

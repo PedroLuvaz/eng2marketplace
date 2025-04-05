@@ -4,6 +4,7 @@ import com.eng2marketplace.model.Comprador;
 import com.eng2marketplace.repository.CompradorRepository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class CompradorController {
@@ -99,15 +100,23 @@ public Comprador getCompradorLogado() {
  * @param produtoId ID ou código do produto
  * @return true se o produto foi adicionado com sucesso, false caso contrário
  */
-public boolean adicionarAoCarrinho(String produtoId) {
-    if (!isLoggedIn()) {
-        throw new IllegalStateException("Nenhum comprador logado");
+public boolean adicionarAoCarrinho(String produtoId, int quantidade) {
+        if (!isLoggedIn()) {
+            throw new IllegalStateException("Nenhum comprador logado");
+        }
+        
+        // Verifica se a quantidade é válida (> 0)
+        if (quantidade <= 0) {
+            return false;
+        }
+        
+        // Atualiza o carrinho
+        int quantidadeAtual = compradorLogado.getCarrinho().getOrDefault(produtoId, 0);
+        compradorLogado.getCarrinho().put(produtoId, quantidadeAtual + quantidade);
+        
+        atualizarCompradorNoRepositorio();
+        return true; // Retorna boolean indicando sucesso
     }
-    
-    compradorLogado.getCarrinho().add(produtoId);
-    atualizarCompradorNoRepositorio();
-    return true;
-}
 
 /**
  * Remove um produto do carrinho do comprador logado
@@ -119,11 +128,15 @@ public boolean removerDoCarrinho(String produtoId) {
         throw new IllegalStateException("Nenhum comprador logado");
     }
     
-    boolean removido = compradorLogado.getCarrinho().remove(produtoId);
-    if (removido) {
+    // Verifica se o produto estava no carrinho antes de remover
+    boolean existiaNoCarrinho = compradorLogado.getCarrinho().containsKey(produtoId);
+    
+    if (existiaNoCarrinho) {
+        compradorLogado.getCarrinho().remove(produtoId);
         atualizarCompradorNoRepositorio();
     }
-    return removido;
+    
+    return existiaNoCarrinho;
 }
 
 /**
@@ -142,12 +155,12 @@ public void limparCarrinho() {
  * Obtém os itens do carrinho do comprador logado
  * @return Lista de IDs ou códigos dos produtos no carrinho
  */
-public List<String> getCarrinho() {
-    if (!isLoggedIn()) {
-        throw new IllegalStateException("Nenhum comprador logado");
+public Map<String, Integer> getCarrinho() {
+        if (!isLoggedIn()) {
+            throw new IllegalStateException("Nenhum comprador logado");
+        }
+        return compradorLogado.getCarrinho();
     }
-    return compradorLogado.getCarrinho();
-}
 
 /**
  * Atualiza os dados do comprador logado no repositório
@@ -157,6 +170,24 @@ private void atualizarCompradorNoRepositorio() {
         compradorRepository.remover(compradorLogado.getCpf());
         compradorRepository.salvar(compradorLogado);
     }
+}
+
+public boolean alterarQuantidadeCarrinho(String produtoId, int novaQuantidade) {
+    if (!isLoggedIn()) {
+        throw new IllegalStateException("Nenhum comprador logado");
+    }
+    
+    if (novaQuantidade <= 0) {
+        return false;
+    }
+    
+    if (compradorLogado.getCarrinho().containsKey(produtoId)) {
+        compradorLogado.getCarrinho().put(produtoId, novaQuantidade);
+        atualizarCompradorNoRepositorio();
+        return true;
+    }
+    
+    return false;
 }
 
 
