@@ -49,9 +49,13 @@ public class LojaView {
         String senha = scanner.askText("Senha (pelo menos 8 caracteres): ", ".{8,}", "Senha inválida!");
         String cpfCnpj = scanner.askCPFCNPJ("CPF/CNPJ (somente números ou com ponto/hífen/barra): ", "Número de documento inválido!");
         String endereco = scanner.askText("Endereço (entre 5 e 250 caracteres): ", ".{5,250}", "Endereço inválido!");
-
-        facade.adicionarLoja(nome, email, senha, cpfCnpj, endereco);
-        System.out.println("Loja adicionada com sucesso!");
+    
+        try {
+            facade.adicionarLoja(nome, email, senha, cpfCnpj, endereco);
+            System.out.println("Loja adicionada com sucesso!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro ao adicionar loja: " + e.getMessage());
+        }
     }
 
     private void listarLojas() {
@@ -70,7 +74,7 @@ public class LojaView {
         String cpfCnpj = scanner.askCPFCNPJ(
             "Informe o CPF/CNPJ da loja a ser buscada (somente números ou com ponto/hífen/barra): ",
             "Documento inválido!");
-
+    
         try {
             Loja loja = facade.buscarLojaPorCpfCnpj(cpfCnpj);
             if (loja != null) {
@@ -82,20 +86,24 @@ public class LojaView {
             } else {
                 System.out.println("Loja não encontrada.");
             }
-        } catch (Exception e) {
-            System.out.println("Erro: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro na busca: " + e.getMessage());
         }
     }
-
+    
     private void removerLoja() {
         String cpfCnpj = scanner.askCPFCNPJ(
             "Informe o CPF/CNPJ da loja a ser removida (somente números ou com ponto/hífen/barra): ",
             "Documento inválido!");
-
-        if (facade.removerLoja(cpfCnpj)) {
-            System.out.println("Loja removida com sucesso!");
-        } else {
-            System.out.println("Loja não encontrada.");
+    
+        try {
+            if (facade.removerLoja(cpfCnpj)) {
+                System.out.println("Loja removida com sucesso!");
+            } else {
+                System.out.println("Loja não encontrada.");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro ao remover loja: " + e.getMessage());
         }
     }
 }

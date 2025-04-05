@@ -12,13 +12,21 @@ public class LojaController {
     }
 
     public void adicionarLoja(String nome, String email, String senha, String cpfCnpj, String endereco) {
-        // Valida se já existe loja com este CPF/CNPJ
-        if (lojaRepository.buscarPorCpfCnpj(cpfCnpj).isPresent()) {
+        // Normaliza o CPF/CNPJ (remove formatação)
+        String cpfCnpjNumerico = cpfCnpj.replaceAll("[^0-9]", "");
+        
+        // Validação básica do CPF/CNPJ
+        if (cpfCnpjNumerico.length() != 11 && cpfCnpjNumerico.length() != 14) {
+            throw new IllegalArgumentException("CPF deve ter 11 dígitos ou CNPJ deve ter 14 dígitos");
+        }
+        
+        // Verifica se já existe loja com este CPF/CNPJ
+        if (lojaRepository.buscarPorCpfCnpj(cpfCnpjNumerico).isPresent()) {
             throw new IllegalArgumentException("Já existe uma loja cadastrada com este CPF/CNPJ");
         }
         
-        // Cria e salva a nova loja
-        Loja novaLoja = new Loja(nome, email, senha, cpfCnpj, endereco);
+        // Cria e salva a nova loja com CPF/CNPJ normalizado (sem formatação)
+        Loja novaLoja = new Loja(nome, email, senha, cpfCnpjNumerico, endereco);
         lojaRepository.salvar(novaLoja);
     }
 

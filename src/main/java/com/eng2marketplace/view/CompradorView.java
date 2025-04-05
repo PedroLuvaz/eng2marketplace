@@ -67,9 +67,13 @@ public class CompradorView {
         String senha = scanner.askText("Senha (mínimo 8 caracteres): ", ".{8,}", "Senha inválida!");
         String cpf = scanner.askCPF("CPF: ", "CPF inválido!");
         String endereco = scanner.askText("Endereço: ", ".{5,250}", "Endereço inválido!");
-
-        facade.cadastrarComprador(nome, email, senha, cpf, endereco);
-        System.out.println("Comprador cadastrado com sucesso!");
+    
+        try {
+            facade.cadastrarComprador(nome, email, senha, cpf, endereco);
+            System.out.println("Comprador cadastrado com sucesso!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro ao cadastrar comprador: " + e.getMessage());
+        }
     }
 
     public void loginComprador() {

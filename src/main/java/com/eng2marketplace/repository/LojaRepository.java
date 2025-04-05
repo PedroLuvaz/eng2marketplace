@@ -76,7 +76,11 @@ public class LojaRepository {
     }
 
     public Optional<Loja> buscarPorCpfCnpj(String cpfCnpj) {
-        // Remove formatação para comparação (pontos, traços, barras)
+        if (cpfCnpj == null || cpfCnpj.trim().isEmpty()) {
+            return Optional.empty();
+        }
+        
+        // Remove formatação para comparação
         String cpfCnpjNumerico = cpfCnpj.replaceAll("[^0-9]", "");
         
         return listar().stream()
@@ -86,4 +90,25 @@ public class LojaRepository {
             })
             .findFirst();
     }
+
+    /**
+ * Atualiza uma loja existente
+ * @param loja Loja com os dados atualizados
+ * @return true se a atualização foi bem-sucedida, false caso contrário
+ */
+public boolean atualizar(Loja loja) {
+    // Primeiro verifica se a loja existe (com o mesmo CPF/CNPJ)
+    Optional<Loja> existente = buscarPorCpfCnpj(loja.getCpfCnpj());
+    if (existente.isEmpty()) {
+        return false; // Loja não existe para ser atualizada
+    }
+    
+    List<Loja> lojas = listar();
+    // Remove a loja antiga
+    lojas.removeIf(l -> l.getCpfCnpj().equals(loja.getCpfCnpj()));
+    // Adiciona a loja atualizada
+    lojas.add(loja);
+    salvarLista(lojas);
+    return true;
+}
 }

@@ -17,13 +17,21 @@ public class CompradorController {
     }
 
     public void adicionarComprador(String nome, String email, String senha, String cpf, String endereco) {
-        // Primeiro valida se já existe comprador com este CPF
-        if (compradorRepository.buscarPorCpf(cpf).isPresent()) {
+        // Normaliza o CPF (remove formatação)
+        String cpfNumerico = cpf.replaceAll("[^0-9]", "");
+        
+        // Validação do CPF
+        if (cpfNumerico.length() != 11) {
+            throw new IllegalArgumentException("CPF deve conter 11 dígitos");
+        }
+        
+        // Verifica se já existe comprador com este CPF
+        if (compradorRepository.buscarPorCpf(cpfNumerico).isPresent()) {
             throw new IllegalArgumentException("Já existe um comprador cadastrado com este CPF");
         }
         
-        // Cria e salva o novo comprador
-        Comprador novoComprador = new Comprador(nome, email, senha, cpf, endereco);
+        // Cria e salva o novo comprador com CPF normalizado (sem formatação)
+        Comprador novoComprador = new Comprador(nome, email, senha, cpfNumerico, endereco);
         compradorRepository.salvar(novoComprador);
     }
 

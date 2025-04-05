@@ -12,5 +12,12 @@
     "senha": "12345678",
     "cpfCnpj": "136.389.264-94",
     "endereco": "rua dos malfagos."
+  },
+  {
+    "nome": "mikeson",
+    "email": "mikeson@gmail.com",
+    "senha": "barcelona99",
+    "cpfCnpj": "13638926493",
+    "endereco": "rua afogados"
   }
 ]
