@@ -4,15 +4,12 @@ import com.eng2marketplace.Facade.MarketplaceFacade;
 import com.eng2marketplace.model.Loja;
 import com.eng2marketplace.view.input.ConsoleInput;
 
-import java.util.List;
-import java.util.Scanner;
-
 public class Main {
+    
     public static void main(String[] args) {
         ConsoleInput scanner = new ConsoleInput();
         MarketplaceFacade facade = new MarketplaceFacade();
         Loja lojaLogada = null;
-        boolean compradorLogado = false;
 
         while (true) {
             System.out.println("\n=== Marketplace ===");
@@ -50,7 +47,7 @@ public class Main {
                 case 4 -> lojaLogada = fazerLoginLoja(facade, scanner);
                 case 5 -> {
                     if (!facade.isCompradorLogado()) {
-                        new CompradorView(facade).loginComprador();
+                        fazerLoginComprador(facade, scanner);
                     } else {
                         System.out.println("Já existe um comprador logado.");
                     }
@@ -62,23 +59,51 @@ public class Main {
             }
         }
     }
-    
+
     private static Loja fazerLoginLoja(MarketplaceFacade facade, ConsoleInput scanner) {
-        String cpfCnpj = scanner.askCPFCNPJ("CPF/CNPJ: ", "Documento inválido!");
-        String senha = scanner.askText("Senha: ", ".{8,}", "Senha inválida!");
-
-        List<Loja> lojas = facade.listarLojas();
-        Loja loja = lojas.stream()
-                .filter(l -> l.getCpfCnpj().equals(cpfCnpj) && l.getSenha().equals(senha))
-                .findFirst()
-                .orElse(null);
-
-        if (loja != null) {
-            System.out.println("Login realizado com sucesso!");
-            return loja;
-        } else {
-            System.out.println("CPF/CNPJ ou senha incorretos.");
-            return null;
+        int tentativas = 0;
+        while (tentativas < 5) {
+            try {
+                System.out.println("\n--- Login da Loja ---");
+                String cpfCnpj = scanner.askCPFCNPJ("CPF/CNPJ: ", "Documento inválido!");
+                String senha = scanner.askText("Senha: ", ".{8,}", "Senha inválida!");
+                
+                Loja loja = facade.loginLoja(cpfCnpj, senha);
+                System.out.println("Login realizado com sucesso!");
+                return loja;
+            } catch (IllegalArgumentException | IllegalStateException e) {
+                System.out.println(e.getMessage());
+                tentativas++;
+                if (tentativas >= 5) {
+                    System.out.println("Número máximo de tentativas atingido. Retornando ao menu.");
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+    
+    private static void fazerLoginComprador(MarketplaceFacade facade, ConsoleInput scanner) {
+        int tentativas = 0;
+        while (tentativas < 5) {
+            try {
+                System.out.println("\n--- Login do Comprador ---");
+                String cpf = scanner.askCPF("CPF: ", "CPF inválido!");
+                String senha = scanner.askText("Senha: ", ".{8,}", "Senha inválida!");
+                
+                if (facade.loginComprador(cpf, senha)) {
+                    System.out.println("Login realizado com sucesso! Bem-vindo, " + 
+                        facade.getCompradorLogado().getNome() + "!");
+                    return;
+                }
+            } catch (IllegalArgumentException | IllegalStateException e) {
+                System.out.println(e.getMessage());
+                tentativas++;
+                if (tentativas >= 5) {
+                    System.out.println("Número máximo de tentativas atingido. Retornando ao menu.");
+                    return;
+                }
+            }
         }
     }
 }

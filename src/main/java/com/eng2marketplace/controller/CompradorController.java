@@ -7,196 +7,243 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+/**
+ * Controlador responsável por gerenciar as operações relacionadas aos compradores.
+ */
 public class CompradorController {
-    private CompradorRepository compradorRepository;
-    private Comprador compradorLogado;  // Guarda a referência do comprador logado
+    private final CompradorRepository compradorRepository;
+    private Comprador compradorLogado; // Referência ao comprador atualmente logado
+    private int tentativasLogin; // Contador de tentativas de login
 
+    /**
+     * Construtor da classe CompradorController.
+     * Inicializa o repositório e define o comprador logado como null.
+     */
     public CompradorController() {
         this.compradorRepository = new CompradorRepository();
         this.compradorLogado = null;
+        this.tentativasLogin = 0;
     }
 
+    /**
+     * Adiciona um novo comprador ao sistema.
+     *
+     * @param nome     Nome do comprador.
+     * @param email    Email do comprador.
+     * @param senha    Senha do comprador.
+     * @param cpf      CPF do comprador (com ou sem formatação).
+     * @param endereco Endereço do comprador.
+     */
     public void adicionarComprador(String nome, String email, String senha, String cpf, String endereco) {
-        // Normaliza o CPF (remove formatação)
-        String cpfNumerico = cpf.replaceAll("[^0-9]", "");
-        
-        // Validação do CPF
+        String cpfNumerico = cpf.replaceAll("[^0-9]", ""); // Remove formatação do CPF
+
         if (cpfNumerico.length() != 11) {
             throw new IllegalArgumentException("CPF deve conter 11 dígitos");
         }
-        
-        // Verifica se já existe comprador com este CPF
+
         if (compradorRepository.buscarPorCpf(cpfNumerico).isPresent()) {
             throw new IllegalArgumentException("Já existe um comprador cadastrado com este CPF");
         }
-        
-        // Cria e salva o novo comprador com CPF normalizado (sem formatação)
+
         Comprador novoComprador = new Comprador(nome, email, senha, cpfNumerico, endereco);
         compradorRepository.salvar(novoComprador);
     }
 
-
+    /**
+     * Lista todos os compradores cadastrados.
+     *
+     * @return Lista de compradores.
+     */
     public List<Comprador> listarCompradores() {
         return compradorRepository.listar();
     }
 
+    /**
+     * Remove um comprador pelo CPF.
+     *
+     * @param cpf CPF do comprador.
+     * @return true se o comprador foi removido, false caso contrário.
+     */
     public boolean removerComprador(String cpf) {
         return compradorRepository.remover(cpf);
     }
 
-   /**
- * Busca um comprador pelo CPF
- * @param cpf CPF do comprador no formato 000.000.000-00 ou 00000000000
- * @return O comprador encontrado ou null se não existir
- * @throws IllegalArgumentException se o CPF for inválido
- */
-public Comprador buscarCompradorPorCpf(String cpf) {
-    // Validação rigorosa do CPF
-    if (cpf == null || cpf.trim().isEmpty()) {
-        throw new IllegalArgumentException("CPF não pode ser nulo ou vazio");
-    }
-
-    // Normaliza o CPF (remove formatação)
-    String cpfNumerico = cpf.replaceAll("[^0-9]", "");
-    
-    if (cpfNumerico.length() != 11) {
-        throw new IllegalArgumentException("CPF deve conter 11 dígitos");
-    }
-    // Busca no repositório com tratamento de caso não encontrado
-    return compradorRepository.buscarPorCpf(cpfNumerico)
-            .orElseThrow(() -> new NoSuchElementException("Comprador não encontrado para CPF: " + cpf));
-}
-
-public boolean login(String cpf, String senha) {
-    try {
-        Comprador comprador = buscarCompradorPorCpf(cpf);
-        if (comprador != null && comprador.getSenha().equals(senha)) {
-            this.compradorLogado = comprador;
-            return true;
+    /**
+     * Busca um comprador pelo CPF.
+     *
+     * @param cpf CPF do comprador (com ou sem formatação).
+     * @return O comprador encontrado.
+     * @throws IllegalArgumentException se o CPF for inválido.
+     * @throws NoSuchElementException   se o comprador não for encontrado.
+     */
+    public Comprador buscarCompradorPorCpf(String cpf) {
+        if (cpf == null || cpf.trim().isEmpty()) {
+            throw new IllegalArgumentException("CPF não pode ser nulo ou vazio");
         }
-        return false;
-    } catch (NoSuchElementException e) {
+
+        String cpfNumerico = cpf.replaceAll("[^0-9]", "");
+
+        if (cpfNumerico.length() != 11) {
+            throw new IllegalArgumentException("CPF deve conter 11 dígitos");
+        }
+
+        return compradorRepository.buscarPorCpf(cpfNumerico)
+                .orElseThrow(() -> new NoSuchElementException("Comprador não encontrado para CPF: " + cpf));
+    }
+
+    /**
+     * Realiza o login de um comprador.
+     *
+     * @param cpf   CPF do comprador.
+     * @param senha Senha do comprador.
+     * @return true se o login foi bem-sucedido, false caso contrário.
+     */
+    public boolean login(String cpf, String senha) {
+        try {
+            Comprador comprador = buscarCompradorPorCpf(cpf);
+            if (comprador.getSenha().equals(senha)) {
+                this.compradorLogado = comprador;
+                this.tentativasLogin = 0; // Reseta o contador de tentativas
+                return true;
+            }
+        } catch (NoSuchElementException e) {
+            // Ignorado, pois será tratado abaixo
+        }
+
+        tentativasLogin++;
+        if (tentativasLogin >= 5) {
+            tentativasLogin = 0; // Reseta o contador
+            throw new IllegalStateException("Número máximo de tentativas excedido");
+        }
+
         return false;
     }
-}
 
-/**
- * Realiza o logout do comprador
- */
-public void logout() {
-    this.compradorLogado = null;
-}
+    /**
+     * Realiza o logout do comprador logado.
+     */
+    public void logout() {
+        this.compradorLogado = null;
+    }
 
-/**
- * Verifica se há um comprador logado
- * @return true se há um comprador logado, false caso contrário
- */
-public boolean isLoggedIn() {
-    return this.compradorLogado != null;
-}
+    /**
+     * Verifica se há um comprador logado.
+     *
+     * @return true se há um comprador logado, false caso contrário.
+     */
+    public boolean isLoggedIn() {
+        return this.compradorLogado != null;
+    }
 
-/**
- * Obtém o comprador atualmente logado
- * @return O comprador logado ou null se não houver ninguém logado
- */
-public Comprador getCompradorLogado() {
-    return this.compradorLogado;
-}
+    /**
+     * Obtém o comprador atualmente logado.
+     *
+     * @return O comprador logado ou null se não houver ninguém logado.
+     */
+    public Comprador getCompradorLogado() {
+        return this.compradorLogado;
+    }
 
-/**
- * Adiciona um produto ao carrinho do comprador logado
- * @param produtoId ID ou código do produto
- * @return true se o produto foi adicionado com sucesso, false caso contrário
- */
-public boolean adicionarAoCarrinho(String produtoId, int quantidade) {
-        if (!isLoggedIn()) {
-            throw new IllegalStateException("Nenhum comprador logado");
-        }
-        
-        // Verifica se a quantidade é válida (> 0)
+    /**
+     * Adiciona um produto ao carrinho do comprador logado.
+     *
+     * @param produtoId ID do produto.
+     * @param quantidade Quantidade do produto.
+     * @return true se o produto foi adicionado com sucesso, false caso contrário.
+     */
+    public boolean adicionarAoCarrinho(String produtoId, int quantidade) {
+        validarCompradorLogado();
+
         if (quantidade <= 0) {
             return false;
         }
-        
-        // Atualiza o carrinho
+
         int quantidadeAtual = compradorLogado.getCarrinho().getOrDefault(produtoId, 0);
         compradorLogado.getCarrinho().put(produtoId, quantidadeAtual + quantidade);
-        
-        atualizarCompradorNoRepositorio();
-        return true; // Retorna boolean indicando sucesso
-    }
 
-/**
- * Remove um produto do carrinho do comprador logado
- * @param produtoId ID ou código do produto
- * @return true se o produto foi removido com sucesso, false caso contrário
- */
-public boolean removerDoCarrinho(String produtoId) {
-    if (!isLoggedIn()) {
-        throw new IllegalStateException("Nenhum comprador logado");
-    }
-    
-    // Verifica se o produto estava no carrinho antes de remover
-    boolean existiaNoCarrinho = compradorLogado.getCarrinho().containsKey(produtoId);
-    
-    if (existiaNoCarrinho) {
-        compradorLogado.getCarrinho().remove(produtoId);
-        atualizarCompradorNoRepositorio();
-    }
-    
-    return existiaNoCarrinho;
-}
-
-/**
- * Limpa o carrinho do comprador logado
- */
-public void limparCarrinho() {
-    if (!isLoggedIn()) {
-        throw new IllegalStateException("Nenhum comprador logado");
-    }
-    
-    compradorLogado.getCarrinho().clear();
-    atualizarCompradorNoRepositorio();
-}
-
-/**
- * Obtém os itens do carrinho do comprador logado
- * @return Lista de IDs ou códigos dos produtos no carrinho
- */
-public Map<String, Integer> getCarrinho() {
-        if (!isLoggedIn()) {
-            throw new IllegalStateException("Nenhum comprador logado");
-        }
-        return compradorLogado.getCarrinho();
-    }
-
-/**
- * Atualiza os dados do comprador logado no repositório
- */
-private void atualizarCompradorNoRepositorio() {
-    if (compradorLogado != null) {
-        compradorRepository.remover(compradorLogado.getCpf());
-        compradorRepository.salvar(compradorLogado);
-    }
-}
-
-public boolean alterarQuantidadeCarrinho(String produtoId, int novaQuantidade) {
-    if (!isLoggedIn()) {
-        throw new IllegalStateException("Nenhum comprador logado");
-    }
-    
-    if (novaQuantidade <= 0) {
-        return false;
-    }
-    
-    if (compradorLogado.getCarrinho().containsKey(produtoId)) {
-        compradorLogado.getCarrinho().put(produtoId, novaQuantidade);
         atualizarCompradorNoRepositorio();
         return true;
     }
-    
-    return false;
-}
 
+    /**
+     * Remove um produto do carrinho do comprador logado.
+     *
+     * @param produtoId ID do produto.
+     * @return true se o produto foi removido, false caso contrário.
+     */
+    public boolean removerDoCarrinho(String produtoId) {
+        validarCompradorLogado();
 
+        boolean existiaNoCarrinho = compradorLogado.getCarrinho().containsKey(produtoId);
+
+        if (existiaNoCarrinho) {
+            compradorLogado.getCarrinho().remove(produtoId);
+            atualizarCompradorNoRepositorio();
+        }
+
+        return existiaNoCarrinho;
+    }
+
+    /**
+     * Limpa o carrinho do comprador logado.
+     */
+    public void limparCarrinho() {
+        validarCompradorLogado();
+        compradorLogado.getCarrinho().clear();
+        atualizarCompradorNoRepositorio();
+    }
+
+    /**
+     * Obtém os itens do carrinho do comprador logado.
+     *
+     * @return Mapa de produtos no carrinho com suas respectivas quantidades.
+     */
+    public Map<String, Integer> getCarrinho() {
+        validarCompradorLogado();
+        return compradorLogado.getCarrinho();
+    }
+
+    /**
+     * Altera a quantidade de um produto no carrinho do comprador logado.
+     *
+     * @param produtoId     ID do produto.
+     * @param novaQuantidade Nova quantidade do produto.
+     * @return true se a quantidade foi alterada com sucesso, false caso contrário.
+     */
+    public boolean alterarQuantidadeCarrinho(String produtoId, int novaQuantidade) {
+        validarCompradorLogado();
+
+        if (novaQuantidade <= 0) {
+            return false;
+        }
+
+        if (compradorLogado.getCarrinho().containsKey(produtoId)) {
+            compradorLogado.getCarrinho().put(produtoId, novaQuantidade);
+            atualizarCompradorNoRepositorio();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Atualiza os dados do comprador logado no repositório.
+     */
+    private void atualizarCompradorNoRepositorio() {
+        if (compradorLogado != null) {
+            compradorRepository.remover(compradorLogado.getCpf());
+            compradorRepository.salvar(compradorLogado);
+        }
+    }
+
+    /**
+     * Valida se há um comprador logado.
+     *
+     * @throws IllegalStateException se não houver comprador logado.
+     */
+    private void validarCompradorLogado() {
+        if (!isLoggedIn()) {
+            throw new IllegalStateException("Nenhum comprador logado");
+        }
+    }
 }

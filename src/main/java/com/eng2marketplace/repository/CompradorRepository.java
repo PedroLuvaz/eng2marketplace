@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,36 +14,58 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repositório para gerenciar operações de persistência de dados de compradores.
+ * Os dados são armazenados em um arquivo JSON.
+ */
 public class CompradorRepository {
-    private static final String ARQUIVO_COMPRADORES = "src/main/data/compradores.json";
-    private final Gson gson;
-    private final Type listType = new TypeToken<ArrayList<Comprador>>() {}.getType();
 
+    private static final String ARQUIVO_COMPRADORES = "src/main/data/compradores.json"; // Caminho do arquivo JSON
+    private final Gson gson; // Instância do Gson para manipulação de JSON
+    private final Type listType; // Tipo genérico para lista de compradores
+
+    /**
+     * Construtor da classe. Inicializa o Gson e garante que o arquivo JSON exista.
+     */
     public CompradorRepository() {
         this.gson = new GsonBuilder()
             .setPrettyPrinting()
             .create();
+        this.listType = new TypeToken<ArrayList<Comprador>>() {}.getType();
         criarArquivoSeNaoExistir();
     }
 
+    /**
+     * Cria o arquivo JSON caso ele não exista.
+     */
     private void criarArquivoSeNaoExistir() {
         try {
-            java.io.File file = new java.io.File(ARQUIVO_COMPRADORES);
+            File file = new File(ARQUIVO_COMPRADORES);
             if (!file.exists()) {
-                file.getParentFile().mkdirs();
-                salvarLista(new ArrayList<>());
+                file.getParentFile().mkdirs(); // Cria os diretórios necessários
+                salvarLista(new ArrayList<>()); // Cria um arquivo vazio
             }
         } catch (Exception e) {
             System.err.println("Erro ao criar arquivo JSON: " + e.getMessage());
         }
     }
 
+    /**
+     * Salva um novo comprador no arquivo JSON.
+     *
+     * @param comprador Comprador a ser salvo.
+     */
     public void salvar(Comprador comprador) {
         List<Comprador> compradores = listar();
         compradores.add(comprador);
         salvarLista(compradores);
     }
 
+    /**
+     * Lista todos os compradores armazenados no arquivo JSON.
+     *
+     * @return Lista de compradores.
+     */
     public List<Comprador> listar() {
         try (FileReader reader = new FileReader(ARQUIVO_COMPRADORES)) {
             List<Comprador> compradores = gson.fromJson(reader, listType);
@@ -53,6 +76,12 @@ public class CompradorRepository {
         }
     }
 
+    /**
+     * Remove um comprador pelo CPF.
+     *
+     * @param cpf CPF do comprador a ser removido.
+     * @return true se o comprador foi removido, false caso contrário.
+     */
     public boolean remover(String cpf) {
         List<Comprador> compradores = listar();
         boolean removido = compradores.removeIf(comprador -> comprador.getCpf().equals(cpf));
@@ -62,6 +91,11 @@ public class CompradorRepository {
         return removido;
     }
 
+    /**
+     * Salva a lista de compradores no arquivo JSON.
+     *
+     * @param compradores Lista de compradores a ser salva.
+     */
     private void salvarLista(List<Comprador> compradores) {
         try (FileWriter writer = new FileWriter(ARQUIVO_COMPRADORES)) {
             gson.toJson(compradores, writer);
@@ -70,14 +104,21 @@ public class CompradorRepository {
         }
     }
 
+    /**
+     * Remove todos os compradores do arquivo JSON.
+     */
     public void limparTodos() {
         salvarLista(new ArrayList<>());
     }
 
+    /**
+     * Busca um comprador pelo CPF.
+     *
+     * @param cpf CPF do comprador a ser buscado.
+     * @return Optional contendo o comprador, se encontrado.
+     */
     public Optional<Comprador> buscarPorCpf(String cpf) {
-        // Remove formatação para comparação
-        String cpfNumerico = cpf.replaceAll("[^0-9]", "");
-        
+        String cpfNumerico = cpf.replaceAll("[^0-9]", ""); // Remove formatação do CPF
         return listar().stream()
             .filter(comprador -> {
                 String cpfComprador = comprador.getCpf().replaceAll("[^0-9]", "");
@@ -85,26 +126,23 @@ public class CompradorRepository {
             })
             .findFirst();
     }
-    
-    /**
-    * Atualiza um comprador existente
-    * @param comprador Comprador com os dados atualizados
-    * @return true se a atualização foi bem-sucedida, false caso contrário
-    */
-   public boolean atualizar(Comprador comprador) {
-       // Primeiro verifica se o comprador existe (com o mesmo CPF)
-       Optional<Comprador> existente = buscarPorCpf(comprador.getCpf());
-       if (existente.isEmpty()) {
-           return false; // Comprador não existe para ser atualizado
-       }
-       
-       List<Comprador> compradores = listar();
-       // Remove o comprador antigo
-       compradores.removeIf(c -> c.getCpf().equals(comprador.getCpf()));
-       // Adiciona o comprador atualizado
-       compradores.add(comprador);
-       salvarLista(compradores);
-       return true;
-   }
 
+    /**
+     * Atualiza os dados de um comprador existente.
+     *
+     * @param comprador Comprador com os dados atualizados.
+     * @return true se a atualização foi bem-sucedida, false caso contrário.
+     */
+    public boolean atualizar(Comprador comprador) {
+        Optional<Comprador> existente = buscarPorCpf(comprador.getCpf());
+        if (existente.isEmpty()) {
+            return false; // Comprador não existe para ser atualizado
+        }
+
+        List<Comprador> compradores = listar();
+        compradores.removeIf(c -> c.getCpf().equals(comprador.getCpf())); // Remove o comprador antigo
+        compradores.add(comprador); // Adiciona o comprador atualizado
+        salvarLista(compradores);
+        return true;
+    }
 }

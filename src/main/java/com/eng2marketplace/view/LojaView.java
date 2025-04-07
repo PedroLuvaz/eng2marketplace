@@ -23,10 +23,11 @@ public class LojaView {
             System.out.println("2. Listar Lojas");
             System.out.println("3. Buscar Loja por CPF/CNPJ");
             System.out.println("4. Remover Loja");
+            System.out.println("5. Logout");
             System.out.println("0. Voltar");
             System.out.print("Escolha uma opção: ");
 
-            opcao = scanner.getNumber(0, 4);
+            opcao = scanner.getNumber(0, 5);
 
             if(opcao == null) {
                 System.out.println("Opção inválida.");
@@ -38,10 +39,23 @@ public class LojaView {
                 case 2 -> listarLojas();
                 case 3 -> buscarLojaPorCpfCnpj();
                 case 4 -> removerLoja();
+                case 5 -> {
+                    logoutLoja();
+                    System.out.println("Logout realizado com sucesso!");
+                    return;
+                }
                 case 0 -> System.out.println("Voltando ao menu principal...");
+                default -> System.out.println("Opção inválida.");
             }
         } while (opcao != 0);
     }
+
+    private void logoutLoja() {
+       String nome = facade.getLojaLogada().getNome();
+        facade.logoutLoja();
+        System.out.println("Logout realizado com sucesso. Até logo, " + nome + "!");
+    }
+
 
     private void adicionarLoja() {
         String nome = scanner.askName("Nome (entre 2 e 99 letras): ", 99, "Nome inválido!");
@@ -106,4 +120,34 @@ public class LojaView {
             System.out.println("Erro ao remover loja: " + e.getMessage());
         }
     }
+
+    public Loja loginLoja() {
+        int tentativas = 0;
+        final int MAX_TENTATIVAS = 5;
+        
+        do {
+            System.out.println("\n--- Login da Loja ---");
+            String cpfCnpj = scanner.askCPFCNPJ("CPF/CNPJ: ", "Documento inválido!");
+            String senha = scanner.askText("Senha: ", ".{8,}", "Senha inválida!");
+    
+            try {
+                Loja loja = facade.loginLoja(cpfCnpj, senha);
+                if (loja != null) {
+                    System.out.println("Login realizado com sucesso! Bem-vindo, " + loja.getNome() + "!");
+                    return loja;
+                }
+            } catch (IllegalArgumentException e) {
+                tentativas++;
+                System.out.println(e.getMessage());
+            } catch (IllegalStateException e) {
+                System.out.println(e.getMessage());
+                return null;
+            }
+        } while (tentativas < MAX_TENTATIVAS);
+        
+        System.out.println("Número máximo de tentativas excedido. Voltando ao menu principal.");
+        return null;
+    }
+
+
 }
