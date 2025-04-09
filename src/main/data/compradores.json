@@ -8,5 +8,15 @@
     "carrinho": {
       "ec1fea4f-732d-4c2c-a7d8-03ed12e21936": 2
     }
+  },
+  {
+    "nome": "wagner",
+    "email": "pedroegay@hotmail.com",
+    "senha": "93771671",
+    "cpf": "17462345690",
+    "endereco": "Rua da lama ",
+    "carrinho": {
+      "722386dc-775d-481b-8e5d-5c3af91f4863": 3
+    }
   }
 ]

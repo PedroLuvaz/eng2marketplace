@@ -4,6 +4,7 @@ import com.eng2marketplace.Facade.MarketplaceFacade;
 import com.eng2marketplace.model.Produto;
 import com.eng2marketplace.view.input.ConsoleInput;
 
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,14 +22,14 @@ public class CompradorView {
         Integer opcao;
         do {
             System.out.println("\n--- Menu do Comprador ---");
-            
+
             if (facade.isCompradorLogado()) {
                 System.out.println("1. Logout");
                 System.out.println("2. Menu do Carrinho");
                 System.out.println("0. Voltar");
-                
+
                 opcao = scanner.getNumber(0, 2);
-                
+
                 if (opcao == null) {
                     System.out.println("Opção inválida.");
                     continue;
@@ -43,9 +44,9 @@ public class CompradorView {
                 System.out.println("1. Cadastrar Comprador");
                 System.out.println("2. Login do Comprador");
                 System.out.println("0. Voltar");
-                
+
                 opcao = scanner.getNumber(0, 2);
-                
+
                 if (opcao == null) {
                     System.out.println("Opção inválida.");
                     continue;
@@ -60,14 +61,14 @@ public class CompradorView {
         } while (opcao != 0);
     }
 
-    private void cadastrarComprador() {
+    void cadastrarComprador() {
         System.out.println("\n--- Cadastro de Comprador ---");
         String nome = scanner.askName("Nome: ", 99, "Nome inválido!");
         String email = scanner.askMail("Email: ", "Email inválido!");
         String senha = scanner.askText("Senha (mínimo 8 caracteres): ", ".{8,}", "Senha inválida!");
         String cpf = scanner.askCPF("CPF: ", "CPF inválido!");
         String endereco = scanner.askText("Endereço: ", ".{5,250}", "Endereço inválido!");
-    
+
         try {
             facade.cadastrarComprador(nome, email, senha, cpf, endereco);
             System.out.println("Comprador cadastrado com sucesso!");
@@ -82,7 +83,7 @@ public class CompradorView {
         String senha = scanner.askText("Senha: ", ".{8,}", "Senha inválida!");
 
         if (facade.loginComprador(cpf, senha)) {
-            System.out.println("Login realizado com sucesso! Bem-vindo, " + 
+            System.out.println("Login realizado com sucesso! Bem-vindo, " +
                 facade.getCompradorLogado().getNome() + "!");
         } else {
             System.out.println("CPF ou senha incorretos.");
@@ -104,10 +105,11 @@ public class CompradorView {
             System.out.println("3. Alterar quantidade no carrinho");
             System.out.println("4. Listar produtos no carrinho");
             System.out.println("5. Limpar carrinho");
+            System.out.println("6. Finalizar compra");
             System.out.println("0. Voltar");
             System.out.print("Escolha uma opção: ");
 
-            opcao = scanner.getNumber(0, 5);
+            opcao = scanner.getNumber(0, 6);
 
             if (opcao == null) {
                 System.out.println("Opção inválida.");
@@ -120,6 +122,7 @@ public class CompradorView {
                 case 3 -> alterarQuantidadeCarrinho();
                 case 4 -> listarCarrinho();
                 case 5 -> limparCarrinho();
+                case 6 -> finalizarCompra();
                 case 0 -> System.out.println("Voltando ao menu anterior...");
             }
         } while (opcao != 0);
@@ -133,7 +136,7 @@ public class CompradorView {
         }
 
         System.out.println("\n--- Produtos Disponíveis ---");
-        produtos.forEach(produto -> 
+        produtos.forEach(produto ->
             System.out.printf("%s - %s - R$%.2f - Estoque: %d%n",
                 produto.getId(),
                 produto.getNome(),
@@ -141,34 +144,34 @@ public class CompradorView {
                 produto.getQuantidade()));
 
         String produtoId = scanner.askText("Informe o ID do produto: ", ".+", "ID inválido!");
-        
+
         Optional<Produto> produtoOpt = produtos.stream()
             .filter(p -> p.getId().equals(produtoId))
             .findFirst();
-        
+
         if (produtoOpt.isEmpty()) {
             System.out.println("Produto não encontrado!");
             return;
         }
-        
+
         Produto produto = produtoOpt.get();
         int estoqueDisponivel = produto.getQuantidade();
-        
+
         if (estoqueDisponivel <= 0) {
             System.out.println("Produto sem estoque disponível!");
             return;
         }
-        
+
         System.out.print("Quantidade (1-" + estoqueDisponivel + "): ");
         Integer quantidade = scanner.getNumber(1, estoqueDisponivel);
-        
+
         if (quantidade == null || quantidade <= 0) {
             System.out.println("Quantidade inválida!");
             return;
         }
-        
+
         if (facade.adicionarAoCarrinho(produtoId, quantidade)) {
-            System.out.printf("%d unidade(s) de %s adicionada(s) ao carrinho!%n", 
+            System.out.printf("%d unidade(s) de %s adicionada(s) ao carrinho!%n",
                 quantidade, produto.getNome());
         } else {
             System.out.println("Falha ao adicionar ao carrinho.");
@@ -184,7 +187,7 @@ public class CompradorView {
 
         listarCarrinho();
         String produtoId = scanner.askText("Informe o ID do produto a remover: ", ".+", "ID inválido!");
-        
+
         if (facade.removerDoCarrinho(produtoId)) {
             System.out.println("Produto removido do carrinho!");
         } else {
@@ -198,42 +201,42 @@ public class CompradorView {
             System.out.println("O carrinho está vazio.");
             return;
         }
-    
+
         listarCarrinho();
         String produtoId = scanner.askText("Informe o ID do produto: ", ".+", "ID inválido!");
-        
+
         if (!carrinho.containsKey(produtoId)) {
             System.out.println("Produto não encontrado no carrinho.");
             return;
         }
-    
+
         List<Produto> produtos = facade.listarProdutos();
         Optional<Produto> produtoOpt = produtos.stream()
             .filter(p -> p.getId().equals(produtoId))
             .findFirst();
-        
+
         if (produtoOpt.isEmpty()) {
             System.out.println("Produto não existe mais no catálogo!");
             return;
         }
-    
+
         Produto produto = produtoOpt.get();
         int estoqueDisponivel = produto.getQuantidade();
         int quantidadeAtual = carrinho.get(produtoId);
-        
-        System.out.printf("Quantidade atual: %d | Estoque disponível: %d%n", 
+
+        System.out.printf("Quantidade atual: %d | Estoque disponível: %d%n",
             quantidadeAtual, estoqueDisponivel);
-        
+
         System.out.print("Nova quantidade (1-" + estoqueDisponivel + "): ");
         Integer novaQuantidade = scanner.getNumber(1, estoqueDisponivel);
-        
+
         if (novaQuantidade == null || novaQuantidade <= 0) {
             System.out.println("Quantidade inválida!");
             return;
         }
-    
+
         if (facade.alterarQuantidadeCarrinho(produtoId, novaQuantidade)) {
-            System.out.printf("Quantidade de %s atualizada para %d!%n", 
+            System.out.printf("Quantidade de %s atualizada para %d!%n",
                 produto.getNome(), novaQuantidade);
         } else {
             System.out.println("Falha ao atualizar quantidade.");
@@ -265,7 +268,7 @@ public class CompradorView {
                 total += subtotal;
 
                 System.out.printf("%s - %s%n", produtoId, produto.getNome());
-                System.out.printf("  %d x R$%.2f = R$%.2f%n", 
+                System.out.printf("  %d x R$%.2f = R$%.2f%n",
                     quantidade, produto.getValor(), subtotal);
             } else {
                 System.out.printf("%s - Produto não disponível%n", produtoId);
@@ -279,5 +282,30 @@ public class CompradorView {
     private void limparCarrinho() {
         facade.limparCarrinho();
         System.out.println("Carrinho limpo com sucesso!");
+    }
+
+    private void finalizarCompra() {
+        Map<String, Integer> carrinho = facade.getCarrinho();
+    
+        if (carrinho.isEmpty()) {
+            System.out.println("Seu carrinho está vazio. Nada para finalizar.");
+            return;
+        }
+    
+        listarCarrinho();
+    
+        String confirmacao = scanner.askText("Deseja realmente finalizar a compra? (s/n): ",
+            "[sSnN]", "Resposta inválida!");
+    
+        if (confirmacao.equalsIgnoreCase("s")) {
+            try {
+                double total = facade.finalizarCompra(carrinho);
+                System.out.printf("Compra finalizada com sucesso! Total: R$%.2f%n", total);
+            } catch (IllegalStateException e) {
+                System.out.println("Erro ao finalizar compra: " + e.getMessage());
+            }
+        } else {
+            System.out.println("Compra cancelada.");
+        }
     }
 }

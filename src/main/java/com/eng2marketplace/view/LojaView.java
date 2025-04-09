@@ -57,7 +57,7 @@ public class LojaView {
     }
 
 
-    private void adicionarLoja() {
+    void adicionarLoja() {
         String nome = scanner.askName("Nome (entre 2 e 99 letras): ", 99, "Nome inválido!");
         String email = scanner.askMail("Email (padrão aaa@bbb.ccc): ", "Email inválido!");
         String senha = scanner.askText("Senha (pelo menos 8 caracteres): ", ".{8,}", "Senha inválida!");

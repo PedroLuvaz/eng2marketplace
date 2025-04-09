@@ -19,5 +19,12 @@
     "senha": "barcelona99",
     "cpfCnpj": "13638926493",
     "endereco": "rua afogados"
+  },
+  {
+    "nome": "Pedro",
+    "email": "wagnejr23@hotmail.com",
+    "senha": "93771671",
+    "cpfCnpj": "11795718439",
+    "endereco": "rua palmares "
   }
 ]

@@ -78,5 +78,21 @@
       "cpfCnpj": "136.389.264-94",
       "endereco": "rua dos malfagos."
     }
+  },
+  {
+    "id": "722386dc-775d-481b-8e5d-5c3af91f4863",
+    "nome": "carro ",
+    "valor": 10.0,
+    "tipo": "carrinho ",
+    "quantidade": 10,
+    "marca": "mercedes",
+    "descricao": "carrinho tamanho miniatura ",
+    "loja": {
+      "nome": "Pedro",
+      "email": "wagnejr23@hotmail.com",
+      "senha": "93771671",
+      "cpfCnpj": "11795718439",
+      "endereco": "rua palmares "
+    }
   }
 ]

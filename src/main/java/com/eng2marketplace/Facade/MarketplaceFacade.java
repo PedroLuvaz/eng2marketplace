@@ -169,4 +169,40 @@ public class MarketplaceFacade {
     public Loja getLojaLogada() {
         return lojaController.getLojaLogada();
     }
+
+    public double finalizarCompra(Map<String, Integer> carrinho) {
+        if (!isCompradorLogado()) {
+            throw new IllegalStateException("Nenhum comprador está logado.");
+        }
+    
+        if (carrinho == null || carrinho.isEmpty()) {
+            throw new IllegalStateException("O carrinho está vazio.");
+        }
+    
+        double total = 0.0;
+    
+        for (Map.Entry<String, Integer> entry : carrinho.entrySet()) {
+            String produtoId = entry.getKey();
+            int quantidade = entry.getValue();
+    
+            Produto produto = listarProdutos().stream()
+                    .filter(p -> p.getId().equals(produtoId))
+                    .findFirst()
+                    .orElse(null);
+    
+            if (produto == null) {
+                throw new IllegalStateException("Produto com ID " + produtoId + " não encontrado.");
+            }
+    
+            if (produto.getQuantidade() < quantidade) {
+                throw new IllegalStateException("Estoque insuficiente para o produto: " + produto.getNome());
+            }
+    
+            produto.setQuantidade(produto.getQuantidade() - quantidade);
+            total += produto.getValor() * quantidade;
+        }
+    
+        carrinho.clear();
+        return total;
+    }
 }
