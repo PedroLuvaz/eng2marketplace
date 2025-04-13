@@ -69,7 +69,7 @@ class ProdutoTest {
     }
 
     /**
-     * Testa atribuir e recuperar a loja do produto
+     * Testa atribuir e recuperar a descrição do produto
      */
     @Test
     void testDescricao() {
@@ -80,7 +80,7 @@ class ProdutoTest {
     }
 
     /**
-     * Testa atribuir e recuperar a descrição do produto
+     * Testa atribuir e recuperar a loja do produto
      */
     @Test
     void testLoja() {
@@ -93,6 +93,27 @@ class ProdutoTest {
     }
 
     /**
+     * Testa atribuir e recuperar o ID do produto
+     */
+    @Test
+    void testId() {
+        Produto prod = new Produto("B2", 150.0, "12345", 1, "Sal", "Sem descrição", LOJA);
+        prod.setId("0");
+
+        assertEquals("0", prod.getId());
+    }
+
+    /**
      * Testa representação da loja em forma textual.
      */
+    @Test
+    void testToString() {
+        Produto prod = new Produto("Camisa 10 Joga Bola Até Na Chuva", 1500.0, "CD", 1, "Sony Music", "Original, ainda selado", LOJA);
+
+        String expect = String.format(
+            "Produto{id='%s', nome='Camisa 10 Joga Bola Até Na Chuva', valor=1500.0, tipo='CD', quantidade=1, marca='Sony Music', descricao='Original, ainda selado', loja=ABC Variedades}",
+            prod.getId());
+
+        assertEquals(expect, prod.toString());
+    }
 }

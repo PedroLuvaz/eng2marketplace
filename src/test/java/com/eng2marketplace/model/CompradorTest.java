@@ -2,7 +2,9 @@ package com.eng2marketplace.model;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.HashMap;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Teste de unidade do comprador.
@@ -54,6 +56,31 @@ class CompradorTest {
         assertEquals("111.222.333-44", buyer.getCpf());
     }
 
+    /**
+     * Testa atribuir e recuperar o endereço do comprador
+     */
+    @Test
+    void testEndereco() {
+        Comprador buyer = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33", "Rua Teló, S/N");
+        buyer.setEndereco("Rua Pom Maven, 99A");
+
+        assertEquals("Rua Pom Maven, 99A", buyer.getEndereco());
+    }
+
+    /**
+     * Testa atribuir e recuperar o carrinho do comprador
+     */
+    @Test
+    void testCarrinho() {
+        Comprador buyer = new Comprador("João", "jao@contact.me", "12345", "000.111.222-33", "Rua Teló, S/N");
+        buyer.getCarrinho().put("00000", 1);
+
+        assertFalse(buyer.getCarrinho().isEmpty());
+
+        buyer.setCarrinho(new HashMap<>());
+
+        assertTrue(buyer.getCarrinho().isEmpty());
+    }
     /**
      * Testa representação da loja em forma textual.
      */
