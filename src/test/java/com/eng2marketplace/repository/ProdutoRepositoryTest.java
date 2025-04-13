@@ -10,9 +10,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Teste de unidade do repositório de loja.
+ * Teste de unidade do repositório de produto.
  */
-class LojaRepositoryTest {
+class ProdutoRepositoryTest {
 
     @BeforeEach
     void setup() {
