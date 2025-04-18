@@ -2,9 +2,11 @@ package com.eng2marketplace.Facade;
 
 import com.eng2marketplace.controller.CompradorController;
 import com.eng2marketplace.controller.LojaController;
+import com.eng2marketplace.controller.PedidoController;
 import com.eng2marketplace.controller.ProdutoController;
 import com.eng2marketplace.model.Comprador;
 import com.eng2marketplace.model.Loja;
+import com.eng2marketplace.model.Pedido;
 import com.eng2marketplace.model.Produto;
 
 import java.util.List;
@@ -14,6 +16,7 @@ public class MarketplaceFacade {
     private LojaController lojaController;
     private ProdutoController produtoController;
     private CompradorController compradorController;
+    private PedidoController pedidoController;
     private int tentativasLoginComprador = 0;
     private int tentativasLoginLoja = 0;
 
@@ -21,6 +24,7 @@ public class MarketplaceFacade {
         this.lojaController = new LojaController();
         this.produtoController = new ProdutoController();
         this.compradorController = new CompradorController();
+        this.pedidoController = new PedidoController();
     }
     // Métodos para Loja (mantidos existentes)
 
@@ -204,5 +208,42 @@ public class MarketplaceFacade {
     
         carrinho.clear();
         return total;
+    }
+
+    public Pedido finalizarCompra(String compradorCpf) {
+        if (!isCompradorLogado()) {
+            throw new IllegalStateException("Comprador não está logado");
+        }
+        
+        Map<String, Integer> carrinho = compradorController.getCarrinho();
+        if (carrinho.isEmpty()) {
+            throw new IllegalStateException("Carrinho vazio");
+        }
+        
+        double total = calcularTotalCarrinho(carrinho);
+        Pedido pedido = pedidoController.criarPedido(compradorCpf, carrinho, total);
+        compradorController.limparCarrinho();
+        return pedido;
+    }
+    
+    public List<Pedido> listarHistoricoCompras(String compradorCpf) {
+        return pedidoController.listarPedidosPorComprador(compradorCpf);
+    }
+    
+    private double calcularTotalCarrinho(Map<String, Integer> carrinho) {
+        final double[] total = {0.0};
+        List<Produto> produtos = produtoController.listarProdutos();
+        
+        for (Map.Entry<String, Integer> item : carrinho.entrySet()) {
+            String produtoId = item.getKey();
+            int quantidade = item.getValue();
+            
+            produtos.stream()
+                .filter(p -> p.getId().equals(produtoId))
+                .findFirst()
+                .ifPresent(produto -> total[0] += produto.getValor() * quantidade);
+        }
+        
+        return total[0];
     }
 }

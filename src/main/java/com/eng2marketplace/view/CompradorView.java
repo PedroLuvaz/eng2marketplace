@@ -22,41 +22,37 @@ public class CompradorView {
         Integer opcao;
         do {
             System.out.println("\n--- Menu do Comprador ---");
-
-            if (facade.isCompradorLogado()) {
-                System.out.println("1. Logout");
-                System.out.println("2. Menu do Carrinho");
-                System.out.println("0. Voltar");
-
-                opcao = scanner.getNumber(0, 2);
-
-                if (opcao == null) {
-                    System.out.println("Opção inválida.");
-                    continue;
+            System.out.println("1. Logout");
+            System.out.println("2. Menu do Carrinho");
+            System.out.println("3. Finalizar Compra");
+            System.out.println("4. Ver Histórico de Pedidos");
+            System.out.println("0. Voltar");
+            
+            opcao = scanner.getNumber(0, 4);
+            
+            if (opcao == null) {
+                System.out.println("Opção inválida. Tente novamente.");
+                continue;
+            }
+    
+            switch (opcao) {
+                case 1 -> logoutComprador();
+                case 2 -> menuCarrinho();
+                case 3 -> {
+                    try {
+                        new PedidoView(facade).finalizarCompra();
+                    } catch (Exception e) {
+                        System.out.println("Erro ao finalizar compra: " + e.getMessage());
+                    }
                 }
-
-                switch (opcao) {
-                    case 1 -> logoutComprador();
-                    case 2 -> menuCarrinho();
-                    case 0 -> System.out.println("Voltando ao menu principal...");
+                case 4 -> {
+                    try {
+                        new PedidoView(facade).menuHistorico();
+                    } catch (Exception e) {
+                        System.out.println("Erro ao acessar histórico: " + e.getMessage());
+                    }
                 }
-            } else {
-                System.out.println("1. Cadastrar Comprador");
-                System.out.println("2. Login do Comprador");
-                System.out.println("0. Voltar");
-
-                opcao = scanner.getNumber(0, 2);
-
-                if (opcao == null) {
-                    System.out.println("Opção inválida.");
-                    continue;
-                }
-
-                switch (opcao) {
-                    case 1 -> cadastrarComprador();
-                    case 2 -> loginComprador();
-                    case 0 -> System.out.println("Voltando ao menu principal...");
-                }
+                case 0 -> System.out.println("Voltando ao menu principal...");
             }
         } while (opcao != 0);
     }

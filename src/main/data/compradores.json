@@ -1,15 +1,5 @@
 [
   {
-    "nome": "Pedro Vaz",
-    "email": "pedro@gmail.com",
-    "senha": "barcelona99",
-    "cpf": "136.389.264-94",
-    "endereco": "rua afogada",
-    "carrinho": {
-      "ec1fea4f-732d-4c2c-a7d8-03ed12e21936": 2
-    }
-  },
-  {
     "nome": "wagner",
     "email": "pedroegay@hotmail.com",
     "senha": "93771671",
@@ -18,5 +8,13 @@
     "carrinho": {
       "722386dc-775d-481b-8e5d-5c3af91f4863": 3
     }
+  },
+  {
+    "nome": "Pedro Vaz",
+    "email": "pedro@gmail.com",
+    "senha": "barcelona99",
+    "cpf": "136.389.264-94",
+    "endereco": "rua afogada",
+    "carrinho": {}
   }
 ]
