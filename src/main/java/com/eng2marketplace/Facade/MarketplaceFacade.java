@@ -1,18 +1,22 @@
 package com.eng2marketplace.Facade;
 
+import com.eng2marketplace.controller.AdministradorController;
 import com.eng2marketplace.controller.CompradorController;
 import com.eng2marketplace.controller.LojaController;
 import com.eng2marketplace.controller.PedidoController;
 import com.eng2marketplace.controller.ProdutoController;
+import com.eng2marketplace.model.Administrador;
 import com.eng2marketplace.model.Comprador;
 import com.eng2marketplace.model.Loja;
 import com.eng2marketplace.model.Pedido;
 import com.eng2marketplace.model.Produto;
 
+
 import java.util.List;
 import java.util.Map;
 
 public class MarketplaceFacade {
+    private AdministradorController administradorController;
     private LojaController lojaController;
     private ProdutoController produtoController;
     private CompradorController compradorController;
@@ -25,7 +29,51 @@ public class MarketplaceFacade {
         this.produtoController = new ProdutoController();
         this.compradorController = new CompradorController();
         this.pedidoController = new PedidoController();
+        this.administradorController = new AdministradorController();
     }
+
+    // ========== ADMINISTRADOR ==========
+
+     public boolean loginAdministrador(String email, String senha) {
+        return administradorController.login(email, senha);
+    }
+
+    public void logoutAdministrador() {
+        administradorController.logout();
+    }
+
+    public void adicionarAdministrador(String nome, String email, String senha) {
+        administradorController.adicionarAdministrador(nome, email, senha);
+    }
+
+    public boolean removerAdministrador(String email) {
+        return administradorController.removerAdministrador(email);
+    }
+
+    public boolean administradorLogadoTemPermissao(String operacao) {
+        return administradorController.verificarPermissao(operacao);
+    }
+
+    public boolean isAdministradorLogado() {
+        return administradorController.isLoggedIn();
+    }
+
+    // Se precisar acessar diretamente o controller:
+    public AdministradorController getAdministradorController() {
+        return administradorController;
+    }
+
+    public List<Administrador> listarAdministradores() {
+    return administradorController.listarAdministradores();
+    }
+
+    public void verificarOuCriarAdminPadrao() {
+        if (administradorController.listarAdministradores().isEmpty()) {
+            adicionarAdministrador("Administrador Padrão", "admin@marketplace.com", "admin123");
+            System.out.println("Administrador padrão criado!");
+        }
+    }
+    
     // Métodos para Loja (mantidos existentes)
 
     // Adiciona uma nova loja ao sistema

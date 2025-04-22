@@ -91,13 +91,34 @@ public class Main {
                         CompradorView view = new CompradorView(facade);
                         view.cadastrarComprador();
                     }
-                    case 5 -> new AdministradorView(facade).menu(); // Apenas aqui tem acesso ao menu de ADM
+                    case 5 -> {
+                        facade.verificarOuCriarAdminPadrao();
+                        if (fazerLoginAdministrador(facade, scanner)) {
+                            new AdministradorView(facade).menu();
+                        } else {
+                            System.out.println("Login do administrador falhou.");
+                        }
+                    }
                     case 0 -> {
                         System.out.println("Saindo...");
                         return;
                     }
                 }
             }
+        }
+    }
+
+    private static boolean fazerLoginAdministrador(MarketplaceFacade facade, ConsoleInput scanner) {
+        System.out.println("\n--- Login do Administrador ---");
+    
+        String login = scanner.askText("Email: ", ".+@.+\\..+", "Email inválido.");
+        String senha = scanner.askText("Senha: ", ".{4,}", "Senha deve ter pelo menos 4 caracteres.");
+    
+        try {
+            return facade.loginAdministrador(login, senha);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Erro: " + e.getMessage());
+            return false;
         }
     }
 

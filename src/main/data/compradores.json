@@ -16,5 +16,13 @@
     "cpf": "136.389.264-94",
     "endereco": "rua afogada",
     "carrinho": {}
+  },
+  {
+    "nome": "Wagner",
+    "email": "wagnerjr23@hotmail.com",
+    "senha": "93771671",
+    "cpf": "11795718439",
+    "endereco": "Rua palmares",
+    "carrinho": {}
   }
 ]
