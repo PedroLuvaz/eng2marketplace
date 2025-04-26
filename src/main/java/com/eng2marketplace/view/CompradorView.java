@@ -27,14 +27,14 @@ public class CompradorView {
             System.out.println("3. Finalizar Compra");
             System.out.println("4. Ver Histórico de Pedidos");
             System.out.println("0. Voltar");
-            
+
             opcao = scanner.getNumber(0, 4);
-            
+
             if (opcao == null) {
                 System.out.println("Opção inválida. Tente novamente.");
                 continue;
             }
-    
+
             switch (opcao) {
                 case 1 -> logoutComprador();
                 case 2 -> menuCarrinho();
@@ -54,7 +54,7 @@ public class CompradorView {
                 }
                 case 0 -> System.out.println("Voltando ao menu principal...");
             }
-        } while (opcao != 0);
+        } while (opcao == null || opcao != 0);
     }
 
     void cadastrarComprador() {
@@ -282,17 +282,17 @@ public class CompradorView {
 
     private void finalizarCompra() {
         Map<String, Integer> carrinho = facade.getCarrinho();
-    
+
         if (carrinho.isEmpty()) {
             System.out.println("Seu carrinho está vazio. Nada para finalizar.");
             return;
         }
-    
+
         listarCarrinho();
-    
+
         String confirmacao = scanner.askText("Deseja realmente finalizar a compra? (s/n): ",
             "[sSnN]", "Resposta inválida!");
-    
+
         if (confirmacao.equalsIgnoreCase("s")) {
             try {
                 double total = facade.finalizarCompra(carrinho);
