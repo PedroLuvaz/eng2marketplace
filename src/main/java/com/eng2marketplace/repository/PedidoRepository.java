@@ -53,6 +53,14 @@ public class PedidoRepository {
         salvarLista(pedidos);
     }
 
+    public boolean remover(String id) {
+        List<Pedido> pedidos = listarTodos();
+        boolean removido = pedidos.removeIf(pedido -> pedido.getId().equals(id));
+        if(removido)
+            salvarLista(pedidos);
+        return removido;
+    }
+
     public List<Pedido> listarTodos() {
         try (FileReader reader = new FileReader(ARQUIVO_PEDIDOS)) {
             List<Pedido> pedidos = gson.fromJson(reader, listType);
@@ -98,7 +106,7 @@ public class PedidoRepository {
     }
 
     @Override
-    public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) 
+    public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
         return LocalDateTime.parse(json.getAsString(), formatter);
     }
