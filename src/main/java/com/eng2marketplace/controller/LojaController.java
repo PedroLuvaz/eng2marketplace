@@ -66,7 +66,8 @@ public class LojaController {
      * @return true se a loja foi removida, false caso contrário.
      */
     public boolean removerLoja(String cpfCnpj) {
-        return lojaRepository.remover(cpfCnpj);
+        String cpfCnpjNumerico = cpfCnpj.replaceAll("[^0-9]", "");
+        return lojaRepository.remover(cpfCnpjNumerico);
     }
 
     /**
