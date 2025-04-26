@@ -31,7 +31,7 @@ public class LojaView {
 
             if(opcao == null) {
                 System.out.println("Opção inválida.");
-                continue;
+                continue; // pule o switch
             }
 
             switch (opcao) {
@@ -45,9 +45,8 @@ public class LojaView {
                     return;
                 }
                 case 0 -> System.out.println("Voltando ao menu principal...");
-                default -> System.out.println("Opção inválida.");
             }
-        } while (opcao != 0);
+        } while (opcao == null || opcao != 0);
     }
 
     private void logoutLoja() {
@@ -63,7 +62,7 @@ public class LojaView {
         String senha = scanner.askText("Senha (pelo menos 8 caracteres): ", ".{8,}", "Senha inválida!");
         String cpfCnpj = scanner.askCPFCNPJ("CPF/CNPJ (somente números ou com ponto/hífen/barra): ", "Número de documento inválido!");
         String endereco = scanner.askText("Endereço (entre 5 e 250 caracteres): ", ".{5,250}", "Endereço inválido!");
-    
+
         try {
             facade.adicionarLoja(nome, email, senha, cpfCnpj, endereco);
             System.out.println("Loja adicionada com sucesso!");
@@ -78,8 +77,8 @@ public class LojaView {
             System.out.println("Nenhuma loja cadastrada.");
         } else {
             System.out.println("\n--- Lista de Lojas ---");
-            lojas.forEach(loja -> 
-                System.out.println(loja.getNome() + " - " + loja.getCpfCnpj() + 
+            lojas.forEach(loja ->
+                System.out.println(loja.getNome() + " - " + loja.getCpfCnpj() +
                                  " - " + loja.getEmail()));
         }
     }
@@ -88,7 +87,7 @@ public class LojaView {
         String cpfCnpj = scanner.askCPFCNPJ(
             "Informe o CPF/CNPJ da loja a ser buscada (somente números ou com ponto/hífen/barra): ",
             "Documento inválido!");
-    
+
         try {
             Loja loja = facade.buscarLojaPorCpfCnpj(cpfCnpj);
             if (loja != null) {
@@ -104,12 +103,12 @@ public class LojaView {
             System.out.println("Erro na busca: " + e.getMessage());
         }
     }
-    
+
     private void removerLoja() {
         String cpfCnpj = scanner.askCPFCNPJ(
             "Informe o CPF/CNPJ da loja a ser removida (somente números ou com ponto/hífen/barra): ",
             "Documento inválido!");
-    
+
         try {
             if (facade.removerLoja(cpfCnpj)) {
                 System.out.println("Loja removida com sucesso!");
@@ -124,12 +123,12 @@ public class LojaView {
     public Loja loginLoja() {
         int tentativas = 0;
         final int MAX_TENTATIVAS = 5;
-        
+
         do {
             System.out.println("\n--- Login da Loja ---");
             String cpfCnpj = scanner.askCPFCNPJ("CPF/CNPJ: ", "Documento inválido!");
             String senha = scanner.askText("Senha: ", ".{8,}", "Senha inválida!");
-    
+
             try {
                 Loja loja = facade.loginLoja(cpfCnpj, senha);
                 if (loja != null) {
@@ -144,7 +143,7 @@ public class LojaView {
                 return null;
             }
         } while (tentativas < MAX_TENTATIVAS);
-        
+
         System.out.println("Número máximo de tentativas excedido. Voltando ao menu principal.");
         return null;
     }
