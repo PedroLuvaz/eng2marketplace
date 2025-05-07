@@ -24,7 +24,7 @@ class LojaControllerTest {
         if (file.exists()) {
             file.delete();
         }
-        
+
         // Garante que o diretório data existe
         new File("./data").mkdirs();
     }
@@ -43,7 +43,7 @@ class LojaControllerTest {
         Loja loja = result.get(0);
         assertEquals("Pou pet store", loja.getNome());
         assertEquals("pou@animals.at", loja.getEmail());
-        assertEquals("074.801.734-03", loja.getCpfCnpj());
+        assertEquals("07480173403", loja.getCpfCnpj());
     }
 
     /**
@@ -71,10 +71,10 @@ class LojaControllerTest {
         assertEquals(2, result.size());
         assertEquals("Pou pet store", result.get(0).getNome());
         assertEquals("Restaurante da Penha", result.get(1).getNome());
-        
+
         // Verifica se os CPFs/CNPJs estão corretos
-        assertEquals("074.801.734-03", result.get(0).getCpfCnpj());
-        assertEquals("072.931.665-18", result.get(1).getCpfCnpj());
+        assertEquals("07480173403", result.get(0).getCpfCnpj());
+        assertEquals("07293166518", result.get(1).getCpfCnpj());
     }
 
     /**
@@ -128,14 +128,14 @@ class LojaControllerTest {
     void testAdicionarLojaComCpfCnpjDuplicado() {
         LojaController control = new LojaController();
         control.adicionarLoja("Petshop", "petshop@email.com", "senha123", "12.345.678/0001-99", "Rua das Lojas, 123");
-        
+
         // Tenta adicionar outra loja com mesmo CPF/CNPJ
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             control.adicionarLoja("Pet Center", "pet@email.com", "outrasenha", "12345678000199", "Av. Principal, 456");
         });
-        
+
         assertEquals("Já existe uma loja cadastrada com este CPF/CNPJ", exception.getMessage());
-        
+
         List<Loja> lojas = control.listarLojas();
         assertEquals(1, lojas.size()); // Deve manter apenas a primeira
         assertEquals("Petshop", lojas.get(0).getNome());
