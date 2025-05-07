@@ -24,7 +24,7 @@ class CompradorControllerTest {
         if (file.exists()) {
             file.delete();
         }
-        
+
         // Garante que o diretório data existe
         new File("./data").mkdirs();
     }
@@ -40,10 +40,10 @@ class CompradorControllerTest {
         List<Comprador> result = control.listarCompradores();
 
         assertEquals(1, result.size());
-        Comprador comprador = result.get(0);
+        Comprador comprador = result.getFirst();
         assertEquals("Joana Ferreira", comprador.getNome());
         assertEquals("jfjf@mail.ko", comprador.getEmail());
-        assertEquals("074.821.754-03", comprador.getCpf());
+        assertEquals("07482175403", comprador.getCpf());
     }
 
     /**
@@ -71,10 +71,10 @@ class CompradorControllerTest {
         assertEquals(2, result.size());
         assertEquals("Joana Ferreira", result.get(0).getNome());
         assertEquals("Ana Pontes", result.get(1).getNome());
-        
+
         // Verifica se os CPFs estão corretos
-        assertEquals("074.821.754-03", result.get(0).getCpf());
-        assertEquals("072.891.939-05", result.get(1).getCpf());
+        assertEquals("07482175403", result.get(0).getCpf());
+        assertEquals("07289193905", result.get(1).getCpf());
     }
 
     /**
@@ -113,7 +113,7 @@ class CompradorControllerTest {
         control.adicionarComprador("Joana Ferreira", "jfjf@mail.ko", "321321", "074.821.754-03", "Avenida Predial 955/B");
         control.adicionarComprador("Ana Pontes", "anabanana@mail.ko", "123123", "072.891.939-05", "Rua Marimbondo Caboclo, 3001");
 
-        boolean result = control.removerComprador("074.821.754-03");
+        boolean result = control.removerComprador("07482175403");
 
         assertTrue(result);
         List<Comprador> compradores = control.listarCompradores();
@@ -128,14 +128,14 @@ class CompradorControllerTest {
     void testAdicionarCompradorComCpfDuplicado() {
         CompradorController control = new CompradorController();
         control.adicionarComprador("Joana Ferreira", "jfjf@mail.ko", "321321", "074.821.754-03", "Avenida Predial 955/B");
-        
+
         // Verifica se lança exceção ao tentar adicionar duplicado
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             control.adicionarComprador("Joana Silva", "jf2@mail.ko", "654321", "074.821.754-03", "Outro endereço");
         });
-        
+
         assertEquals("Já existe um comprador cadastrado com este CPF", exception.getMessage());
-        
+
         List<Comprador> compradores = control.listarCompradores();
         assertEquals(1, compradores.size()); // Deve manter apenas o primeiro
         assertEquals("Joana Ferreira", compradores.get(0).getNome());
@@ -148,9 +148,9 @@ class CompradorControllerTest {
 void testBuscarPorCpf_Encontrado() {
     CompradorController controller = new CompradorController();
     controller.adicionarComprador("João Silva", "joao@email.com", "senha123", "123.456.789-09", "Rua A, 123");
-    
+
     Comprador encontrado = controller.buscarCompradorPorCpf("123.456.789-09");
-    
+
     assertNotNull(encontrado);
     assertEquals("João Silva", encontrado.getNome());
 }
@@ -160,11 +160,11 @@ void testBuscarPorCpf_Encontrado() {
 @Test
 void testBuscarPorCpf_FormatoInvalido() {
     CompradorController controller = new CompradorController();
-    
+
     assertThrows(IllegalArgumentException.class, () -> {
         controller.buscarCompradorPorCpf("123"); // CPF muito curto
     });
-    
+
     assertThrows(IllegalArgumentException.class, () -> {
         controller.buscarCompradorPorCpf(null); // CPF nulo
     });
