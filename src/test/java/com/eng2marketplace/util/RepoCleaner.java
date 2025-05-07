@@ -1,13 +1,7 @@
 package com.eng2marketplace.util;
 
-import com.eng2marketplace.model.Administrador;
-import com.eng2marketplace.model.Comprador;
-import com.eng2marketplace.model.Loja;
-import com.eng2marketplace.model.Pedido;
-import com.eng2marketplace.repository.AdministradorRepository;
-import com.eng2marketplace.repository.CompradorRepository;
-import com.eng2marketplace.repository.LojaRepository;
-import com.eng2marketplace.repository.PedidoRepository;
+import com.eng2marketplace.model.*;
+import com.eng2marketplace.repository.*;
 
 
 public final class RepoCleaner {
@@ -31,6 +25,10 @@ public final class RepoCleaner {
         PedidoRepository pr = new PedidoRepository();
         for(Pedido item: pr.listarTodos())
             pr.remover(item.getId());
+
+        ProdutoRepository pd = new ProdutoRepository(lr);
+        for(Produto item: pd.listar())
+            pd.remover(item.getNome());
     }
 
 }
