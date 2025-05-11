@@ -16,12 +16,8 @@ class LojaRepositoryTest {
 
     @BeforeEach
     void setup() {
-        // deleta o repositório de lojas
-        File f = new File("src/main/data/lojas.json");
-        if(!f.exists())
-            return;
-        if(!f.delete())
-            throw new RuntimeException();
+        LojaRepository lr = new LojaRepository();
+        lr.limpar();
     }
 
     /**

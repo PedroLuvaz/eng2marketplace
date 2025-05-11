@@ -12,7 +12,7 @@ import static com.eng2marketplace.util.RepoCleaner.cleanRepos;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Teste de unidade de repositório
+ * Teste de unidade de repositório de pedidos
  */
 class PedidoRepositoryTest {
 
@@ -20,7 +20,8 @@ class PedidoRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        cleanRepos();
+        PedidoRepository pr = new PedidoRepository();
+        pr.limpar();
         carrinho = new HashMap<>();
     }
 
@@ -34,8 +35,8 @@ class PedidoRepositoryTest {
         Pedido p = new Pedido("012.345.678-90", carrinho, 999);
         pr.salvar(p);
 
-        assertEquals(1, pr.listarTodos().size());
-        assertEquals(p.getId(), pr.listarTodos().getFirst().getId());
+        assertEquals(1, pr.listar().size());
+        assertEquals(p.getId(), pr.listar().getFirst().getId());
     }
 
     /**
@@ -51,7 +52,7 @@ class PedidoRepositoryTest {
         boolean result = pr.remover(p.getId());
 
         assertTrue(result);
-        assertTrue(pr.listarTodos().isEmpty());
+        assertTrue(pr.listar().isEmpty());
     }
 
     /**
@@ -67,21 +68,21 @@ class PedidoRepositoryTest {
         boolean result = pr.remover("a");
 
         assertFalse(result);
-        assertFalse(pr.listarTodos().isEmpty());
+        assertFalse(pr.listar().isEmpty());
     }
 
     /**
      * Testa listar todos pedidos
      */
     @Test
-    void testListarTodos() {
+    void testListar() {
         PedidoRepository pr = new PedidoRepository();
         carrinho.put("00000", 2);
         pr.salvar(new Pedido("012.345.678-90", carrinho, 999));
         pr.salvar(new Pedido("012.345.678-90", carrinho, 123));
         pr.salvar(new Pedido("012.345.678-90", carrinho, 456));
 
-        List<Pedido> pedidos = pr.listarTodos();
+        List<Pedido> pedidos = pr.listar();
 
         assertEquals(3, pedidos.size());
     }
@@ -90,10 +91,10 @@ class PedidoRepositoryTest {
      * Testa listar todos pedidos sem ter inserido nenhum
      */
     @Test
-    void testListarTodosVazio() {
+    void testListarVazio() {
         PedidoRepository pr = new PedidoRepository();
 
-        List<Pedido> pedidos = pr.listarTodos();
+        List<Pedido> pedidos = pr.listar();
 
         assertTrue(pedidos.isEmpty());
     }

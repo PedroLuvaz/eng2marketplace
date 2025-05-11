@@ -2,6 +2,8 @@ package com.eng2marketplace.controller;
 
 import com.eng2marketplace.model.Loja;
 import com.eng2marketplace.model.Produto;
+import com.eng2marketplace.repository.LojaRepository;
+import com.eng2marketplace.repository.ProdutoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,12 +21,12 @@ class ProdutoControllerTest {
 
     @BeforeEach
     void setup() {
-        // deleta o repositório de Produtos
-        File f = new File("src/main/data/produtos.json");
-        if(!f.exists())
-            return;
-        if(!f.delete())
-            throw new RuntimeException();
+        LojaRepository lr = new LojaRepository();
+        lr.limpar();
+        lr.salvar(LOJA);
+
+        ProdutoRepository pr = new ProdutoRepository(lr);
+        pr.limpar();
     }
 
     /**
@@ -116,6 +118,9 @@ class ProdutoControllerTest {
     void testListarPorLoja() {
         Loja pets = new Loja("Pets&Pets&Pets", "abc@xyz.cc", "12345678", "12.345.678/0001-90", "Rua Nova, No 1");
         Loja sports = new Loja("S(a)ports", "s@por.ts", "0000-0000", "93.333.999/0001-39", "Rua Nova, No 2");
+        LojaRepository lr = new LojaRepository();
+        lr.salvar(sports);
+        lr.salvar(pets);
 
         ProdutoController control = new ProdutoController();
         control.adicionarProduto("Ração", 1000.00, "0000", 9191, "Nutrifods", "Ração universal", pets);
@@ -137,6 +142,9 @@ class ProdutoControllerTest {
     void testListarPorLojaInexistente() {
         Loja pets = new Loja("Pets&Pets&Pets", "abc@xyz.cc", "12345678", "12.345.678/0001-90", "Rua Nova, No 1");
         Loja sports = new Loja("S(a)ports", "s@por.ts", "0000-0000", "93.333.999/0001-39", "Rua Nova, No 2");
+        LojaRepository lr = new LojaRepository();
+        lr.salvar(sports);
+        lr.salvar(pets);
 
         ProdutoController control = new ProdutoController();
         control.adicionarProduto("Ração", 1000.00, "0000", 9191, "Nutrifods", "Ração universal", pets);

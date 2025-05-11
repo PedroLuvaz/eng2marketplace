@@ -1,6 +1,7 @@
 package com.eng2marketplace.controller;
 
 import com.eng2marketplace.model.Loja;
+import com.eng2marketplace.repository.LojaRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,14 +20,8 @@ class LojaControllerTest {
     @BeforeEach
     @AfterEach
     void cleanUp() {
-        // Garante que o arquivo de teste seja deletado antes e depois de cada teste
-        File file = new File(TEST_FILE_PATH);
-        if (file.exists()) {
-            file.delete();
-        }
-
-        // Garante que o diretório data existe
-        new File("./data").mkdirs();
+        LojaRepository lr = new LojaRepository();
+        lr.limpar();
     }
 
     /**

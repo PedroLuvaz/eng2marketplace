@@ -43,6 +43,6 @@ public final class RepoCleanerTest {
         assertTrue(ar.listar().isEmpty());
         assertTrue(cr.listar().isEmpty());
         assertTrue(lr.listar().isEmpty());
-        assertTrue(pr.listarTodos().isEmpty());
+        assertTrue(pr.listar().isEmpty());
     }
 }

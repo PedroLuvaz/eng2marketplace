@@ -11,8 +11,7 @@ public final class RepoCleaner {
      */
     public static void cleanRepos() {
         AdministradorRepository ar = new AdministradorRepository();
-        for(Administrador item: ar.listar())
-            ar.removerPorEmail(item.getEmail());
+        ar.limpar();
 
         CompradorRepository cr = new CompradorRepository();
         for(Comprador item: cr.listar())
@@ -23,7 +22,7 @@ public final class RepoCleaner {
             lr.remover(item.getCpfCnpj());
 
         PedidoRepository pr = new PedidoRepository();
-        for(Pedido item: pr.listarTodos())
+        for(Pedido item: pr.listar())
             pr.remover(item.getId());
 
         ProdutoRepository pd = new ProdutoRepository(lr);
