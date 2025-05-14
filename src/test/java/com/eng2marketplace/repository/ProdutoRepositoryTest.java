@@ -192,38 +192,108 @@ class ProdutoRepositoryTest {
         ProdutoRepository repo = new ProdutoRepository(lr);
         repo.salvar(new Produto("Chapéu sem fundo", 9.50, "Equipamento", 15, "CDD", "Porta itens, pode ser usado como chapéu", loja));
 
-        lr.limpar();
+        repo.limpar();
 
-        assertTrue(lr.listar().isEmpty());
+        assertTrue(repo.listar().isEmpty());
     }
 
     @Test
     void atualizar() {
-        fail("Teste não implementado!");
+        ProdutoRepository repo = new ProdutoRepository(lr);
+        Produto bastao = new Produto("Batsao migco", 99.90, "Equipamento", 9, "CDD", "Bastão de madeira de comprimento variável", loja);
+        repo.salvar(bastao);
+
+        bastao.setNome("Bastão mágico");
+
+        boolean resultado = repo.atualizar(bastao, p -> p.getId().equals(bastao.getId()));
+
+        assertTrue(resultado);
+        assertTrue(repo.buscarPorNome("Bastão mágico").isPresent());
+        assertTrue(repo.buscarPorNome("Batsao migco").isEmpty());
+    }
+
+    @Test
+    void atualizarInvalido() {
+        ProdutoRepository repo = new ProdutoRepository(lr);
+        Produto bastao = new Produto("Batsao migco", 99.90, "Equipamento", 9, "CDD", "Bastão de madeira de comprimento variável", loja);
+        repo.salvar(bastao);
+
+        bastao.setNome("Bastão mágico");
+
+        boolean resultado = repo.atualizar(bastao, p -> p.getId().equals("bastao.getId()"));
+
+        assertFalse(resultado);
+        assertTrue(repo.buscarPorNome("Bastão mágico").isEmpty());
+        assertTrue(repo.buscarPorNome("Batsao migco").isPresent());
     }
 
     @Test
     void testRemover() {
-        fail("Teste não implementado!");
+        ProdutoRepository repo = new ProdutoRepository(lr);
+        Produto pico = new Produto("Raspberry Pi Pico", 49.95, "Eletrônicos", 5, "Adafruit", "Placa Raspberry Pi Pico", posto);
+        repo.salvar(pico);
+
+        assertTrue(repo.buscarPorNome("Raspberry Pi Pico").isPresent());
+        boolean resultado = repo.remover(p -> p.getId().equals(pico.getId()));
+
+        assertTrue(resultado);
+        assertTrue(repo.buscarPorNome("Raspberry Pi Pico").isEmpty());
+        assertTrue(repo.listar().isEmpty());
     }
 
     @Test
     void testRemoverInvalido() {
-        fail("Teste não implementado!");
+        ProdutoRepository repo = new ProdutoRepository(lr);
+        Produto pico = new Produto("Raspberry Pi Pico", 49.95, "Eletrônicos", 5, "Adafruit", "Placa Raspberry Pi Pico", posto);
+        repo.salvar(pico);
+
+        assertTrue(repo.buscarPorNome("Raspberry Pi Pico").isPresent());
+        boolean resultado = repo.remover("Arduino Mega");
+
+        assertFalse(resultado);
+        assertTrue(repo.buscarPorNome("Raspberry Pi Pico").isPresent());
+        assertEquals(1, repo.listar().size());
+    }
+    @Test
+    void removerPorId() {
+        ProdutoRepository repo = new ProdutoRepository(lr);
+        Produto pico = new Produto("Raspberry Pi Pico", 49.95, "Eletrônicos", 5, "Adafruit", "Placa Raspberry Pi Pico", posto);
+        repo.salvar(pico);
+
+        assertTrue(repo.buscarPorNome("Raspberry Pi Pico").isPresent());
+        boolean resultado = repo.removerPorId(pico.getId());
+
+        assertTrue(resultado);
+        assertTrue(repo.buscarPorNome("Raspberry Pi Pico").isEmpty());
+        assertTrue(repo.listar().isEmpty());
+    }
+    @Test
+    void testRemoverPorIdInvalido() {
+        ProdutoRepository repo = new ProdutoRepository(lr);
+        Produto pico = new Produto("Raspberry Pi Pico", 49.95, "Eletrônicos", 5, "Adafruit", "Placa Raspberry Pi Pico", posto);
+        repo.salvar(pico);
+
+        assertTrue(repo.buscarPorNome("Raspberry Pi Pico").isPresent());
+        boolean resultado = repo.removerPorId("a");
+
+        assertFalse(resultado);
+        assertTrue(repo.buscarPorNome("Raspberry Pi Pico").isPresent());
+        assertEquals(1, repo.listar().size());
     }
 
     @Test
     void testLimpar() {
-        fail("Teste não implementado!");
+        ProdutoRepository repo = new ProdutoRepository(lr);
+        repo.salvar(new Produto("Raspberry Pi Pico", 49.95, "Eletrônicos", 5, "Adafruit", "Placa Raspberry Pi Pico", posto));
+        repo.salvar(new Produto("STM32", 59.95, "Eletrônicos", 3, "ST", "Placa de desenvolvimento STM32", posto));
+        repo.salvar(new Produto("Jetson Nano", 4999.95, "Eletrônicos", 5, "Nvidia", "Placa de desenvolvimento Nvidia Jetson Nano 4GB", posto));
+        repo.salvar(new Produto("ESP32", 129.95, "Eletrônicos", 5, "EspressIf", "Placa ESP32-D0WD", posto));
+        repo.salvar(new Produto("Arduino Nano", 59.95, "Eletrônicos", 5, "Arduino", "Placa Arduino Nano Atmega328", posto));
+
+        assertEquals(5, repo.listar().size());
+        repo.limpar();
+
+        assertTrue(repo.listar().isEmpty());
     }
 
-    @Test
-    void removerPorId() {
-        fail("Teste não implementado!");
-    }
-
-    @Test
-    void testRemoverPorIdInvalido() {
-        fail("Teste não implementado!");
-    }
 }

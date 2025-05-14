@@ -5,6 +5,7 @@ import com.eng2marketplace.repository.LojaRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.io.File;
 import java.util.List;
@@ -137,6 +138,20 @@ class LojaControllerTest {
     }
 
     /**
+     * Testa adicionar loja com CPF/CNPJ com documento inválido
+     */
+    @Test
+    void testAdicionarLojaComCpfCnpjInvalido() {
+        LojaController control = new LojaController();
+        try {
+            control.adicionarLoja("Pet Center", "pet@email.com", "outrasenha", "1", "Av. Principal, 456");
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(true);
+        }
+    }
+
+    /**
      * Testa buscar loja por CPF/CNPJ
      */
     @Test
@@ -151,5 +166,120 @@ class LojaControllerTest {
 
         Loja naoEncontrada = control.buscarLojaPorCpfCnpj("000.000.000-00");
         assertNull(naoEncontrada);
+    }
+
+    /**
+     * Testa buscar loja por CPF/CNPJ
+     */
+    @Test
+    void testBuscarPorCpfCnpjInvalido() {
+        LojaController control = new LojaController();
+        control.adicionarLoja("Pou pet store", "pou@animals.at", "0000", "074.801.734-03", "Rua José da Silva Jr., No 200");
+        control.adicionarLoja("Restaurante da Penha", "penha123@a-mail.com", "13011990", "072.931.665-18", "Rua José da Silva Jr., No 201");
+
+        try {
+            control.buscarLojaPorCpfCnpj(null);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(true); // ok
+        }
+
+        try {
+            control.buscarLojaPorCpfCnpj("");
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(true); // ok
+        }
+    }
+
+    @Test
+    void fazerLogin() {
+        LojaRepository repo = new LojaRepository();
+        repo.salvar(new Loja("Pou pet store", "pou@animals.at", "0000", "074.801.734-03", "Rua José da Silva Jr., No 200"));
+        repo.salvar(new Loja("Restaurante da Penha", "penha123@a-mail.com", "13011990", "072.931.665-18", "Rua José da Silva Jr., No 201"));
+
+        LojaController control = new LojaController();
+        Loja result = control.fazerLogin("074.801.734-03", "0000");
+
+        assertEquals("pou@animals.at", result.getEmail());
+    }
+
+    @Test
+    void fazerLoginFail() {
+        LojaRepository repo = new LojaRepository();
+        repo.salvar(new Loja("Pou pet store", "pou@animals.at", "0000", "074.801.734-03", "Rua José da Silva Jr., No 200"));
+        repo.salvar(new Loja("Restaurante da Penha", "penha123@a-mail.com", "13011990", "072.931.665-18", "Rua José da Silva Jr., No 201"));
+
+        LojaController control = new LojaController();
+        try {
+            control.fazerLogin("074.801.734-03", "abc"); // senha errada
+        } catch (IllegalArgumentException e) {
+            assertTrue(true);
+        }
+
+        try {
+            control.fazerLogin("000.000.000-00", "0000"); // usuário errada
+        } catch (IllegalArgumentException e) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    void fazerLoginFailTooMuch() {
+        LojaRepository repo = new LojaRepository();
+        repo.salvar(new Loja("Pou pet store", "pou@animals.at", "0000", "074.801.734-03", "Rua José da Silva Jr., No 200"));
+        repo.salvar(new Loja("Restaurante da Penha", "penha123@a-mail.com", "13011990", "072.931.665-18", "Rua José da Silva Jr., No 201"));
+
+        LojaController control = new LojaController();
+        try {
+            for(int i=0; i<10; i++) {
+                try {
+                    control.fazerLogin("074.801.734-03", "abc"); // senha errada
+                } catch (IllegalArgumentException e) { }
+            }
+        } catch (IllegalStateException e) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    void logout() {
+        LojaRepository repo = new LojaRepository();
+        repo.salvar(new Loja("Pou pet store", "pou@animals.at", "0000", "074.801.734-03", "Rua José da Silva Jr., No 200"));
+        repo.salvar(new Loja("Restaurante da Penha", "penha123@a-mail.com", "13011990", "072.931.665-18", "Rua José da Silva Jr., No 201"));
+
+        LojaController control = new LojaController();
+        control.fazerLogin("074.801.734-03", "0000");
+        assertTrue(control.isLoggedIn());
+        control.logout();
+
+        assertFalse(control.isLoggedIn());
+    }
+
+    @Test
+    void isLoggedIn() {
+        LojaRepository repo = new LojaRepository();
+        repo.salvar(new Loja("Pou pet store", "pou@animals.at", "0000", "074.801.734-03", "Rua José da Silva Jr., No 200"));
+        repo.salvar(new Loja("Restaurante da Penha", "penha123@a-mail.com", "13011990", "072.931.665-18", "Rua José da Silva Jr., No 201"));
+
+        LojaController control = new LojaController();
+        assertFalse(control.isLoggedIn());
+        control.fazerLogin("074.801.734-03", "0000");
+
+        assertTrue(control.isLoggedIn());
+    }
+
+    @Test
+    void getLojaLogada() {
+        LojaRepository repo = new LojaRepository();
+        repo.salvar(new Loja("Pou pet store", "pou@animals.at", "0000", "074.801.734-03", "Rua José da Silva Jr., No 200"));
+        repo.salvar(new Loja("Restaurante da Penha", "penha123@a-mail.com", "13011990", "072.931.665-18", "Rua José da Silva Jr., No 201"));
+        LojaController control = new LojaController();
+        control.fazerLogin("074.801.734-03", "0000");
+        assertTrue(control.isLoggedIn());
+
+        Loja result = control.getLojaLogada();
+
+        assertEquals("pou@animals.at", result.getEmail());
     }
 }
