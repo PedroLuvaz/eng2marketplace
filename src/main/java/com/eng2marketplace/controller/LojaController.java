@@ -2,9 +2,11 @@ package com.eng2marketplace.controller;
 
 import com.eng2marketplace.model.Loja;
 import com.eng2marketplace.repository.LojaRepository;
+import com.eng2marketplace.model.Avaliacao;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
 
 /**
  * Controlador responsável por gerenciar as operações relacionadas às lojas.
@@ -140,5 +142,91 @@ public class LojaController {
      */
     public Loja getLojaLogada() {
         return this.lojaLogada;
+    }
+
+    /**
+     * Adiciona uma avaliação a uma loja.
+     *
+     * @param cpfCnpj CPF/CNPJ da loja a ser avaliada.
+     * @param compradorCpf CPF do comprador que está avaliando.
+     * @param nota Nota da avaliação (1 a 5).
+     * @param comentario Comentário da avaliação.
+     */
+    public void avaliarLoja(String cpfCnpj, String compradorCpf, int nota, String comentario) {
+        Loja loja = buscarLojaPorCpfCnpj(cpfCnpj);
+        if (loja == null) throw new IllegalArgumentException("Loja não encontrada");
+        Avaliacao avaliacao = new Avaliacao(compradorCpf, nota, comentario);
+        loja.adicionarAvaliacao(avaliacao);
+        lojaRepository.salvar(loja); // Atualiza loja no repositório, se necessário
+    }
+
+    /**
+     * Retorna a média das avaliações de uma loja.
+     *
+     * @param cpfCnpj CPF/CNPJ da loja.
+     * @return Média das avaliações.
+     */
+    public double getMediaAvaliacoes(String cpfCnpj) {
+        Loja loja = buscarLojaPorCpfCnpj(cpfCnpj);
+        if (loja == null) throw new IllegalArgumentException("Loja não encontrada");
+        return loja.getMediaAvaliacoes();
+    }
+
+    /**
+     * Retorna o conceito da loja baseado nas avaliações.
+     *
+     * @param cpfCnpj CPF/CNPJ da loja.
+     * @return Conceito da loja.
+     */
+    public String getConceitoLoja(String cpfCnpj) {
+        Loja loja = buscarLojaPorCpfCnpj(cpfCnpj);
+        if (loja == null) throw new IllegalArgumentException("Loja não encontrada");
+        return loja.getConceito();
+    }
+
+    /**
+     * Retorna as avaliações de uma loja.
+     *
+     * @param cpfCnpj CPF/CNPJ da loja.
+     * @return Lista de avaliações.
+     */
+    public List<Avaliacao> getAvaliacoesLoja(String cpfCnpj) {
+        Loja loja = buscarLojaPorCpfCnpj(cpfCnpj);
+        if (loja == null) throw new IllegalArgumentException("Loja não encontrada");
+        return loja.getAvaliacoes();
+    }
+
+    // Exemplo de exibição em um menu de consulta de lojas
+    public void mostrarDetalhesLoja(LojaController lojaController, String cpfCnpj) {
+        Loja loja = lojaController.buscarLojaPorCpfCnpj(cpfCnpj);
+        if (loja == null) {
+            System.out.println("Loja não encontrada.");
+            return;
+        }
+        System.out.println("Nome: " + loja.getNome());
+        System.out.println("Endereço: " + loja.getEndereco());
+        System.out.println("Conceito: " + lojaController.getConceitoLoja(cpfCnpj));
+        System.out.println("Média das avaliações: " + lojaController.getMediaAvaliacoes(cpfCnpj));
+        System.out.println("Avaliações:");
+        for (Avaliacao av : lojaController.getAvaliacoesLoja(cpfCnpj)) {
+            System.out.println("Nota: " + av.getNota() + " | Comentário: " + av.getComentario() + " | Comprador: " + av.getCompradorCpf());
+        }
+    }
+
+    // Exemplo de método para avaliar uma loja após a compra
+    public void avaliarLojaView(LojaController lojaController, String cpfCnpj, String compradorCpf) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Digite a nota para a loja (1 a 5): ");
+        int nota = scanner.nextInt();
+        scanner.nextLine(); // Limpa o buffer
+        System.out.println("Digite um comentário: ");
+        String comentario = scanner.nextLine();
+
+        try {
+            lojaController.avaliarLoja(cpfCnpj, compradorCpf, nota, comentario);
+            System.out.println("Avaliação registrada com sucesso!");
+        } catch (Exception e) {
+            System.out.println("Erro ao avaliar loja: " + e.getMessage());
+        }
     }
 }

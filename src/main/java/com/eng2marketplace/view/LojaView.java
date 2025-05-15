@@ -2,6 +2,7 @@ package com.eng2marketplace.view;
 
 import com.eng2marketplace.Facade.MarketplaceFacade;
 import com.eng2marketplace.model.Loja;
+import com.eng2marketplace.model.Avaliacao;
 import com.eng2marketplace.view.input.ConsoleInput;
 
 import java.util.List;
@@ -24,10 +25,11 @@ public class LojaView {
             System.out.println("3. Buscar Loja por CPF/CNPJ");
             System.out.println("4. Remover Loja");
             System.out.println("5. Logout");
+            System.out.println("6. Ver avaliações de uma loja"); // Nova opção
             System.out.println("0. Voltar");
             System.out.print("Escolha uma opção: ");
 
-            opcao = scanner.getNumber(0, 5);
+            opcao = scanner.getNumber(0, 6);
 
             if(opcao == null) {
                 System.out.println("Opção inválida.");
@@ -44,6 +46,7 @@ public class LojaView {
                     System.out.println("Logout realizado com sucesso!");
                     return;
                 }
+                case 6 -> mostrarAvaliacoesLoja(); // Chama o método de avaliações
                 case 0 -> System.out.println("Voltando ao menu principal...");
             }
         } while (opcao == null || opcao != 0);
@@ -117,6 +120,22 @@ public class LojaView {
             }
         } catch (IllegalArgumentException e) {
             System.out.println("Erro ao remover loja: " + e.getMessage());
+        }
+    }
+
+    private void mostrarAvaliacoesLoja() {
+        String cpfCnpj = scanner.askCPFCNPJ("Informe o CPF/CNPJ da loja: ", "CPF/CNPJ inválido!");
+        Loja loja = facade.buscarLojaPorCpfCnpj(cpfCnpj);
+        if (loja == null) {
+            System.out.println("Loja não encontrada.");
+            return;
+        }
+        System.out.println("Nome: " + loja.getNome());
+        System.out.println("Conceito: " + facade.getConceitoLoja(cpfCnpj));
+        System.out.println("Média das avaliações: " + facade.getMediaAvaliacoes(cpfCnpj));
+        System.out.println("Avaliações:");
+        for (Avaliacao av : facade.getAvaliacoesLoja(cpfCnpj)) {
+            System.out.println("Nota: " + av.getNota() + " | Comentário: " + av.getComentario() + " | Comprador: " + av.getCompradorCpf());
         }
     }
 

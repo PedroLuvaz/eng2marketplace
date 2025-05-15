@@ -12,14 +12,16 @@ public class Pedido {
     private double valorTotal;
     private LocalDateTime dataPedido;
     private String status; // "EM_PROCESSAMENTO", "ENVIADO", "ENTREGUE", "CANCELADO"
+    private Loja loja;
 
-    public Pedido(String compradorCpf, Map<String, Integer> carrinho, double valorTotal) {
+    public Pedido(String compradorCpf, Map<String, Integer> carrinho, double valorTotal, Loja loja) {
         this.id = UUID.randomUUID().toString();
         this.compradorCpf = compradorCpf;
         this.itens = new HashMap<>(carrinho);
         this.valorTotal = valorTotal;
         this.dataPedido = LocalDateTime.now();
         this.status = "EM_PROCESSAMENTO";
+        this.loja = loja;
     }
 
     // Getters
@@ -29,6 +31,7 @@ public class Pedido {
     public double getValorTotal() { return valorTotal; }
     public LocalDateTime getDataPedido() { return dataPedido; }
     public String getStatus() { return status; }
+    public Loja getLoja() { return loja; }
 
     // Setters
     public void setStatus(String status) { 

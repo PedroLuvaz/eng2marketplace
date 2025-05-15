@@ -336,8 +336,27 @@ public class ConsoleInput {
         }
     }
 
-    public Long askLong(String string, int i, long maxValue, String string2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'askLong'");
+    public Long askLong(String prompt, long min, long max, String errorMessage) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                long value = Long.parseLong(scanner.nextLine());
+                if (value >= min && value <= max) {
+                    return value;
+                }
+                System.out.println(errorMessage);
+            } catch (NumberFormatException e) {
+                System.out.println(errorMessage);
+            }
+        }
+    }
+
+    public String nextLine() {
+        return scanner.nextLine();
+    }
+
+    public String askText(String prompt) {
+        System.out.print(prompt);
+        return scanner.nextLine();
     }
 }

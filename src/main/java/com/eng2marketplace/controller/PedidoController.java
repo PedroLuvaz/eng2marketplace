@@ -1,5 +1,6 @@
 package com.eng2marketplace.controller;
 
+import com.eng2marketplace.model.Loja;
 import com.eng2marketplace.model.Pedido;
 import com.eng2marketplace.repository.PedidoRepository;
 
@@ -13,8 +14,8 @@ public class PedidoController {
         this.pedidoRepository = new PedidoRepository();
     }
 
-    public Pedido criarPedido(String compradorCpf, Map<String, Integer> carrinho, double valorTotal) {
-        Pedido pedido = new Pedido(compradorCpf, carrinho, valorTotal);
+    public Pedido criarPedido(String compradorCpf, Map<String, Integer> carrinho, double valorTotal, Loja loja) {
+        Pedido pedido = new Pedido(compradorCpf, carrinho, valorTotal, loja);
         pedidoRepository.salvar(pedido);
         return pedido;
     }

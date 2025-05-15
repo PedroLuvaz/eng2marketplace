@@ -10,7 +10,7 @@ import com.eng2marketplace.model.Comprador;
 import com.eng2marketplace.model.Loja;
 import com.eng2marketplace.model.Pedido;
 import com.eng2marketplace.model.Produto;
-
+import com.eng2marketplace.model.Avaliacao;
 
 import java.util.List;
 import java.util.Map;
@@ -269,7 +269,24 @@ public class MarketplaceFacade {
         }
         
         double total = calcularTotalCarrinho(carrinho);
-        Pedido pedido = pedidoController.criarPedido(compradorCpf, carrinho, total);
+        // Supondo que todos os produtos do carrinho são da mesma loja, pegamos o primeiro produto para obter o lojaCpfCnpj
+        String lojaCpfCnpj = null;
+        Loja loja = null;
+        if (!carrinho.isEmpty()) {
+            String primeiroProdutoId = carrinho.keySet().iterator().next();
+            Produto produto = listarProdutos().stream()
+                .filter(p -> p.getId().equals(primeiroProdutoId))
+                .findFirst()
+                .orElse(null);
+            if (produto != null && produto.getLoja() != null) {
+                lojaCpfCnpj = produto.getLoja().getCpfCnpj();
+                loja = buscarLojaPorCpfCnpj(lojaCpfCnpj); // Busca o objeto Loja
+            }
+        }
+        if (loja == null) {
+            throw new IllegalStateException("Loja não encontrada para o pedido.");
+        }
+        Pedido pedido = pedidoController.criarPedido(compradorCpf, carrinho, total, loja);
         compradorController.limparCarrinho();
         return pedido;
     }
@@ -293,5 +310,27 @@ public class MarketplaceFacade {
         }
         
         return total[0];
+    }
+
+    public boolean podeAvaliarLoja(String compradorCpf, String lojaCpfCnpj) {
+        List<Pedido> pedidos = listarHistoricoCompras(compradorCpf);
+        return pedidos.stream()
+            .anyMatch(p -> p.getLoja().getCpfCnpj().equals(lojaCpfCnpj) && p.getStatus().equalsIgnoreCase("FINALIZADO"));
+    }
+
+    public void avaliarLoja(String lojaCpfCnpj, String compradorCpf, int nota, String comentario) {
+        lojaController.avaliarLoja(lojaCpfCnpj, compradorCpf, nota, comentario);
+    }
+
+    public List<Avaliacao> getAvaliacoesLoja(String lojaCpfCnpj) {
+        return lojaController.getAvaliacoesLoja(lojaCpfCnpj);
+    }
+
+    public double getMediaAvaliacoes(String lojaCpfCnpj) {
+        return lojaController.getMediaAvaliacoes(lojaCpfCnpj);
+    }
+
+    public String getConceitoLoja(String lojaCpfCnpj) {
+        return lojaController.getConceitoLoja(lojaCpfCnpj);
     }
 }

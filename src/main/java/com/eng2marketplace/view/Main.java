@@ -2,6 +2,7 @@ package com.eng2marketplace.view;
 
 import com.eng2marketplace.Facade.MarketplaceFacade;
 import com.eng2marketplace.model.Loja;
+import com.eng2marketplace.model.Avaliacao;
 import com.eng2marketplace.view.input.ConsoleInput;
 
 
@@ -77,7 +78,7 @@ public class Main {
                 System.out.println("0. Sair");
                 System.out.print("Escolha uma opção: ");
 
-                Integer opcao = scanner.getNumber(0, 5);
+                Integer opcao = scanner.getNumber(0, 6);
                 if (opcao == null) continue;
 
                 switch (opcao) {
