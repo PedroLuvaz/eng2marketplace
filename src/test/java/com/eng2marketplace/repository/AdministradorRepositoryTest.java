@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
 
-import static com.eng2marketplace.util.RepoCleaner.cleanRepos;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -22,7 +21,9 @@ class AdministradorRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        cleanRepos(); // limpa todos os repositórios
+        // limpa todos os repositórios
+        AdministradorRepository ar = new AdministradorRepository();
+        ar.limpar();
     }
 
     /**
@@ -78,7 +79,7 @@ class AdministradorRepositoryTest {
      * Testa recuperar um administrador buscando por email
      */
     @Test
-    void testBuscarPorEmail() {
+    void testBuscar() {
         Administrador adm = new Administrador("Santos", "breja@full.no", "********");
         Administrador adm2 = new Administrador("Lourenço", "ttk@fish.br", "--------");
         AdministradorRepository ar = new AdministradorRepository();
@@ -86,7 +87,8 @@ class AdministradorRepositoryTest {
         ar.salvar(adm);
         ar.salvar(adm2);
 
-        Optional<Administrador> result = ar.buscarPorEmail("breja@full.no");
+        Optional<Administrador> result = ar.buscar(
+            a -> a.getEmail().equalsIgnoreCase("breja@full.no"));
 
         assertTrue(result.isPresent());
         assertEquals(result.get().getEmail(), adm.getEmail());
@@ -97,15 +99,15 @@ class AdministradorRepositoryTest {
      * Testa recuperar um administrador informando um email inválido.
      */
     @Test
-    void testBuscarPorEmailInvalido() {
+    void testBuscarInvalido() {
         Administrador adm = new Administrador("Santos", "breja@full.no", "********");
         Administrador adm2 = new Administrador("Lourenço", "ttk@fish.br", "--------");
         AdministradorRepository ar = new AdministradorRepository();
 
         ar.salvar(adm);
         ar.salvar(adm2);
-
-        Optional<Administrador> result = ar.buscarPorEmail("random@rng.num");
+        Optional<Administrador> result = ar.buscar(
+            a -> a.getEmail().equalsIgnoreCase("random@rng.num"));
 
         assertFalse(result.isPresent());
     }
@@ -114,7 +116,7 @@ class AdministradorRepositoryTest {
      * Testa remover um administrador usando o email
      */
     @Test
-    void testRemoverPorEmail() {
+    void testRemover() {
         Administrador adm = new Administrador("Carlos", "carlos.mengo@courier.bat", "||||||||");
         Administrador adm2 = new Administrador("Vizeu", "zivizeu@default.html", "%%%%%%%%");
         AdministradorRepository ar = new AdministradorRepository();
@@ -122,7 +124,7 @@ class AdministradorRepositoryTest {
         ar.salvar(adm);
         ar.salvar(adm2);
 
-        boolean result = ar.removerPorEmail("zivizeu@default.html");
+        boolean result = ar.remover(a -> a.getEmail().equalsIgnoreCase("zivizeu@default.html"));
 
         assertTrue(result);
         assertEquals(1, ar.listar().size());
@@ -140,7 +142,7 @@ class AdministradorRepositoryTest {
         ar.salvar(adm);
         ar.salvar(adm2);
 
-        boolean result = ar.removerPorEmail("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        boolean result = ar.remover(a -> a.getEmail().equalsIgnoreCase("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
 
         assertFalse(result);
         assertEquals(2, ar.listar().size());
@@ -150,7 +152,7 @@ class AdministradorRepositoryTest {
      * Testa remover todos os administradores de uma vez só
      */
     @Test
-    void testLimparTodos() {
+    void testLimpar() {
         AdministradorRepository ar = new AdministradorRepository();
 
         ar.salvar(new Administrador("Carlos", "carlos.mengo@courier.bat", "||||||||"));
@@ -162,7 +164,7 @@ class AdministradorRepositoryTest {
         ar.salvar(new Administrador("Tavares", "vares31@sipwith.us", "........"));
 
         assertEquals(7, ar.listar().size());
-        ar.limparTodos();
+        ar.limpar();
 
         assertTrue(ar.listar().isEmpty());
     }

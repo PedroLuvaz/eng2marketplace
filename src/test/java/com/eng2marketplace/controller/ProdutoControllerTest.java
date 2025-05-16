@@ -2,11 +2,14 @@ package com.eng2marketplace.controller;
 
 import com.eng2marketplace.model.Loja;
 import com.eng2marketplace.model.Produto;
+import com.eng2marketplace.repository.LojaRepository;
+import com.eng2marketplace.repository.ProdutoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,12 +22,12 @@ class ProdutoControllerTest {
 
     @BeforeEach
     void setup() {
-        // deleta o repositório de Produtos
-        File f = new File("src/main/data/produtos.json");
-        if(!f.exists())
-            return;
-        if(!f.delete())
-            throw new RuntimeException();
+        LojaRepository lr = new LojaRepository();
+        lr.limpar();
+        lr.salvar(LOJA);
+
+        ProdutoRepository pr = new ProdutoRepository(lr);
+        pr.limpar();
     }
 
     /**
@@ -116,6 +119,9 @@ class ProdutoControllerTest {
     void testListarPorLoja() {
         Loja pets = new Loja("Pets&Pets&Pets", "abc@xyz.cc", "12345678", "12.345.678/0001-90", "Rua Nova, No 1");
         Loja sports = new Loja("S(a)ports", "s@por.ts", "0000-0000", "93.333.999/0001-39", "Rua Nova, No 2");
+        LojaRepository lr = new LojaRepository();
+        lr.salvar(sports);
+        lr.salvar(pets);
 
         ProdutoController control = new ProdutoController();
         control.adicionarProduto("Ração", 1000.00, "0000", 9191, "Nutrifods", "Ração universal", pets);
@@ -137,6 +143,9 @@ class ProdutoControllerTest {
     void testListarPorLojaInexistente() {
         Loja pets = new Loja("Pets&Pets&Pets", "abc@xyz.cc", "12345678", "12.345.678/0001-90", "Rua Nova, No 1");
         Loja sports = new Loja("S(a)ports", "s@por.ts", "0000-0000", "93.333.999/0001-39", "Rua Nova, No 2");
+        LojaRepository lr = new LojaRepository();
+        lr.salvar(sports);
+        lr.salvar(pets);
 
         ProdutoController control = new ProdutoController();
         control.adicionarProduto("Ração", 1000.00, "0000", 9191, "Nutrifods", "Ração universal", pets);
@@ -149,4 +158,40 @@ class ProdutoControllerTest {
         assertEquals(0, result.size());
     }
 
+    @Test
+    void testBuscarProdutoPorId() {
+        Loja pets = new Loja("Pets&Pets&Pets", "abc@xyz.cc", "12345678", "12.345.678/0001-90", "Rua Nova, No 1");
+        Loja sports = new Loja("S(a)ports", "s@por.ts", "0000-0000", "93.333.999/0001-39", "Rua Nova, No 2");
+        LojaRepository lr = new LojaRepository();
+        lr.salvar(sports);
+        lr.salvar(pets);
+        ProdutoRepository repo = new ProdutoRepository(lr);
+        Produto p = new Produto("Colher", 1.50, "00001", 300, "AluminoKitchen", "Colher de aço inox", sports);
+        repo.salvar(p);
+
+        ProdutoController control = new ProdutoController();
+        Produto result = control.buscarProdutoPorId(p.getId());
+
+        assertNotNull(result);
+        assertEquals(p.getId(), result.getId());
+    }
+
+    @Test
+    void testRemoverProdutoPorId() {
+        Loja pets = new Loja("Pets&Pets&Pets", "abc@xyz.cc", "12345678", "12.345.678/0001-90", "Rua Nova, No 1");
+        Loja sports = new Loja("S(a)ports", "s@por.ts", "0000-0000", "93.333.999/0001-39", "Rua Nova, No 2");
+        LojaRepository lr = new LojaRepository();
+        lr.salvar(sports);
+        lr.salvar(pets);
+        ProdutoRepository repo = new ProdutoRepository(lr);
+        Produto p = new Produto("Copo Shake", 15.00, "00001", 300, "PlastiKitchen", "Copo 800ml", sports);
+        repo.salvar(p);
+
+        ProdutoController control = new ProdutoController();
+        boolean result = control.removerProdutoPorId(p.getId());
+
+        assertTrue(result);
+        Optional<Produto> test = repo.buscarPorId(p.getId());
+        assertTrue(test.isEmpty());
+    }
 }

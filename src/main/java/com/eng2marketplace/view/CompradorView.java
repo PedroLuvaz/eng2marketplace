@@ -36,7 +36,10 @@ public class CompradorView {
             }
 
             switch (opcao) {
-                case 1 -> logoutComprador();
+                case 1 -> {
+                    logoutComprador();
+                    opcao = 0;
+                }
                 case 2 -> menuCarrinho();
                 case 3 -> {
                     try {
@@ -121,7 +124,7 @@ public class CompradorView {
                 case 6 -> finalizarCompra();
                 case 0 -> System.out.println("Voltando ao menu anterior...");
             }
-        } while (opcao != 0);
+        } while (opcao == null || opcao != 0);
     }
 
     private void adicionarAoCarrinho() {

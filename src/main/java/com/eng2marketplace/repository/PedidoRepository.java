@@ -1,7 +1,6 @@
 package com.eng2marketplace.repository;
 
 import com.eng2marketplace.model.Pedido;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -12,103 +11,55 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class PedidoRepository {
+public class PedidoRepository extends JSONRepository<Pedido> {
     private static final String ARQUIVO_PEDIDOS = "src/main/data/pedidos.json";
-    private final Gson gson;
-    private final Type listType = new TypeToken<ArrayList<Pedido>>() {}.getType();
 
     public PedidoRepository() {
-        this.gson = new GsonBuilder()
-                .setPrettyPrinting()
+        super(ARQUIVO_PEDIDOS,
+            new TypeToken<>(){},
+            new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .create();
-        criarArquivoSeNaoExistir();
-    }
-
-    private void criarArquivoSeNaoExistir() {
-        try {
-            java.io.File file = new java.io.File(ARQUIVO_PEDIDOS);
-            if (!file.exists()) {
-                file.getParentFile().mkdirs();
-                salvarLista(new ArrayList<>());
-            }
-        } catch (Exception e) {
-            System.err.println("Erro ao criar arquivo JSON: " + e.getMessage());
-        }
-    }
-
-    public void salvar(Pedido pedido) {
-        List<Pedido> pedidos = listarTodos();
-        pedidos.add(pedido);
-        salvarLista(pedidos);
+        );
     }
 
     public boolean remover(String id) {
-        List<Pedido> pedidos = listarTodos();
-        boolean removido = pedidos.removeIf(pedido -> pedido.getId().equals(id));
-        if(removido)
-            salvarLista(pedidos);
-        return removido;
-    }
-
-    public List<Pedido> listarTodos() {
-        try (FileReader reader = new FileReader(ARQUIVO_PEDIDOS)) {
-            List<Pedido> pedidos = gson.fromJson(reader, listType);
-            return pedidos != null ? pedidos : new ArrayList<>();
-        } catch (IOException e) {
-            System.err.println("Erro ao ler arquivo JSON: " + e.getMessage());
-            return new ArrayList<>();
-        }
+        return super.remover(pedido -> pedido.getId().equals(id));
     }
 
     public List<Pedido> listarPorComprador(String compradorCpf) {
-        return listarTodos().stream()
+        return listar().stream()
                 .filter(p -> p.getCompradorCpf().equals(compradorCpf))
                 .collect(Collectors.toList());
     }
 
     public boolean atualizarStatus(String pedidoId, String novoStatus) {
-        List<Pedido> pedidos = listarTodos();
-        for (Pedido pedido : pedidos) {
-            if (pedido.getId().equals(pedidoId)) {
-                pedido.setStatus(novoStatus);
-                salvarLista(pedidos);
-                return true;
-            }
+        Optional<Pedido> optionalPedido = super.buscar(p -> p.getId().equals(pedidoId));
+        if(optionalPedido.isEmpty())
+            return false;
+        Pedido pedido = optionalPedido.get();
+        pedido.setStatus(novoStatus);
+        return super.atualizar(pedido, p -> p.getId().equals(pedidoId));
+    }
+
+    public static class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
+        private final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
+        @Override
+        public JsonElement serialize(LocalDateTime src, Type typeOfSrc, JsonSerializationContext context) {
+            return new JsonPrimitive(formatter.format(src));
         }
-        return false;
-    }
 
-    private void salvarLista(List<Pedido> pedidos) {
-        try (FileWriter writer = new FileWriter(ARQUIVO_PEDIDOS)) {
-            gson.toJson(pedidos, writer);
-        } catch (IOException e) {
-            System.err.println("Erro ao salvar arquivo JSON: " + e.getMessage());
-        }
-    }
-
-    public class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
-    private final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-
-    @Override
-    public JsonElement serialize(LocalDateTime src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(formatter.format(src));
-    }
-
-    @Override
-    public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        @Override
+        public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
-        return LocalDateTime.parse(json.getAsString(), formatter);
+            return LocalDateTime.parse(json.getAsString(), formatter);
+        }
     }
-}
 }

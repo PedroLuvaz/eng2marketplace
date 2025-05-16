@@ -1,20 +1,16 @@
 package com.eng2marketplace.util;
 
-import com.eng2marketplace.model.Administrador;
-import com.eng2marketplace.model.Comprador;
-import com.eng2marketplace.model.Loja;
-import com.eng2marketplace.model.Pedido;
-import com.eng2marketplace.repository.AdministradorRepository;
-import com.eng2marketplace.repository.CompradorRepository;
-import com.eng2marketplace.repository.LojaRepository;
-import com.eng2marketplace.repository.PedidoRepository;
+import com.eng2marketplace.model.*;
+import com.eng2marketplace.repository.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.eng2marketplace.util.RepoCleaner.cleanRepos;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 public final class RepoCleanerTest {
@@ -35,10 +31,18 @@ public final class RepoCleanerTest {
         PedidoRepository pr = new PedidoRepository();
         pr.salvar(new Pedido("123.123.123-33", carrinho, 50.0));
 
+        ProdutoRepository pdr = new ProdutoRepository(lr);
+        lr.salvar(new Loja("Ecko Suplementos", "ecko@mail.sport", "Sim", "123.132.321-32", "Parque Comercil, 231"));
+        Optional<Loja> opLoja = lr.buscarPorCpfCnpj("123.132.321-32");
+        if(opLoja.isEmpty())
+            fail();
+        Loja ecko = opLoja.get();
+        pdr.salvar(new Produto("Creatina", 99.90, "Suplementos", 199, "Spike", "Creatina 200g", ecko));
+
         cleanRepos();
         assertTrue(ar.listar().isEmpty());
         assertTrue(cr.listar().isEmpty());
         assertTrue(lr.listar().isEmpty());
-        assertTrue(pr.listarTodos().isEmpty());
+        assertTrue(pr.listar().isEmpty());
     }
 }

@@ -3,6 +3,7 @@ package com.eng2marketplace.controller;
 import com.eng2marketplace.model.Administrador;
 import com.eng2marketplace.repository.AdministradorRepository;
 
+import java.util.Optional;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -23,6 +24,11 @@ public class AdministradorController {
         this.tentativasLogin = 0;
     }
 
+    private Optional<Administrador> buscarPorEmail(String email) {
+        return administradorRepository.buscar(
+            a -> a.getEmail().equalsIgnoreCase(email));
+    }
+
     /**
      * Realiza o login de um administrador.
      *
@@ -32,10 +38,9 @@ public class AdministradorController {
      */
     public boolean login(String email, String senha) {
         try {
-            Administrador administrador = administradorRepository
-                .buscarPorEmail(email)
+            Administrador administrador = buscarPorEmail(email)
                 .orElseThrow(); // Lança NoSuchElementException se não encontrar
-    
+
             if (administrador.getSenha().equals(senha)) {
                 administradorLogado = administrador;
                 tentativasLogin = 0;
@@ -44,13 +49,13 @@ public class AdministradorController {
         } catch (NoSuchElementException e) {
             // Ignorado propositalmente, será tratado abaixo
         }
-    
+
         tentativasLogin++;
         if (tentativasLogin >= 5) {
             tentativasLogin = 0;
             throw new IllegalStateException("Número máximo de tentativas excedido");
         }
-    
+
         return false;
     }
 
@@ -78,7 +83,7 @@ public class AdministradorController {
      * @param senha Senha do administrador.
      */
     public void adicionarAdministrador(String nome, String email, String senha) {
-        if (administradorRepository.buscarPorEmail(email).isPresent()) {
+        if (buscarPorEmail(email).isPresent()) {
             throw new IllegalArgumentException("Já existe um administrador com este email");
         }
         administradorRepository.salvar(new Administrador(nome, email, senha));
@@ -91,7 +96,7 @@ public class AdministradorController {
      * @return true se o administrador foi removido, false caso contrário.
      */
     public boolean removerAdministrador(String email) {
-        return administradorRepository.removerPorEmail(email);
+        return administradorRepository.remover(admin -> admin.getEmail().equalsIgnoreCase(email));
     }
 
     /**
@@ -102,8 +107,8 @@ public class AdministradorController {
      * @throws NoSuchElementException Se o administrador não for encontrado.
      */
     public Administrador buscarAdministradorPorEmail(String email) {
-        return administradorRepository.buscarPorEmail(email)
-                .orElseThrow(() -> new NoSuchElementException("Administrador não encontrado: " + email));
+        return buscarPorEmail(email)
+            .orElseThrow(() -> new NoSuchElementException("Administrador não encontrado: " + email));
     }
 
     /**
@@ -120,6 +125,6 @@ public class AdministradorController {
     }
 
     public List<Administrador> listarAdministradores() {
-    return administradorRepository.listar();  // Assumindo que o repositório tem esse método
+        return administradorRepository.listar();  // Assumindo que o repositório tem esse método
     }
 }

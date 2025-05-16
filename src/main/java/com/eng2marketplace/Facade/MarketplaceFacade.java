@@ -73,7 +73,7 @@ public class MarketplaceFacade {
             System.out.println("Administrador padrão criado!");
         }
     }
-    
+
     // Métodos para Loja (mantidos existentes)
 
     // Adiciona uma nova loja ao sistema
@@ -194,7 +194,7 @@ public class MarketplaceFacade {
         if (tentativasLoginLoja >= 5) {
             throw new IllegalStateException("Número máximo de tentativas excedido. Tente novamente mais tarde.");
         }
-        
+
         Loja loja = lojaController.fazerLogin(cpfCnpj, senha);
         if (loja == null) {
             tentativasLoginLoja++;
@@ -203,12 +203,12 @@ public class MarketplaceFacade {
         tentativasLoginLoja = 0; // Reseta se login for bem-sucedido
         return loja;
     }
-    
+
     public boolean loginComprador(String cpf, String senha) {
         if (tentativasLoginComprador >= 5) {
             throw new IllegalStateException("Número máximo de tentativas excedido. Tente novamente mais tarde.");
         }
-        
+
         boolean success = compradorController.login(cpf, senha);
         if (!success) {
             tentativasLoginComprador++;
@@ -226,34 +226,35 @@ public class MarketplaceFacade {
         if (!isCompradorLogado()) {
             throw new IllegalStateException("Nenhum comprador está logado.");
         }
-    
+
         if (carrinho == null || carrinho.isEmpty()) {
             throw new IllegalStateException("O carrinho está vazio.");
         }
-    
+
         double total = 0.0;
-    
+
         for (Map.Entry<String, Integer> entry : carrinho.entrySet()) {
             String produtoId = entry.getKey();
             int quantidade = entry.getValue();
-    
+
             Produto produto = listarProdutos().stream()
                     .filter(p -> p.getId().equals(produtoId))
                     .findFirst()
                     .orElse(null);
-    
+
             if (produto == null) {
                 throw new IllegalStateException("Produto com ID " + produtoId + " não encontrado.");
             }
-    
+
             if (produto.getQuantidade() < quantidade) {
                 throw new IllegalStateException("Estoque insuficiente para o produto: " + produto.getNome());
             }
-    
+
             produto.setQuantidade(produto.getQuantidade() - quantidade);
+            produtoController.atualizarProduto(produto, produto.getId());
             total += produto.getValor() * quantidade;
         }
-    
+
         carrinho.clear();
         return total;
     }
@@ -262,12 +263,12 @@ public class MarketplaceFacade {
         if (!isCompradorLogado()) {
             throw new IllegalStateException("Comprador não está logado");
         }
-        
+
         Map<String, Integer> carrinho = compradorController.getCarrinho();
         if (carrinho.isEmpty()) {
             throw new IllegalStateException("Carrinho vazio");
         }
-        
+
         double total = calcularTotalCarrinho(carrinho);
         // Supondo que todos os produtos do carrinho são da mesma loja, pegamos o primeiro produto para obter o lojaCpfCnpj
         String lojaCpfCnpj = null;
@@ -290,25 +291,25 @@ public class MarketplaceFacade {
         compradorController.limparCarrinho();
         return pedido;
     }
-    
+
     public List<Pedido> listarHistoricoCompras(String compradorCpf) {
         return pedidoController.listarPedidosPorComprador(compradorCpf);
     }
-    
+
     private double calcularTotalCarrinho(Map<String, Integer> carrinho) {
         final double[] total = {0.0};
         List<Produto> produtos = produtoController.listarProdutos();
-        
+
         for (Map.Entry<String, Integer> item : carrinho.entrySet()) {
             String produtoId = item.getKey();
             int quantidade = item.getValue();
-            
+
             produtos.stream()
                 .filter(p -> p.getId().equals(produtoId))
                 .findFirst()
                 .ifPresent(produto -> total[0] += produto.getValor() * quantidade);
         }
-        
+
         return total[0];
     }
 

@@ -4,7 +4,6 @@ import com.eng2marketplace.model.Loja;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,12 +15,8 @@ class LojaRepositoryTest {
 
     @BeforeEach
     void setup() {
-        // deleta o repositório de lojas
-        File f = new File("src/main/data/lojas.json");
-        if(!f.exists())
-            return;
-        if(!f.delete())
-            throw new RuntimeException();
+        LojaRepository lr = new LojaRepository();
+        lr.limpar();
     }
 
     /**

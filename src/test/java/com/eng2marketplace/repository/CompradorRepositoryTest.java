@@ -16,12 +16,8 @@ class CompradorRepositoryTest {
 
     @BeforeEach
     void setup() {
-        // deleta o repositório de compradores
-        File f = new File("src/main/data/compradores.json");
-        if(!f.exists())
-            return;
-        if(!f.delete())
-            throw new RuntimeException();
+        CompradorRepository cr = new CompradorRepository();
+        cr.limpar();
     }
 
     /**

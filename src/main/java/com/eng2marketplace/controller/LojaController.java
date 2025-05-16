@@ -13,7 +13,7 @@ import java.util.Scanner;
  */
 public class LojaController {
 
-    private LojaRepository lojaRepository;
+    private final LojaRepository lojaRepository;
     private Loja lojaLogada;
     private int tentativasLogin = 0;
 

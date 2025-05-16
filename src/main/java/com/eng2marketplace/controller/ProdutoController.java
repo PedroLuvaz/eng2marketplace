@@ -88,4 +88,8 @@ public class ProdutoController {
     public boolean removerProdutoPorId(String id) {
         return produtoRepository.removerPorId(id);
     }
+
+    public boolean atualizarProduto(Produto produto, String id) {
+        return produtoRepository.atualizar(produto, p -> p.getId().equals(id));
+    }
 }
