@@ -42,20 +42,26 @@ public class PedidoView {
                     .filter(p -> p.getId().equals(item.getKey()))
                     .findFirst().orElse(null);
                 if (produto != null) {
-                    System.out.print("Avalie o produto '" + produto.getNome() + "' (1-5): ");
-                    int nota = scanner.getNumber(1, 5);
-                    String comentario = scanner.askText("Comentário para o produto: ", ".{0,250}", "Comentário inválido!");
-                    facade.avaliarProduto(produto.getId(), facade.getCompradorLogado().getCpf(), nota, comentario);
+                    System.out.printf("Deseja avaliar o produto '%s'? (s/n): ", produto.getNome());
+                    String resp = scanner.askText("> ", "[sSnN]", "Digite s ou n");
+                    if (resp.equalsIgnoreCase("s")) {
+                        int nota = scanner.getNumber(1, 5);
+                        String comentario = scanner.askText("Comentário para o produto: ", ".{0,250}", "Comentário inválido!");
+                        facade.avaliarProduto(produto.getId(), facade.getCompradorLogado().getCpf(), nota, comentario);
+                    }
                 }
             }
 
-            // Avaliação da loja
+            // Avaliação da loja (pedido)
             String lojaCpfCnpj = pedido.getLoja() != null ? pedido.getLoja().getCpfCnpj() : null;
             if (lojaCpfCnpj != null) {
-                System.out.print("Avalie a loja desta compra (1-5): ");
-                int notaLoja = scanner.getNumber(1, 5);
-                String comentarioLoja = scanner.askText("Comentário para a loja: ", ".{0,250}", "Comentário inválido!");
-                facade.avaliarLoja(lojaCpfCnpj, facade.getCompradorLogado().getCpf(), notaLoja, comentarioLoja);
+                System.out.print("Deseja avaliar a loja desta compra? (s/n): ");
+                String resp = scanner.askText("> ", "[sSnN]", "Digite s ou n");
+                if (resp.equalsIgnoreCase("s")) {
+                    int notaLoja = scanner.getNumber(1, 5);
+                    String comentarioLoja = scanner.askText("Comentário para a loja: ", ".{0,250}", "Comentário inválido!");
+                    facade.avaliarLoja(lojaCpfCnpj, facade.getCompradorLogado().getCpf(), notaLoja, comentarioLoja);
+                }
             }
 
             System.out.println("Avaliações registradas. Obrigado pelo feedback!");
