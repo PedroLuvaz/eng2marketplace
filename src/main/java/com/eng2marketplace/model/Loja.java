@@ -17,6 +17,7 @@ public class Loja {
         this.senha = senha;
         this.cpfCnpj = cpfCnpj;
         this.endereco = endereco;
+        this.avaliacoes = new ArrayList<>();
     }
 
     // Getters e Setters
