@@ -89,7 +89,14 @@ public class ConsoleInput {
      * @return Um número ou null se um número inválido for informado.
      */
     public Integer getNumber() {
-        return IntRangeGetter.get(this.scanner, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        while (true) {
+            String input = scanner.nextLine();
+            try {
+                return Integer.parseInt(input.trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Por favor, digite um número inteiro válido.");
+            }
+        }
     }
 
     public int askNumber(String prompt, String invalidMsg) {

@@ -2,6 +2,7 @@ package com.eng2marketplace.view;
 
 import com.eng2marketplace.Facade.MarketplaceFacade;
 import com.eng2marketplace.model.Pedido;
+import com.eng2marketplace.model.Produto;
 import com.eng2marketplace.view.input.ConsoleInput;
 
 import java.util.List;
@@ -35,24 +36,29 @@ public class PedidoView {
             System.out.printf("Valor Total: R$%.2f%n", pedido.getValorTotal());
             System.out.println("Obrigado por sua compra!");
 
-            // Permitir avaliação da loja
-            String avaliar = scanner.askText("Deseja avaliar a loja desta compra? (s/n): ", "[sSnN]", "Digite s ou n");
-            if (avaliar.equalsIgnoreCase("s")) {
-                String lojaCpfCnpj = pedido.getLoja() != null ? pedido.getLoja().getCpfCnpj() : null;
-                if (lojaCpfCnpj == null) {
-                    System.out.println("Não foi possível identificar a loja para avaliação.");
-                    return;
-                }
-                int nota = scanner.getNumber(1, 5);
-                scanner.nextLine(); // Limpa buffer se necessário
-                String comentario = scanner.askText("Comentário: ");
-                try {
-                    facade.avaliarLoja(lojaCpfCnpj, facade.getCompradorLogado().getCpf(), nota, comentario);
-                    System.out.println("Avaliação registrada com sucesso!");
-                } catch (Exception e) {
-                    System.out.println("Erro ao avaliar loja: " + e.getMessage());
+            // Avaliação dos produtos
+            for (Map.Entry<String, Integer> item : carrinho.entrySet()) {
+                Produto produto = facade.listarProdutos().stream()
+                    .filter(p -> p.getId().equals(item.getKey()))
+                    .findFirst().orElse(null);
+                if (produto != null) {
+                    System.out.print("Avalie o produto '" + produto.getNome() + "' (1-5): ");
+                    int nota = scanner.getNumber(1, 5);
+                    String comentario = scanner.askText("Comentário para o produto: ", ".{0,250}", "Comentário inválido!");
+                    facade.avaliarProduto(produto.getId(), facade.getCompradorLogado().getCpf(), nota, comentario);
                 }
             }
+
+            // Avaliação da loja
+            String lojaCpfCnpj = pedido.getLoja() != null ? pedido.getLoja().getCpfCnpj() : null;
+            if (lojaCpfCnpj != null) {
+                System.out.print("Avalie a loja desta compra (1-5): ");
+                int notaLoja = scanner.getNumber(1, 5);
+                String comentarioLoja = scanner.askText("Comentário para a loja: ", ".{0,250}", "Comentário inválido!");
+                facade.avaliarLoja(lojaCpfCnpj, facade.getCompradorLogado().getCpf(), notaLoja, comentarioLoja);
+            }
+
+            System.out.println("Avaliações registradas. Obrigado pelo feedback!");
         } catch (Exception e) {
             System.out.println("Erro ao finalizar compra: " + e.getMessage());
             e.printStackTrace(); // Para debug durante desenvolvimento

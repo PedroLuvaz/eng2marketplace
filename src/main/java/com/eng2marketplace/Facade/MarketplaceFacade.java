@@ -334,4 +334,9 @@ public class MarketplaceFacade {
     public String getConceitoLoja(String lojaCpfCnpj) {
         return lojaController.getConceitoLoja(lojaCpfCnpj);
     }
+
+    public void avaliarProduto(String id, String cpf, int nota, String comentario) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'avaliarProduto'");
+    }
 }
