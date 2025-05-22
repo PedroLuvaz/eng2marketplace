@@ -1,5 +1,6 @@
 package com.eng2marketplace.repository;
 
+import com.eng2marketplace.model.Administrador;
 import com.eng2marketplace.model.Avaliacao;
 import com.google.gson.reflect.TypeToken;
 
@@ -17,4 +18,10 @@ public class AvaliacaoRepository extends JSONRepository<Avaliacao> {
 
     public AvaliacaoRepository() {super(ARQUIVO_AVALIACOES, new TypeToken<>(){});
     }
+
+    public boolean atualizar(Avaliacao avaliacao) {
+        return super.atualizar(avaliacao,
+            a -> a.getCompradorCpf().equalsIgnoreCase(avaliacao.getCompradorCpf()));
+    }
+
 }
