@@ -32,7 +32,7 @@ class PedidoRepositoryTest {
     void testSalvar() {
         PedidoRepository pr = new PedidoRepository();
         carrinho.put("00000", 2);
-        Pedido p = new Pedido("012.345.678-90", carrinho, 999);
+        Pedido p = new Pedido("012.345.678-90", carrinho, 999, null);
         pr.salvar(p);
 
         assertEquals(1, pr.listar().size());
@@ -46,7 +46,7 @@ class PedidoRepositoryTest {
     void testRemover() {
         PedidoRepository pr = new PedidoRepository();
         carrinho.put("00000", 2);
-        Pedido p = new Pedido("012.345.678-90", carrinho, 999);
+        Pedido p = new Pedido("012.345.678-90", carrinho, 999, null);
         pr.salvar(p);
 
         boolean result = pr.remover(p.getId());
@@ -62,7 +62,7 @@ class PedidoRepositoryTest {
     void testRemoverInvalido() {
         PedidoRepository pr = new PedidoRepository();
         carrinho.put("00000", 2);
-        Pedido p = new Pedido("012.345.678-90", carrinho, 999);
+        Pedido p = new Pedido("012.345.678-90", carrinho, 999, null);
         pr.salvar(p);
 
         boolean result = pr.remover("a");
@@ -78,9 +78,9 @@ class PedidoRepositoryTest {
     void testListar() {
         PedidoRepository pr = new PedidoRepository();
         carrinho.put("00000", 2);
-        pr.salvar(new Pedido("012.345.678-90", carrinho, 999));
-        pr.salvar(new Pedido("012.345.678-90", carrinho, 123));
-        pr.salvar(new Pedido("012.345.678-90", carrinho, 456));
+        pr.salvar(new Pedido("012.345.678-90", carrinho, 999, null));
+        pr.salvar(new Pedido("012.345.678-90", carrinho, 123, null));
+        pr.salvar(new Pedido("012.345.678-90", carrinho, 456, null));
 
         List<Pedido> pedidos = pr.listar();
 
@@ -106,10 +106,10 @@ class PedidoRepositoryTest {
     void testListarPorComprador() {
         PedidoRepository pr = new PedidoRepository();
         carrinho.put("00000", 2);
-        pr.salvar(new Pedido("098.765.432-10", carrinho, 999));
-        pr.salvar(new Pedido("098.765.432-10", carrinho, 1));
-        pr.salvar(new Pedido("555.555.555-55", carrinho, 123));
-        pr.salvar(new Pedido("012.345.678-90", carrinho, 456));
+        pr.salvar(new Pedido("098.765.432-10", carrinho, 999, null));
+        pr.salvar(new Pedido("098.765.432-10", carrinho, 1, null));
+        pr.salvar(new Pedido("555.555.555-55", carrinho, 123, null));
+        pr.salvar(new Pedido("012.345.678-90", carrinho, 456, null));
 
         List<Pedido> pedidos = pr.listarPorComprador("098.765.432-10");
 
@@ -123,10 +123,10 @@ class PedidoRepositoryTest {
     void testListarPorCompradorInvalido() {
         PedidoRepository pr = new PedidoRepository();
         carrinho.put("00000", 2);
-        pr.salvar(new Pedido("098.765.432-10", carrinho, 999));
-        pr.salvar(new Pedido("098.765.432-10", carrinho, 1));
-        pr.salvar(new Pedido("555.555.555-55", carrinho, 123));
-        pr.salvar(new Pedido("012.345.678-90", carrinho, 456));
+        pr.salvar(new Pedido("098.765.432-10", carrinho, 999, null));
+        pr.salvar(new Pedido("098.765.432-10", carrinho, 1, null));
+        pr.salvar(new Pedido("555.555.555-55", carrinho, 123, null));
+        pr.salvar(new Pedido("012.345.678-90", carrinho, 456, null));
 
         List<Pedido> pedidos = pr.listarPorComprador("313.131.313-31");
 
@@ -141,11 +141,11 @@ class PedidoRepositoryTest {
         PedidoRepository pr = new PedidoRepository();
         carrinho.put("00000", 2);
 
-        Pedido p = new Pedido("192.168.000-01", carrinho, 456);
+        Pedido p = new Pedido("192.168.000-01", carrinho, 456, null);
         pr.salvar(p);
-        pr.salvar(new Pedido("090.909.090-90", carrinho, 999));
-        pr.salvar(new Pedido("300.000.000-03", carrinho, 1));
-        pr.salvar(new Pedido("201.420.152-01", carrinho, 123));
+        pr.salvar(new Pedido("090.909.090-90", carrinho, 999, null));
+        pr.salvar(new Pedido("300.000.000-03", carrinho, 1, null));
+        pr.salvar(new Pedido("201.420.152-01", carrinho, 123, null));
 
         pr.atualizarStatus(p.getId(), "CANCELADO");
 

@@ -29,7 +29,7 @@ public final class RepoCleanerTest {
         Map<String, Integer> carrinho = new HashMap<>();
         carrinho.put("Ovo de Codorna", 150);
         PedidoRepository pr = new PedidoRepository();
-        pr.salvar(new Pedido("123.123.123-33", carrinho, 50.0));
+        pr.salvar(new Pedido("123.123.123-33", carrinho, 50.0, null));
 
         ProdutoRepository pdr = new ProdutoRepository(lr);
         lr.salvar(new Loja("Ecko Suplementos", "ecko@mail.sport", "Sim", "123.132.321-32", "Parque Comercil, 231"));

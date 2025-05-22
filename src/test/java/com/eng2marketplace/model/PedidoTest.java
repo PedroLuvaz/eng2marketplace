@@ -130,4 +130,60 @@ class PedidoTest {
 
         assertEquals(expected, p.toString());
     }
+    
+    public class Pedido {
+        private String id;
+        private String compradorCpf;
+        private Map<String, Integer> itens;
+        private double valorTotal;
+        private LocalDateTime dataPedido;
+        private String status;
+
+        public Pedido(String compradorCpf, Map<String, Integer> itens, int valorTotal) {
+            this.compradorCpf = compradorCpf;
+            this.itens = new HashMap<>(itens);
+            this.valorTotal = valorTotal;
+            this.id = java.util.UUID.randomUUID().toString();
+            this.dataPedido = java.time.LocalDateTime.now();
+            this.status = "EM_PROCESSAMENTO";
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getCompradorCpf() {
+            return compradorCpf;
+        }
+
+        public Map<String, Integer> getItens() {
+            return itens;
+        }
+
+        public double getValorTotal() {
+            return valorTotal;
+        }
+
+        public LocalDateTime getDataPedido() {
+            return dataPedido;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        @Override
+        public String toString() {
+            return "Pedido{" +
+                    "id='" + id + '\'' +
+                    ", data=" + dataPedido +
+                    ", valorTotal=" + valorTotal +
+                    ", status='" + status + '\'' +
+                    '}';
+        }
+    }
 }
