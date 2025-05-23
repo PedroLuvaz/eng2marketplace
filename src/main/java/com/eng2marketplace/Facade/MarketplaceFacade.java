@@ -11,9 +11,11 @@ import com.eng2marketplace.model.Loja;
 import com.eng2marketplace.model.Pedido;
 import com.eng2marketplace.model.Produto;
 import com.eng2marketplace.model.Avaliacao;
+import com.eng2marketplace.repository.ProdutoRepository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class MarketplaceFacade {
     private AdministradorController administradorController;
@@ -335,8 +337,28 @@ public class MarketplaceFacade {
         return lojaController.getConceitoLoja(lojaCpfCnpj);
     }
 
-    public void avaliarProduto(String id, String cpf, int nota, String comentario) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'avaliarProduto'");
+
+    public void avaliarProduto(String produtoId, String compradorCpf, int nota, String comentario) {
+        // Validações
+        if (produtoId == null || compradorCpf == null) {
+            throw new IllegalArgumentException("ID do produto ou CPF inválidos");
+        }
+
+        Produto produto = produtoController.listarProdutos().stream()
+            .filter(p -> produtoId.equals(p.getId()))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
+
+        // Cria e adiciona a avaliação (usando getAvaliacoes() que nunca retorna null)
+        Avaliacao avaliacao = new Avaliacao(compradorCpf, nota, comentario);
+        produto.getAvaliacoes().add(avaliacao);
+
+        // Persiste as alterações
+        produtoController.atualizarProduto(produto, produtoId);
     }
+
+
+
+
+
 }

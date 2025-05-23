@@ -1,5 +1,7 @@
 package com.eng2marketplace.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Produto {
@@ -11,6 +13,7 @@ public class Produto {
     private String marca;
     private String descricao;
     private Loja loja;
+    private List<Avaliacao> avaliacoes ;
 
     public Produto(String nome, double valor, String tipo, int quantidade, String marca, String descricao, Loja loja) {
         this.id = UUID.randomUUID().toString(); // Gera ID único
@@ -21,6 +24,7 @@ public class Produto {
         this.marca = marca;
         this.descricao = descricao;
         this.loja = loja;
+        this.avaliacoes = new ArrayList<>();
     }
 
     // Getters e Setters
@@ -47,6 +51,27 @@ public class Produto {
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
+
+    public List<Avaliacao> getAvaliacoes() {
+        if (this.avaliacoes == null) {
+            this.avaliacoes = new ArrayList<>();
+        }
+        return this.avaliacoes;
+    }
+
+    public double getMediaAvaliacoes() {
+        if (avaliacoes.isEmpty()) return 0.0;
+        return avaliacoes.stream().mapToInt(Avaliacao::getNota).average().orElse(0.0);
+    }
+
+    public String getConceito() {
+        double media = getMediaAvaliacoes();
+        if (media == 0.0) return "Sem avaliações";
+        if (media < 2.5) return "Ruim";
+        if (media < 3.5) return "Médio";
+        if (media < 4.5) return "Bom";
+        return "Excelente";
+    }
 
     @Override
     public String toString() {

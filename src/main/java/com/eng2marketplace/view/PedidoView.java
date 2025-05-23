@@ -5,6 +5,7 @@ import com.eng2marketplace.model.Pedido;
 import com.eng2marketplace.model.Produto;
 import com.eng2marketplace.view.input.ConsoleInput;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,20 +25,21 @@ public class PedidoView {
                 return;
             }
 
-            Map<String, Integer> carrinho = facade.getCarrinho();
-            if (carrinho.isEmpty()) {
+            Map<String, Integer> carrinhoOriginal = new HashMap<>(facade.getCarrinho());
+            if (carrinhoOriginal.isEmpty()) {
                 System.out.println("Seu carrinho está vazio. Adicione produtos antes de finalizar.");
                 return;
             }
 
             Pedido pedido = facade.finalizarCompra(facade.getCompradorLogado().getCpf());
+
             System.out.println("\n--- Compra Finalizada com Sucesso ---");
             System.out.printf("Número do Pedido: %s%n", pedido.getId());
             System.out.printf("Valor Total: R$%.2f%n", pedido.getValorTotal());
             System.out.println("Obrigado por sua compra!");
 
             // Avaliação dos produtos
-            for (Map.Entry<String, Integer> item : carrinho.entrySet()) {
+            for (Map.Entry<String, Integer> item : carrinhoOriginal.entrySet()) {
                 Produto produto = facade.listarProdutos().stream()
                     .filter(p -> p.getId().equals(item.getKey()))
                     .findFirst().orElse(null);

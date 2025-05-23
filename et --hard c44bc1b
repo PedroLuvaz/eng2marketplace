@@ -1,0 +1,62 @@
+[33md43aaf7[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdev2[m[33m, [m[1;31morigin/dev2[m[33m)[m test: implementando mais testes.
+[33mb2c39d7[m docs: documentaçao sprint 5
+[33m622c906[m test: refatorando testes.
+[33mf2d92ce[m test: Adição dos testes de AvaliaçãoRepository
+[33m1ee77aa[m feat: Adição da função de atualizar no repositorio de avaliações
+[33m57b5cdf[m more bug fixes.
+[33mb8fb2cc[m ajustes.
+[33m5352155[m buf-fixes(avaliaçoes model loja)
+[33m1e51940[m feat: Adição da classe AvaliacaoRepository para salvar as avaliações
+[33m0496c8d[m avaliações + outras implementaçoes (revisem)
+[33mad5806a[m Merge branch 'dev2' of https://github.com/PedroLuvaz/eng2marketplace into dev2
+[33me4855d8[m avaliaçãoes/revisem
+[33mc44bc1b[m Atualização testes view Atualiza os testes da view e remove mockito
+[33m1081610[m Decremento de estoque Implementa decremento de todos itens do estoque ao finalizar a venda
+[33mec9d010[m Mais testes Implementa testes restantes do controlador
+[33ma27f9d9[m Correções e simplificação Padronização e simplificação da interface dos repositórios JSON, correção do salvamento de lojas nos produtos, implementação de testes de produto, correção nos controladores
+[33m366c8b9[m relatorio
+[33ma4d2841[m Relatorio de Processo
+[33m57c8f79[m Fix comparação de cpf Remove formatação do cpf nos testes
+[33m1e5df47[m Testes facade Implementa parcialmente testes do facade
+[33m4bdfec6[m Adiciona limpeza de produtos Implementa limpeza da base de dados de produtos
+[33mab12085[m Correção de teste
+[33m59e7617[m adicionando relatorios
+[33m6914976[m Testes de unidade
+[33m3a616b0[m Adiciona método de remoção
+[33m1666f88[m Corrige bug
+[33m114eefd[m Adiciona testes
+[33m7dd27d1[m Limpeza diretório de dados
+[33mad6b86d[m Correção de bug
+[33mda3fa85[m Adiciona mockito
+[33m4407d1b[m correção de bug
+[33m2c05007[m Remove arquivos .class
+[33m83ef91d[m Add files via upload
+[33m623d611[m pedidos added
+[33m545239b[m relatorio funcionalidades
+[33mec8953c[m Testes Adiciona testes faltantes
+[33maa2853f[m Limpeza Remove linhas não usadas
+[33mf55d79e[m conserta nome de classe
+[33ma5d2303[m Administrador e Efetuação de Compras
+[33me42a56e[m Logout / Tentativa e Falha
+[33mf30cb10[m duplicadas fix
+[33m2160239[m relatorio arq release 02
+[33m2b68a27[m quantidade de produtos no carrinho
+[33m7949d7c[m login comprador / carrinho
+[33m47aee5b[m adicionando documentaçao atualizada
+[33m11d8148[m removendo arquivos inúteis
+[33m0df5a17[m Implementação de testes
+[33mcf10c14[m removendo arquivos fixes
+[33mffcbfed[m implementação de teste
+[33m6a3c87c[m Implementação de teste
+[33m637c0cb[m release 1
+[33m1a0f129[m Revert "Adicionado campo endereço"
+[33mc8f0e9f[m Adicionado campo endereço Adiciona campo de endereço e CPF no comprador
+[33mf93b165[m Validador Implementa entrada de dados por validador
+[33m716e223[m Correção Corrige validador de CPF para CPF/CNPJ
+[33m885eb15[m Alteração validador Melhora separação de validadores e obtenção de texto para diferentes valores
+[33mac1dc23[m Integração validador Integrado com validador e implementação parcial de testes
+[33m6e6d45d[m Obtenção de dados Adicionado obtenção de dados
+[33m6dfd279[m Validador Adicionado validador e testes
+[33m5978007[m market facade
+[33m08c685a[m test implement
+[33m13d22b3[m first commit 1 sprint

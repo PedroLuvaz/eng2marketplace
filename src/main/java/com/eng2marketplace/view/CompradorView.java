@@ -121,7 +121,13 @@ public class CompradorView {
                 case 3 -> alterarQuantidadeCarrinho();
                 case 4 -> listarCarrinho();
                 case 5 -> limparCarrinho();
-                case 6 -> finalizarCompra();
+                case 6 -> {
+                    try {
+                        new PedidoView(facade).finalizarCompra();
+                    } catch (Exception e) {
+                        System.out.println("Erro ao finalizar compra: " + e.getMessage());
+                    }
+                }
                 case 0 -> System.out.println("Voltando ao menu anterior...");
             }
         } while (opcao == null || opcao != 0);
