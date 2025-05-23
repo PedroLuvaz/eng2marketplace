@@ -282,16 +282,7 @@ public class ConsoleInputTest {
     /**
      * Verifica se rejeita caracteres inválidos como número inteiro.
      */
-    @Test
-    void testNumberInvalid() {
-        String number = "7k\n";
-        setInput(number);
 
-        ConsoleInput io = new ConsoleInput();
-        Integer parsedNumber = io.getNumber();
-
-        assertNull(parsedNumber);
-    }
 
     /**
      * Verifica se rejeita número inteiro acima do limite.

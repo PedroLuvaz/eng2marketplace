@@ -499,71 +499,181 @@ class MarketplaceFacadeTest {
 
     @Test
     void testLogoutLoja() {
-        fail("Teste não implementado!");
+        MarketplaceFacade facade = new MarketplaceFacade();
+        facade.adicionarLoja("Loja Teste", "loja@teste.com", "senha", "123.456.789-00", "Rua Teste, 1");
+        facade.loginLoja("123.456.789-00", "senha");
+        facade.logoutLoja();
+        LojaController lc = new LojaController();
+        assertNull(lc.getLojaLogada());
     }
 
     @Test
     void testLogoutComprador() {
-        fail("Teste não implementado!");
+        MarketplaceFacade facade = new MarketplaceFacade();
+        facade.cadastrarComprador("Comprador Teste", "comprador@teste.com", "senha", "111.222.333-44", "Rua Teste, 2");
+        facade.loginComprador("111.222.333-44", "senha");
+        facade.logoutComprador();
+        CompradorController cc = new CompradorController();
+        assertNull(cc.getCompradorLogado());
     }
 
     @Test
     void testIsCompradorLogado() {
-        fail("Teste não implementado!");
+        MarketplaceFacade facade = new MarketplaceFacade();
+        facade.cadastrarComprador("Comprador Teste", "comprador@teste.com", "senha", "111.222.333-44", "Rua Teste, 2");
+        assertFalse(facade.isCompradorLogado());
+        facade.loginComprador("111.222.333-44", "senha");
+        assertTrue(facade.isCompradorLogado());
     }
 
     @Test
     void testGetCompradorLogado() {
-        fail("Teste não implementado!");
+        MarketplaceFacade facade = new MarketplaceFacade();
+        facade.cadastrarComprador("Comprador Teste", "comprador@teste.com", "senha", "111.222.333-44", "Rua Teste, 2");
+        facade.loginComprador("111.222.333-44", "senha");
+        Comprador logado = facade.getCompradorLogado();
+        assertNotNull(logado);
+        assertEquals("Comprador Teste", logado.getNome());
     }
 
     @Test
     void testAdicionarAoCarrinho() {
-        fail("Teste não implementado!");
+        MarketplaceFacade facade = new MarketplaceFacade();
+        // Cria loja e produto
+        facade.adicionarLoja("Loja Teste", "loja@teste.com", "senha", "123.456.789-00", "Rua Teste, 1");
+        Loja loja = facade.buscarLojaPorCpfCnpj("123.456.789-00");
+        facade.adicionarProduto("Produto Teste", 10.0, "Tipo", 5, "Marca", "Descrição", loja);
+        Produto produto = facade.listarProdutos().getFirst();
+        // Cria comprador e faz login
+        facade.cadastrarComprador("Comprador Teste", "comprador@teste.com", "senha", "111.222.333-44", "Rua Teste, 2");
+        facade.loginComprador("111.222.333-44", "senha");
+        boolean adicionado = facade.adicionarAoCarrinho(produto.getId(), 2);
+        assertTrue(adicionado);
+        assertEquals(2, facade.getCarrinho().get(produto.getId()));
     }
 
     @Test
     void testRemoverDoCarrinho() {
-        fail("Teste não implementado!");
+        MarketplaceFacade facade = new MarketplaceFacade();
+        facade.adicionarLoja("Loja Teste", "loja@teste.com", "senha", "123.456.789-00", "Rua Teste, 1");
+        Loja loja = facade.buscarLojaPorCpfCnpj("123.456.789-00");
+        facade.adicionarProduto("Produto Teste", 10.0, "Tipo", 5, "Marca", "Descrição", loja);
+        Produto produto = facade.listarProdutos().getFirst();
+        facade.cadastrarComprador("Comprador Teste", "comprador@teste.com", "senha", "111.222.333-44", "Rua Teste, 2");
+        facade.loginComprador("111.222.333-44", "senha");
+        facade.adicionarAoCarrinho(produto.getId(), 2);
+        boolean removido = facade.removerDoCarrinho(produto.getId());
+        assertTrue(removido);
+        assertFalse(facade.getCarrinho().containsKey(produto.getId()));
     }
 
     @Test
     void testLimparCarrinho() {
-        fail("Teste não implementado!");
+        MarketplaceFacade facade = new MarketplaceFacade();
+        facade.adicionarLoja("Loja Teste", "loja@teste.com", "senha", "123.456.789-00", "Rua Teste, 1");
+        Loja loja = facade.buscarLojaPorCpfCnpj("123.456.789-00");
+        facade.adicionarProduto("Produto Teste", 10.0, "Tipo", 5, "Marca", "Descrição", loja);
+        Produto produto = facade.listarProdutos().getFirst();
+        facade.cadastrarComprador("Comprador Teste", "comprador@teste.com", "senha", "111.222.333-44", "Rua Teste, 2");
+        facade.loginComprador("111.222.333-44", "senha");
+        facade.adicionarAoCarrinho(produto.getId(), 2);
+        facade.limparCarrinho();
+        assertTrue(facade.getCarrinho().isEmpty());
     }
 
     @Test
     void testGetCarrinho() {
-        fail("Teste não implementado!");
+        MarketplaceFacade facade = new MarketplaceFacade();
+        facade.adicionarLoja("Loja Teste", "loja@teste.com", "senha", "123.456.789-00", "Rua Teste, 1");
+        Loja loja = facade.buscarLojaPorCpfCnpj("123.456.789-00");
+        facade.adicionarProduto("Produto Teste", 10.0, "Tipo", 5, "Marca", "Descrição", loja);
+        Produto produto = facade.listarProdutos().getFirst();
+        facade.cadastrarComprador("Comprador Teste", "comprador@teste.com", "senha", "111.222.333-44", "Rua Teste, 2");
+        facade.loginComprador("111.222.333-44", "senha");
+        facade.adicionarAoCarrinho(produto.getId(), 2);
+        assertEquals(1, facade.getCarrinho().size());
+        assertEquals(2, facade.getCarrinho().get(produto.getId()));
     }
 
     @Test
     void testAlterarQuantidadeCarrinho() {
-        fail("Teste não implementado!");
+        MarketplaceFacade facade = new MarketplaceFacade();
+        facade.adicionarLoja("Loja Teste", "loja@teste.com", "senha", "123.456.789-00", "Rua Teste, 1");
+        Loja loja = facade.buscarLojaPorCpfCnpj("123.456.789-00");
+        facade.adicionarProduto("Produto Teste", 10.0, "Tipo", 5, "Marca", "Descrição", loja);
+        Produto produto = facade.listarProdutos().getFirst();
+        facade.cadastrarComprador("Comprador Teste", "comprador@teste.com", "senha", "111.222.333-44", "Rua Teste, 2");
+        facade.loginComprador("111.222.333-44", "senha");
+        facade.adicionarAoCarrinho(produto.getId(), 2);
+        boolean alterado = facade.alterarQuantidadeCarrinho(produto.getId(), 4);
+        assertTrue(alterado);
+        assertEquals(4, facade.getCarrinho().get(produto.getId()));
     }
 
     @Test
     void testLoginLoja() {
-        fail("Teste não implementado!");
+        MarketplaceFacade facade = new MarketplaceFacade();
+        facade.adicionarLoja("Loja Teste", "loja@teste.com", "senha", "123.456.789-00", "Rua Teste, 1");
+        Loja loja = facade.loginLoja("123.456.789-00", "senha");
+        assertNotNull(loja);
+        assertEquals("Loja Teste", loja.getNome());
     }
 
     @Test
     void testLoginComprador() {
-        fail("Teste não implementado!");
+        MarketplaceFacade facade = new MarketplaceFacade();
+        facade.cadastrarComprador("Comprador Teste", "comprador@teste.com", "senha", "111.222.333-44", "Rua Teste, 2");
+        boolean logado = facade.loginComprador("111.222.333-44", "senha");
+        assertTrue(logado);
+        assertTrue(facade.isCompradorLogado());
     }
 
     @Test
     void testGetLojaLogada() {
-        fail("Teste não implementado!");
+        MarketplaceFacade facade = new MarketplaceFacade();
+        facade.adicionarLoja("Loja Teste", "loja@teste.com", "senha", "123.456.789-00", "Rua Teste, 1");
+        facade.loginLoja("123.456.789-00", "senha");
+        Loja loja = facade.getLojaLogada();
+        assertNotNull(loja);
+        assertEquals("Loja Teste", loja.getNome());
     }
 
     @Test
     void testFinalizarCompra() {
-        fail("Teste não implementado!");
+        MarketplaceFacade facade = new MarketplaceFacade();
+        // Cria loja e produto
+        facade.adicionarLoja("Loja Teste", "loja@teste.com", "senha", "123.456.789-00", "Rua Teste, 1");
+        Loja loja = facade.buscarLojaPorCpfCnpj("123.456.789-00");
+        facade.adicionarProduto("Produto Teste", 10.0, "Tipo", 5, "Marca", "Descrição", loja);
+        Produto produto = facade.listarProdutos().getFirst();
+        // Cria comprador, login e adiciona ao carrinho
+        facade.cadastrarComprador("Comprador Teste", "comprador@teste.com", "senha", "111.222.333-44", "Rua Teste, 2");
+        facade.loginComprador("111.222.333-44", "senha");
+        facade.adicionarAoCarrinho(produto.getId(), 2);
+        // Finaliza compra
+        var pedido = facade.finalizarCompra("11122233344");
+        assertNotNull(pedido);
+        assertEquals(20.0, pedido.getValorTotal(), 0.01);
+        assertEquals("11122233344", pedido.getCompradorCpf());
+        assertEquals(loja.getCpfCnpj(), pedido.getLoja().getCpfCnpj());
+        assertTrue(facade.getCarrinho().isEmpty());
     }
 
     @Test
     void testListarHistoricoCompras() {
-        fail("Teste não implementado!");
+        MarketplaceFacade facade = new MarketplaceFacade();
+        // Cria loja e produto
+        facade.adicionarLoja("Loja Teste", "loja@teste.com", "senha", "123.456.789-00", "Rua Teste, 1");
+        Loja loja = facade.buscarLojaPorCpfCnpj("123.456.789-00");
+        facade.adicionarProduto("Produto Teste", 10.0, "Tipo", 5, "Marca", "Descrição", loja);
+        Produto produto = facade.listarProdutos().getFirst();
+        // Cria comprador, login e adiciona ao carrinho
+        facade.cadastrarComprador("Comprador Teste", "comprador@teste.com", "senha", "111.222.333-44", "Rua Teste, 2");
+        facade.loginComprador("111.222.333-44", "senha");
+        facade.adicionarAoCarrinho(produto.getId(), 2);
+        facade.finalizarCompra("11122233344");
+        var historico = facade.listarHistoricoCompras("11122233344");
+        assertEquals(1, historico.size());
+        assertEquals(20.0, historico.getFirst().getValorTotal(), 0.01);
     }
 }
