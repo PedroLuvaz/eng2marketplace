@@ -31,7 +31,7 @@ public class PedidoView {
                 return;
             }
 
-            Pedido pedido = facade.finalizarCompra(facade.getCompradorLogado().getCpf());
+            Pedido pedido = facade.finalizarCompra(carrinhoOriginal);
 
             System.out.println("\n--- Compra Finalizada com Sucesso ---");
             System.out.printf("Número do Pedido: %s%n", pedido.getId());

@@ -224,17 +224,23 @@ public class MarketplaceFacade {
         return lojaController.getLojaLogada();
     }
 
-    public double finalizarCompra(Map<String, Integer> carrinho) {
+        /**
+     * Finaliza a compra do comprador logado, atualiza o estoque, cria o pedido e limpa o carrinho.
+     * @return Pedido criado
+     */
+    public Pedido finalizarCompra(Map<String, Integer> carrinho) {
         if (!isCompradorLogado()) {
             throw new IllegalStateException("Nenhum comprador está logado.");
         }
+
+
+        Comprador comprador = getCompradorLogado();
 
         if (carrinho == null || carrinho.isEmpty()) {
             throw new IllegalStateException("O carrinho está vazio.");
         }
 
-        double total = 0.0;
-
+        // Verifica estoque e atualiza produtos
         for (Map.Entry<String, Integer> entry : carrinho.entrySet()) {
             String produtoId = entry.getKey();
             int quantidade = entry.getValue();
@@ -254,42 +260,19 @@ public class MarketplaceFacade {
 
             produto.setQuantidade(produto.getQuantidade() - quantidade);
             produtoController.atualizarProduto(produto, produto.getId());
-            total += produto.getValor() * quantidade;
-        }
-
-        carrinho.clear();
-        return total;
-    }
-
-    public Pedido finalizarCompra(String compradorCpf) {
-        if (!isCompradorLogado()) {
-            throw new IllegalStateException("Comprador não está logado");
-        }
-
-        Map<String, Integer> carrinho = compradorController.getCarrinho();
-        if (carrinho.isEmpty()) {
-            throw new IllegalStateException("Carrinho vazio");
         }
 
         double total = calcularTotalCarrinho(carrinho);
-        // Supondo que todos os produtos do carrinho são da mesma loja, pegamos o primeiro produto para obter o lojaCpfCnpj
-        String lojaCpfCnpj = null;
-        Loja loja = null;
-        if (!carrinho.isEmpty()) {
-            String primeiroProdutoId = carrinho.keySet().iterator().next();
-            Produto produto = listarProdutos().stream()
-                .filter(p -> p.getId().equals(primeiroProdutoId))
-                .findFirst()
-                .orElse(null);
-            if (produto != null && produto.getLoja() != null) {
-                lojaCpfCnpj = produto.getLoja().getCpfCnpj();
-                loja = buscarLojaPorCpfCnpj(lojaCpfCnpj); // Busca o objeto Loja
-            }
-        }
-        if (loja == null) {
-            throw new IllegalStateException("Loja não encontrada para o pedido.");
-        }
-        Pedido pedido = pedidoController.criarPedido(compradorCpf, carrinho, total, loja);
+        // Obtém a loja associada ao primeiro produto do carrinho
+        String primeiroProdutoId = carrinho.keySet().iterator().next();
+        Produto primeiroProduto = listarProdutos().stream()
+            .filter(p -> p.getId().equals(primeiroProdutoId))
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException("Produto não encontrado ao finalizar compra."));
+        Loja loja = primeiroProduto.getLoja();
+
+        Pedido pedido = pedidoController.criarPedido(comprador.getCpf(), carrinho, total, loja);
+
         compradorController.limparCarrinho();
         return pedido;
     }

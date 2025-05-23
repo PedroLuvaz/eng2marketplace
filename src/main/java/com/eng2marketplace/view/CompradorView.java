@@ -289,28 +289,4 @@ public class CompradorView {
         System.out.println("Carrinho limpo com sucesso!");
     }
 
-    private void finalizarCompra() {
-        Map<String, Integer> carrinho = facade.getCarrinho();
-
-        if (carrinho.isEmpty()) {
-            System.out.println("Seu carrinho está vazio. Nada para finalizar.");
-            return;
-        }
-
-        listarCarrinho();
-
-        String confirmacao = scanner.askText("Deseja realmente finalizar a compra? (s/n): ",
-            "[sSnN]", "Resposta inválida!");
-
-        if (confirmacao.equalsIgnoreCase("s")) {
-            try {
-                double total = facade.finalizarCompra(carrinho);
-                System.out.printf("Compra finalizada com sucesso! Total: R$%.2f%n", total);
-            } catch (IllegalStateException e) {
-                System.out.println("Erro ao finalizar compra: " + e.getMessage());
-            }
-        } else {
-            System.out.println("Compra cancelada.");
-        }
-    }
 }
