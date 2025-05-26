@@ -47,7 +47,12 @@ public class PedidoView {
                     System.out.printf("Deseja avaliar o produto '%s'? (s/n): ", produto.getNome());
                     String resp = scanner.askText("> ", "[sSnN]", "Digite s ou n");
                     if (resp.equalsIgnoreCase("s")) {
-                        int nota = scanner.getNumber(1, 5);
+                        System.out.print("Digite uma nota de 1 a 5 para o produto: ");
+                        Integer nota = scanner.getNumber(1, 5);
+                        if (nota == null) {
+                            System.out.println("Nota inválida. Avaliação cancelada.");
+                            continue;
+                        }
                         String comentario = scanner.askText("Comentário para o produto: ", ".{0,250}", "Comentário inválido!");
                         facade.avaliarProduto(produto.getId(), facade.getCompradorLogado().getCpf(), nota, comentario);
                     }
@@ -60,11 +65,17 @@ public class PedidoView {
                 System.out.print("Deseja avaliar a loja desta compra? (s/n): ");
                 String resp = scanner.askText("> ", "[sSnN]", "Digite s ou n");
                 if (resp.equalsIgnoreCase("s")) {
-                    int notaLoja = scanner.getNumber(1, 5);
-                    String comentarioLoja = scanner.askText("Comentário para a loja: ", ".{0,250}", "Comentário inválido!");
-                    facade.avaliarLoja(lojaCpfCnpj, facade.getCompradorLogado().getCpf(), notaLoja, comentarioLoja);
+                    System.out.print("Digite uma nota de 1 a 5 para a loja: ");
+                    Integer notaLoja = scanner.getNumber(1, 5);
+                    if (notaLoja == null) {
+                        System.out.println("Nota inválida. Avaliação cancelada.");
+                    } else {
+                        String comentarioLoja = scanner.askText("Comentário para a loja: ", ".{0,250}", "Comentário inválido!");
+                        facade.avaliarLoja(lojaCpfCnpj, facade.getCompradorLogado().getCpf(), notaLoja, comentarioLoja);
+                    }
                 }
             }
+
 
             System.out.println("Avaliações registradas. Obrigado pelo feedback!");
         } catch (Exception e) {
