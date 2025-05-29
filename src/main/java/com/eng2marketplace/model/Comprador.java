@@ -10,6 +10,7 @@ public class Comprador {
     private String cpf;
     private String endereco;
     private Map<String, Integer> carrinho;  // Lista de IDs ou códigos dos produtos
+    //Aqui será adicionado o sistema de pontuaçao
 
     public Comprador(String nome, String email, String senha, String cpf, String endereco) {
         this.nome = nome;
