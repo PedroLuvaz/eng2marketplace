@@ -15,7 +15,7 @@ public class CompradorController {
     private Comprador compradorLogado; // Referência ao comprador atualmente logado
     private int tentativasLogin; // Contador de tentativas de login
 
-    /**
+    /** 
      * Construtor da classe CompradorController.
      * Inicializa o repositório e define o comprador logado como null.
      */
@@ -246,4 +246,60 @@ public class CompradorController {
             throw new IllegalStateException("Nenhum comprador logado");
         }
     }
+
+    /**
+     * Finaliza a compra do carrinho e concede pontos ao comprador.
+     *
+     * @param valorTotalCompra Valor total da compra em reais.
+     */
+    public void finalizarCompra(double valorTotalCompra) {
+        validarCompradorLogado();
+
+        if (valorTotalCompra <= 0) {
+            throw new IllegalArgumentException("O valor da compra deve ser maior que zero.");
+        }
+
+        // Exemplo: 1 ponto a cada R$10 gastos
+        int pontosGanhos = (int) (valorTotalCompra / 10);
+        compradorLogado.adicionarPontos(pontosGanhos);
+
+        limparCarrinho(); // Limpa o carrinho após a compra
+        atualizarCompradorNoRepositorio();
+    }
+
+    /**
+     * Concede pontos ao comprador por avaliar um produto.
+     *
+     * @param idProduto ID do produto avaliado
+     */
+    public void avaliarProduto(String idProduto) {
+        validarCompradorLogado();
+
+        // Exemplo: +50 pontos por avaliação
+        int pontosPorAvaliacao = 50;
+        compradorLogado.adicionarPontos(pontosPorAvaliacao);
+        atualizarCompradorNoRepositorio();
+    }
+
+    /**
+     * Tenta resgatar um benefício usando pontos.
+     *
+     * @param nomeBeneficio Nome do benefício
+     * @param pontosNecessarios Pontos necessários para resgate
+     * @return true se o benefício foi resgatado, false caso contrário
+     */
+    public boolean resgatarBeneficio(String nomeBeneficio, int pontosNecessarios) {
+        validarCompradorLogado();
+
+        if (compradorLogado.usarPontos(pontosNecessarios)) {
+            System.out.println("Benefício '" + nomeBeneficio + "' resgatado com sucesso!");
+            return true;
+        } else {
+            System.out.println("Você não possui pontos suficientes para resgatar '" + nomeBeneficio + "'.");
+            return false;
+        }
+    }
+
+
+
 }
