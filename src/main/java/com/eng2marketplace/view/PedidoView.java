@@ -31,7 +31,32 @@ public class PedidoView {
                 return;
             }
 
-            Pedido pedido = facade.finalizarCompra(carrinhoOriginal);
+            double valorTotal = this.facade.calcularTotalCarrinho(carrinhoOriginal);
+            int pontosDisponiveis = this.facade.getCompradorLogado().getPontuacao();
+
+            System.out.printf("Valor total do carrinho: R$ %.2f%n", valorTotal);
+            System.out.printf("Você tem %d pontos disponíveis.%n", pontosDisponiveis);
+
+            double descontoMaximo = pontosDisponiveis * 0.5; // 1 ponto = R$0.50
+            if (pontosDisponiveis > 0) {
+                System.out.printf("Você pode usar até R$ %.2f de desconto.%n", descontoMaximo);
+                System.out.print("Deseja usar pontos para desconto? (s/n): ");
+                String usarPontos = scanner.askText("> ", "[sSnN]", "Digite s ou n");
+
+                if (usarPontos.equalsIgnoreCase("s")) {
+                    System.out.print("Quantos pontos deseja usar? ");
+                    int pontosParaUsar = scanner.getNumber(0, pontosDisponiveis);
+                    if (pontosParaUsar > 0) {
+                        double descontoAplicado = pontosParaUsar * 0.5;
+                        valorTotal -= descontoAplicado; // subtrai o desconto
+                        facade.getCompradorLogado().usarPontos(pontosParaUsar); // remove os pontos usados
+                        System.out.printf("Desconto de R$ %.2f aplicado.%n", descontoAplicado);
+                    }
+                }
+            }
+            System.out.printf("Valor final a pagar: R$ %.2f%n", valorTotal);
+
+            Pedido pedido = facade.finalizarCompra(carrinhoOriginal,valorTotal);
 
             System.out.println("\n--- Compra Finalizada com Sucesso ---");
             System.out.printf("Número do Pedido: %s%n", pedido.getId());

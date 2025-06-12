@@ -15,7 +15,7 @@ public class CompradorController {
     private Comprador compradorLogado; // Referência ao comprador atualmente logado
     private int tentativasLogin; // Contador de tentativas de login
 
-    /** 
+    /**
      * Construtor da classe CompradorController.
      * Inicializa o repositório e define o comprador logado como null.
      */

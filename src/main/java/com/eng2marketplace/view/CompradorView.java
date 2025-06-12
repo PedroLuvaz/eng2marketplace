@@ -25,9 +25,6 @@ public class CompradorView {
             // Exibe a pontuação do comprador logado
             int pontos = facade.getCompradorLogado().getPontuacao();
             System.out.println("Pontuação atual: " + pontos);
-            if (pontos >= 100) {
-                System.out.println("Parabéns! Você tem direito a frete grátis!");
-            }
             System.out.println("1. Logout");
             System.out.println("2. Menu do Carrinho");
             System.out.println("3. Finalizar Compra");
