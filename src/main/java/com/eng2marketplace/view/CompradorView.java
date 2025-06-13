@@ -22,6 +22,9 @@ public class CompradorView {
         Integer opcao;
         do {
             System.out.println("\n--- Menu do Comprador ---");
+            // Exibe a pontuação do comprador logado
+            int pontos = facade.getCompradorLogado().getPontuacao();
+            System.out.println("Pontuação atual: " + pontos);
             System.out.println("1. Logout");
             System.out.println("2. Menu do Carrinho");
             System.out.println("3. Finalizar Compra");
@@ -44,6 +47,12 @@ public class CompradorView {
                 case 3 -> {
                     try {
                         new PedidoView(facade).finalizarCompra();
+                        // Exibe a pontuação após finalizar a compra
+                        int pontosAposCompra = facade.getCompradorLogado().getPontuacao();
+                        System.out.println("Sua pontuação atual: " + pontosAposCompra);
+                        if (pontosAposCompra >= 100) {
+                            System.out.println("Você ganhou frete grátis!");
+                        }
                     } catch (Exception e) {
                         System.out.println("Erro ao finalizar compra: " + e.getMessage());
                     }

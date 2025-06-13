@@ -651,7 +651,7 @@ class MarketplaceFacadeTest {
         facade.loginComprador("111.222.333-44", "senha");
         facade.adicionarAoCarrinho(produto.getId(), 2);
         // Finaliza compra
-        var pedido = facade.finalizarCompra(facade.getCarrinho());
+        var pedido = facade.finalizarCompra(facade.getCarrinho(), valorTotal);
         assertNotNull(pedido);
         assertEquals(20.0, pedido.getValorTotal(), 0.01);
         assertEquals("11122233344", pedido.getCompradorCpf());
@@ -671,7 +671,7 @@ class MarketplaceFacadeTest {
         facade.cadastrarComprador("Comprador Teste", "comprador@teste.com", "senha", "111.222.333-44", "Rua Teste, 2");
         facade.loginComprador("111.222.333-44", "senha");
         facade.adicionarAoCarrinho(produto.getId(), 2);
-        facade.finalizarCompra(facade.getCarrinho());
+        facade.finalizarCompra(facade.getCarrinho(), valorTotal);
         var historico = facade.listarHistoricoCompras("11122233344");
         assertEquals(1, historico.size());
         assertEquals(20.0, historico.getFirst().getValorTotal(), 0.01);
