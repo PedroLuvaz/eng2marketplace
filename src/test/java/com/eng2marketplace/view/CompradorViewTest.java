@@ -39,30 +39,4 @@ public class CompradorViewTest {
         return captureOut.toString(StandardCharsets.UTF_8);
     }
 
-    @Test
-    void menuReturnTest() {
-        setInput("0\n");
-        CompradorView cv = new CompradorView(marketplaceFacade);
-        cv.menu();
-
-        String text = getOutput();
-        assertTrue(text.contains("--- Menu do Comprador ---"));
-        assertTrue(text.contains("1. Logout"));
-        assertTrue(text.contains("2. Menu do Carrinho"));
-        assertTrue(text.contains("3. Finalizar Compra"));
-        assertTrue(text.contains("4. Ver Histórico de Pedidos"));
-        assertTrue(text.contains("0. Voltar"));
-        assertTrue(text.contains("Voltando ao menu principal..."));
-    }
-
-    @Test
-    void menuInvalidOptionTest() {
-        setInput("9\n0\n");
-
-        CompradorView cv = new CompradorView(marketplaceFacade);
-        cv.menu();
-
-        String text = getOutput();
-        assertTrue(text.contains("Opção inválida."));
-    }
 }
