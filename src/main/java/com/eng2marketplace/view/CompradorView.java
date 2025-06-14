@@ -50,9 +50,6 @@ public class CompradorView {
                         // Exibe a pontuação após finalizar a compra
                         int pontosAposCompra = facade.getCompradorLogado().getPontuacao();
                         System.out.println("Sua pontuação atual: " + pontosAposCompra);
-                        if (pontosAposCompra >= 100) {
-                            System.out.println("Você ganhou frete grátis!");
-                        }
                     } catch (Exception e) {
                         System.out.println("Erro ao finalizar compra: " + e.getMessage());
                     }
