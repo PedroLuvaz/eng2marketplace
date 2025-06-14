@@ -4,10 +4,7 @@ import com.eng2marketplace.controller.AdministradorController;
 import com.eng2marketplace.controller.CompradorController;
 import com.eng2marketplace.controller.LojaController;
 import com.eng2marketplace.controller.ProdutoController;
-import com.eng2marketplace.model.Administrador;
-import com.eng2marketplace.model.Comprador;
-import com.eng2marketplace.model.Loja;
-import com.eng2marketplace.model.Produto;
+import com.eng2marketplace.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -641,15 +638,21 @@ class MarketplaceFacadeTest {
     @Test
     void testFinalizarCompra() {
         MarketplaceFacade facade = new MarketplaceFacade();
+
         // Cria loja e produto
         facade.adicionarLoja("Loja Teste", "loja@teste.com", "senha", "123.456.789-00", "Rua Teste, 1");
         Loja loja = facade.buscarLojaPorCpfCnpj("123.456.789-00");
         facade.adicionarProduto("Produto Teste", 10.0, "Tipo", 5, "Marca", "Descrição", loja);
         Produto produto = facade.listarProdutos().getFirst();
+
         // Cria comprador, login e adiciona ao carrinho
         facade.cadastrarComprador("Comprador Teste", "comprador@teste.com", "senha", "111.222.333-44", "Rua Teste, 2");
         facade.loginComprador("111.222.333-44", "senha");
         facade.adicionarAoCarrinho(produto.getId(), 2);
+
+        // Calcula o valor total do carrinho
+        double valorTotal = facade.calcularTotalCarrinho(facade.getCarrinho());
+
         // Finaliza compra
         var pedido = facade.finalizarCompra(facade.getCarrinho(), valorTotal);
         assertNotNull(pedido);
@@ -660,6 +663,63 @@ class MarketplaceFacadeTest {
     }
 
     @Test
+    void testAvaliacaoAdicionadaAoProduto() {
+        MarketplaceFacade facade = new MarketplaceFacade();
+
+        // Cria loja e produto
+        facade.adicionarLoja("Loja Teste", "loja@teste.com", "senha", "123.456.789-00", "Rua da Loja");
+        Loja loja = facade.buscarLojaPorCpfCnpj("123.456.789-00");
+        facade.adicionarProduto("Produto Teste", 50.0, "Categoria", 10, "Marca", "Descrição", loja);
+        Produto produto = facade.listarProdutos().getFirst();
+
+        // Cria comprador e faz o login
+        facade.cadastrarComprador("Comprador Teste", "comprador@teste.com", "senha", "111.222.333-44", "Rua do Comprador");
+        facade.loginComprador("111.222.333-44", "senha");
+
+        // Avalia produto
+        facade.avaliarProduto(produto.getId(), "111.222.333-44", 4, "Muito bom");
+
+        // Verifica se a avaliação foi adicionada
+        Produto atualizado = facade.listarProdutos().getFirst();
+        List<Avaliacao> avaliacoes = atualizado.getAvaliacoes();
+
+        assertEquals(1, avaliacoes.size());
+        assertEquals("111.222.333-44", avaliacoes.get(0).getCompradorCpf());
+        assertEquals(4, avaliacoes.get(0).getNota());
+        assertEquals("Muito bom", avaliacoes.get(0).getComentario());
+    }
+
+
+    @Test
+    void testPontosSaoConcedidosAoAvaliarProduto() {
+        MarketplaceFacade facade = new MarketplaceFacade();
+
+        // Cria loja e produto
+        facade.adicionarLoja("Loja Teste", "loja@teste.com", "senha", "123.456.789-00", "Rua da Loja");
+        Loja loja = facade.buscarLojaPorCpfCnpj("123.456.789-00");
+        facade.adicionarProduto("Produto Teste", 50.0, "Categoria", 10, "Marca", "Descrição", loja);
+        Produto produto = facade.listarProdutos().getFirst();
+
+        // Cria comprador e faz o login
+        facade.cadastrarComprador("Comprador Teste", "comprador@teste.com", "senha", "111.222.333-44", "Rua do Comprador");
+        facade.loginComprador("111.222.333-44", "senha");
+
+        // Salva pontos antes da avaliação
+        Comprador comprador = facade.buscarCompradorPorCpf("111.222.333-44");
+        int pontosAntes = comprador.getPontuacao();
+
+        // Avalia o produto
+        facade.avaliarProduto(produto.getId(), "111.222.333-44", 5, "Excelente");
+
+        // Verifica se os pontos aumentaram
+        Comprador atualizado = facade.buscarCompradorPorCpf("111.222.333-44");
+        int pontosDepois = atualizado.getPontuacao();
+
+        assertTrue(pontosDepois > pontosAntes);
+        assertEquals(50, pontosDepois - pontosAntes);
+    }
+
+    @Test
     void testListarHistoricoCompras() {
         MarketplaceFacade facade = new MarketplaceFacade();
         // Cria loja e produto
@@ -667,12 +727,19 @@ class MarketplaceFacadeTest {
         Loja loja = facade.buscarLojaPorCpfCnpj("123.456.789-00");
         facade.adicionarProduto("Produto Teste", 10.0, "Tipo", 5, "Marca", "Descrição", loja);
         Produto produto = facade.listarProdutos().getFirst();
+
         // Cria comprador, login e adiciona ao carrinho
         facade.cadastrarComprador("Comprador Teste", "comprador@teste.com", "senha", "111.222.333-44", "Rua Teste, 2");
         facade.loginComprador("111.222.333-44", "senha");
         facade.adicionarAoCarrinho(produto.getId(), 2);
+
+        // Calcula o valor total do carrinho
+        double valorTotal = facade.calcularTotalCarrinho(facade.getCarrinho());
+
+        // Finaliza a compra e lista o histórico
         facade.finalizarCompra(facade.getCarrinho(), valorTotal);
         var historico = facade.listarHistoricoCompras("11122233344");
+
         assertEquals(1, historico.size());
         assertEquals(20.0, historico.getFirst().getValorTotal(), 0.01);
     }
