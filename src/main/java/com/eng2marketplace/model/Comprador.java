@@ -11,7 +11,6 @@ public class Comprador {
     private String endereco;
     private Map<String, Integer> carrinho;  // Lista de IDs ou códigos dos produtos
     private int pontuacao;// Atributo para armazenar a pontuação do comprador
-    //Aqui será adicionado o sistema de pontuaçao
 
     public Comprador(String nome, String email, String senha, String cpf, String endereco) {
         this.nome = nome;
@@ -40,7 +39,7 @@ public class Comprador {
     public void setEndereco(String endereco) { this.endereco = endereco; }
 
     public int getPontuacao() { return pontuacao; }
-    
+
     // Métodos de Pontuação
     public void adicionarPontos(int pontos) {
         if (pontos < 0) throw new IllegalArgumentException("Não é possível adicionar pontos negativos.");
@@ -55,13 +54,14 @@ public class Comprador {
         }
         return false;
     }
-    
+
     public Map<String, Integer> getCarrinho() {
         return carrinho;
     }
     public void setCarrinho(Map<String, Integer> carrinho) {
         this.carrinho = carrinho;
     }
+
 
     @Override
     public String toString() {

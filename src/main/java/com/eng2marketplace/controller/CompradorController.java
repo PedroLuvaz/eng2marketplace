@@ -272,7 +272,7 @@ public class CompradorController {
      *
      * @param idProduto ID do produto avaliado
      */
-    public void avaliarProduto(String idProduto) {
+    public void avaliarProdutoPontos(String idProduto) {
         validarCompradorLogado();
 
         // Exemplo: +50 pontos por avaliação

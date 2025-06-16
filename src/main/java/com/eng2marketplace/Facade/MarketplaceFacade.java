@@ -339,6 +339,9 @@ public class MarketplaceFacade {
         Avaliacao avaliacao = new Avaliacao(compradorCpf, nota, comentario);
         produto.getAvaliacoes().add(avaliacao);
 
+        // Concede os pontos ao commprador por avaliar o produto
+        compradorController.avaliarProdutoPontos(produtoId);
+
         // Persiste as alterações
         produtoController.atualizarProduto(produto, produtoId);
     }
