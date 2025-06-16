@@ -8,6 +8,7 @@ import com.eng2marketplace.model.Administrador;
 import com.eng2marketplace.model.Comprador;
 import com.eng2marketplace.model.Loja;
 import com.eng2marketplace.model.Produto;
+import com.eng2marketplace.model.Avaliacao;
 import com.eng2marketplace.model.Pedido;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -639,7 +640,7 @@ class MarketplaceFacadeTest {
         assertEquals("Loja Teste", loja.getNome());
     }
 
-        @Test
+    @Test
     void testFinalizarCompra() {
         MarketplaceFacade facade = new MarketplaceFacade();
 
@@ -747,9 +748,5 @@ class MarketplaceFacadeTest {
         assertEquals(1, historico.size());
         assertEquals(20.0, historico.getFirst().getValorTotal(), 0.01);
     }
-    
-}
-
-    
 
 }
